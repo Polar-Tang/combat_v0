@@ -1,0 +1,84 @@
+local anim = {}
+
+--||Services||--
+local RS = game:GetService("ReplicatedStorage")
+
+--||Animation Folder||--
+local AnimationFolder = RS:WaitForChild("Animations")
+
+
+local NPCAnimBinder = require(RS.Animations.Utils.HandlerBinder).NPCAnimBinder
+
+------------------------------------------------------------------------------------------------------------------
+
+--local function getHandler(char)
+--	local animationHandler = PlayerAnimationHandler:GetHandler(char)
+--	animationHandler
+--end
+
+
+------------------ Equip ------------------
+anim.Equip = function(char: Model)
+	--print("AnimationsClient required by:", debug.info(2, "sln"))
+	--StopAllAnimations(char)
+	print("NPCAnimBinder ", NPCAnimBinder)
+
+	-- PENDING: an equipping animation should play, onEnded play the idle animation
+	
+
+	local AnimationHandler = NPCAnimBinder:Get(char)
+	AnimationHandler:LoadAnimation(true,"Equip")
+	
+	--EquipAnim[char]:GetMarkerReachedSignal("Equipped"):Connect(
+	-- make a higher order function that take the tanimation track as a parameter
+	-- PENDING. SUPPORT AN EQUIP ANIMATION WHICH IS A TRASITION TO IDLE
+	
+	-- IN SUCH CASE PLAY THIS char:SetAttribute("Swing",true) --so the player can't attack while still equipping 
+	local onEquipp = function(animTrack)
+		char:SetAttribute("Swing",false)
+		--animTrack:Play()		
+	end
+	AnimationHandler:OnSignal({
+		callback = onEquipp,
+		animationName = "Idle",
+		animationEventName = "Equipped"
+	})
+	
+	-- IDK WHY THE ORIGINAL AUTHOR MADE THIS, IT HAS NO SENSE, IT REPLAYS AN ANIMATION THAT SHOULD BE LOOPED
+	--[[
+		local onEnded = function(animTack) --we are actually still keeping the ended in case the player gets hit while equipping
+			if char:FindFirstChildWhichIsA("Tool") and char:GetAttribute("Stunned") then --actually checking if we didnt just unequip the weapon while we still equipped it
+				animTack:Play()
+			end
+		end
+		
+		AnimationHandler:OnSignal({
+			callback = onEnded,
+			animationName = "Equip",
+			animationEventName = "EndedCon"
+		})
+	]]
+	
+end
+
+anim.UnEquip = function(char: Model) --function for UnEquip animation
+	local AnimationHandler = NPCAnimBinder:Get(char)
+	AnimationHandler:LoadAnimation(true,"Equip")
+	AnimationHandler:LoadAnimation(true,"UnEquip")	
+end
+
+anim.Blocking = function(char: Model)
+	local AnimationHandler = NPCAnimBinder:Get(char)
+	AnimationHandler:LoadAnimation(true,"Blocking")
+	print("NPCAnimBinder ", NPCAnimBinder)
+
+end
+
+anim.UnBlocking = function(char: Model)
+	print("NPCAnimBinder ", NPCAnimBinder)
+	local AnimationHandler = NPCAnimBinder:Get(char)
+	AnimationHandler:LoadAnimation(false,"Blocking")
+	
+end
+
+return anim
