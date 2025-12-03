@@ -1,25 +1,24 @@
 local RS = game:GetService("ReplicatedStorage")
 
 local animationsData = require(RS.Animations.WeaponsAnims)
-local nome = {}
+local HandlerBinder = {}
 
-nome.NPCAnimBinder = {}
+HandlerBinder.NPCAnimBinder = {}
 
-nome.init = function(Binder)
-	nome.NPCAnimBinder = Binder.new(
+HandlerBinder.init = function(ServiceBag, Binder)
+	HandlerBinder.NPCAnimBinder = Binder.new(
 		"AnimationHandler",
 		require(script.Parent.AnimationHandler)
 	)
-	nome.NPCAnimBinder:GetClassAddedSignal():Connect(function(handler, npcModel)
-		if npcModel.Name == "Blocking"  then
-			handler:registryAnims(animationsData["Fist-r6"])
-			handler:preloadAll()
-			handler:LoadAnimation(true, "Blocking")
+	
+	-- HandlerBinder.NPCAnimBinder:GetClassAddedSignal():Connect(function(handler, npcModel)
+	-- 	if npcModel.Name == "Blocking"  then
+	-- 		handler:registryAnims(animationsData["Fist-r6"])
+	-- 		handler:preloadAll()
+	-- 		handler:LoadAnimation(true, "Blocking")
 			
-		end 
-	end)
-	nome.NPCAnimBinder:Start()
-	return nome.NPCAnimBinder
+	-- 	end 
+	-- end)
+	return HandlerBinder.NPCAnimBinder
 end
-
-return nome
+return HandlerBinder

@@ -4,25 +4,32 @@
     "$className": "DataModel",
 
     "ReplicatedStorage": {
-      "Shared": {
-        "$path": "src/shared"
-      }
+        "$path": "src/shared",
+		"Packages": {
+			"$className" : "Folder",
+			"Nevermore": {
+				"$path": "node_modules/@quenty"
+			}
+		}
     },
 
     "ServerScriptService": {
-      "Server": {
         "$path": "src/server"
-      }
     },
-
+    "StarterPack": {
+      "$path": "src/Tools"
+    },
     "StarterPlayer": {
       "StarterPlayerScripts": {
-        "Client": {
-          "$path": "src/client"
+          "$path": "src/client/UI"
+      },
+      "StarterCharacterScripts": {
+          "$path": "src/client/Character"
         }
-      }
     },
-
+    "StarterGui": {
+      "$path": "src/client/StarterGui"
+    },
     "Workspace": {
       "$properties": {
         "FilteringEnabled": true

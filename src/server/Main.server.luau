@@ -6,41 +6,59 @@ local Players = game:GetService("Players")
 local SSS = game:GetService("ServerScriptService")
 
 --||Nevermore Shit||--
---BINDERS
+----------------------------- declaring process -----------------------------
 local AnimationUtils = RS.Animations.Utils
 
-local HandlerBindler = require(AnimationUtils.HandlerBinder)
-local WeaponBinder = require(SSS.Combat.Weapons.WeaponBinder)
 
-local Nevermore = require(RS.Nevermore.loader)
+local NeverMorePackages = RS.Packages.Nevermore
+local loader = NeverMorePackages:FindFirstChild("LoaderUtils", true ).Parent
+local Nevermore = require(loader).bootstrapGame(NeverMorePackages)
+
 local ServiceBag = Nevermore("ServiceBag")
-local serviceBag = ServiceBag.new() 
+local serviceBag = ServiceBag.new()
+
+----------------------------- init process -----------------------------
+
+
+---------- BINDERS ----------
 local Binder = Nevermore("Binder")
+local BinderProvider = Nevermore("BinderProvider")
 
-local animationHandlerBinder = HandlerBindler.init(Binder)
-local WeaponBinderBinder = WeaponBinder.init(Binder)
+local HandlerAnimationBindler = require(AnimationUtils.HandlerBinder).init(serviceBag, Binder)
+local WeaponBinder = require(SSS.Combat.Weapons.WeaponBinder).init(serviceBag, Binder)
 
---local Cooldown = RS.Nevermore.cooldown.Shared.Binders.Cooldown
-local CooldownBinder = Nevermore("Cooldown")
-local Cooldown = serviceBag:GetService(CooldownBinder)
+---------- COOLDOWN-BINDERS ----------
+local Cooldown = Nevermore("Cooldown")
+-- local CooldownHandler = require(SSS.Combat.Attacks.Utils.CooldownBinder)
 
-local BlockingNpc = game.Workspace.Blocking
-local nv = Instance.new("NumberValue")
-nv.Name = "AttackCooldown"
-nv.Parent = BlockingNpc
-nv:AddTag("Cooldown")
+---------- USE BINDER PORVIDER ----------
+local AttacksBinders = require(SSS.Combat.AttackBinderProvider).new(
+	BinderProvider,
+	{
+		HandlerAnimationBindler,
+		WeaponBinder,
+		-- CooldownHandler,
+	}
+)
 
+serviceBag:GetService(AttacksBinders)
+--[[
+	local BlockingNpc = game.Workspace.Blocking
+	local nv = Instance.new("NumberValue")
+	nv.Name = "AttackCooldown"
+	nv.Parent = BlockingNpc
+	nv:AddTag("Cooldown")
+
+]]
+----- ------------------------ START SERVICEBAG -----------------------------
 serviceBag:Init()
-
+-- CooldownHandler.start()
 serviceBag:Start()
-------------------------------------------------------------
----
-local cooldDownBLocking = Cooldown:Get(nv)
---WeaponBinderBinder:_add(Cooldown)
---local Cooldown2 = serviceBag:GetService("Cooldown")
-print("cooldDownBLocking ", cooldDownBLocking)
-print("cooldDownBLocking ", BlockingNpc.AttackCooldown)
+---------------- Coldown test ----------------------------
 
+--
+--local cooldDownBLocking = CooldownHandler.CD:Get(BlockingNpc)
+--print("cooldDownBLocking ", cooldDownBLocking)
 
 ------------------------------------------------------------
 
@@ -90,8 +108,8 @@ Equipment.OnServerEvent:Connect(function(player, data)
 	local arm = "RightLowerArm"
 	local HUM: Humanoid = char:WaitForChild("Humanoid")
 	
-	local animationHandler = animationHandlerBinder:Get(char)
-	local WeaponData = WeaponBinderBinder:Get(char)
+	local animationHandler = HandlerAnimationBindler:Get(char)
+	local WeaponData = WeaponBinder:Get(char)
 	WeaponData:registryTool(tool.Name)
 	if HUM.RigType == Enum.HumanoidRigType.R15 then
 		arm = "RightLowerArm"
@@ -138,7 +156,7 @@ Equipment.OnServerEvent:Connect(function(player, data)
 		UnEquipSound:Play()
 		Debris:AddItem(UnEquipSound,1)
 		
-		local WeaponData = WeaponBinderBinder:Get(char)
+		local WeaponData = WeaponBinder:Get(char)
 		WeaponData:deleteToolData()
 	end
 end)

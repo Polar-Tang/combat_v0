@@ -1,13 +1,16 @@
 local RS = game:GetService("ReplicatedStorage")
 
-local nome = {}
+local CooldownBinder = {}
 
-nome.WeaponCooldown = {}
+CooldownBinder.CD = {}
 
-nome.init = function(Cooldown, serviceBag)
-	
-	Cooldown:Start()
-	return nome.WeaponCooldown
+function CooldownBinder.init (ServiceBag, CooldownShit)
+	-- Inject the service bag into the damn binder
+	CooldownShit:Init(ServiceBag)
+	CooldownBinder.CD = CooldownShit
+	CooldownBinder.CD:Start()
+
+	return CooldownBinder.CD
 end
 
-return nome
+return CooldownBinder
