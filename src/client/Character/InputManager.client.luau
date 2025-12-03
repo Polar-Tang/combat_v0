@@ -1,4 +1,3 @@
-
 local repStore = game:GetService("ReplicatedStorage")
 local UserInputSer = game:GetService("UserInputService")
 
@@ -8,17 +7,14 @@ local swingEvent = remotes:WaitForChild("Swing")
 -- constants
 local plr = game:GetService("Players").LocalPlayer
 local char = plr.Character or plr.CharacterAdded:Wait()
+print("char ", char)
 
-
-local CheckingForValues = require(repStore.Helpers.CheckingForValues)
-local attckChck = function() 
+local attckChck = function()
 	local tool = char:FindFirstChildWhichIsA("Tool")
-	return tool and char:FindFirstChildWhichIsA("Tool"):GetAttribute("Type") == "Attack" 
+	return tool and char:FindFirstChildWhichIsA("Tool"):GetAttribute("Type") == "Attack"
 end
 
-
 local InputManager = {}
-
 
 InputManager.Bindings = {
 	[Enum.KeyCode.Q] = require(char:WaitForChild("Abilities").Dash.DashClient),
@@ -26,19 +22,20 @@ InputManager.Bindings = {
 	[Enum.KeyCode.F] = require(char:WaitForChild("Abilities").Blocking),
 	[Enum.KeyCode.W] = require(char:WaitForChild("Abilities").Sprint),
 	--[Enum.KeyCode.R] = require(script.Parent.Abilities.CombatClient).FeintFunction,
-
 }
 
 local isBlocking = char:GetAttribute("IsBlocking")
 
-UserInputSer.InputBegan:Connect(function(input,IsTyping)
-	if IsTyping then return end	
+UserInputSer.InputBegan:Connect(function(input, IsTyping)
+	if IsTyping then
+		return
+	end
 	local command = InputManager.Bindings[input.KeyCode]
 	if input.KeyCode == Enum.KeyCode.Q and not isBlocking and command.Check() then
 		command.Execute()
 	elseif input.KeyCode == Enum.KeyCode.R and not isBlocking and attckChck(char) then --for the heavy attack
 		command.Execute()
-	elseif input.KeyCode == Enum.KeyCode.F and attckChck(char)  and command.Check() then
+	elseif input.KeyCode == Enum.KeyCode.F and attckChck(char) and command.Check() then
 		print("block")
 		command.Execute()
 	elseif input.KeyCode == Enum.KeyCode.W and command.isIdle() and command.Check() then
@@ -46,7 +43,7 @@ UserInputSer.InputBegan:Connect(function(input,IsTyping)
 		command.Execute()
 	elseif input.UserInputType == Enum.UserInputType.MouseButton1 and attckChck(char) and not isBlocking then
 		--lastMouseButton1Pressed = tick()
-		swingEvent:FireServer("Basic",char:FindFirstChildWhichIsA("Tool").Name)
+		swingEvent:FireServer("Basic", char:FindFirstChildWhichIsA("Tool").Name)
 		--[[task.spawn(function() --for hiding the inventory
 			StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false)
 			task.wait(.1)				
@@ -56,8 +53,10 @@ UserInputSer.InputBegan:Connect(function(input,IsTyping)
 		]]
 	end
 end)
-UserInputSer.InputEnded:Connect(function(input,isTyping)
-	if isTyping then return end
+UserInputSer.InputEnded:Connect(function(input, isTyping)
+	if isTyping then
+		return
+	end
 
 	local Stunned = char:GetAttribute("Stunned")
 	local command = InputManager.Bindings[input.KeyCode]
@@ -137,7 +136,6 @@ end
 end	
 
 	]]
-
-end	
+end
 
 ---------------------------------MOBILE------------------------------------

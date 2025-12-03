@@ -1,6 +1,5 @@
 --the script got changed a bit after the video so some lines are not 100% the same, keep that in mind
 
-
 --||Services||--
 local RS = game:GetService("ReplicatedStorage")
 local uis = game:GetService("UserInputService")
@@ -30,14 +29,13 @@ local AttachChck = require(script.Parent.Helpers.AttackCheck)
 local CheckingForValues = require(RS.Helpers.CheckingForValues)
 ------------------------------------------------------------------------------------------------------------------
 
-
 local Sprint = {}
 
 function Sprint.isIdle()
-	local isNotBusy = not char:GetAttribute("Stunned") 
-		and not char:GetAttribute("IsRagdoll") 
-		and not char:GetAttribute("IsBlocking") 
-		and not char:GetAttribute("Attacking") 
+	local isNotBusy = not char:GetAttribute("Stunned")
+		and not char:GetAttribute("IsRagdoll")
+		and not char:GetAttribute("IsBlocking")
+		and not char:GetAttribute("Attacking")
 	return isNotBusy
 end
 
@@ -51,38 +49,39 @@ function Sprint.Check()
 	print("currentTime ", currentTime)
 	print("isDoubleTap ", isDoubleTap)
 
-
 	lastKeyPressTime = currentTime
 
 	return isDoubleTap
 end
 
-
 function shiftToSprint()
 	if isSprinting and not debounce then
-		debounce = true		
+		debounce = true
 
 		--if we are not attacking and are not stunned we reset our walkspeed
 		if not char:GetAttribute("Attacking") and not char:GetAttribute("Stunned") then
-			hum.WalkSpeed = walkSpeed 
+			hum.WalkSpeed = walkSpeed
 		end
 
-		TS:Create(camera, TweenInfo.new(.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {FieldOfView = 70}):Play() --tweening the FOV
+		TS:Create(camera, TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), { FieldOfView = 70 })
+			:Play() --tweening the FOV
 		isSprinting = false
 
-		if SprintTrack then SprintTrack:Stop() end
+		if SprintTrack then
+			SprintTrack:Stop()
+		end
 
 		char:SetAttribute("Sprinting", false)
 
-		task.wait(.5) -- so we can't spam sprint
-		debounce = false		
+		task.wait(0.5) -- so we can't spam sprint
+		debounce = false
 	elseif not isSprinting and debounce == false then
-
 		char:SetAttribute("Sprinting", true)
 
 		hum.WalkSpeed = runSpeed
 
-		TS:Create(camera, TweenInfo.new(.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {FieldOfView = 80}):Play() --tweening the FOV
+		TS:Create(camera, TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), { FieldOfView = 80 })
+			:Play() --tweening the FOV
 		isSprinting = true
 		--SprintTrack = hum.Animator:LoadAnimation(SprintAnim)
 		--SprintTrack:Play()
@@ -90,22 +89,19 @@ function shiftToSprint()
 end
 
 function Sprint.Execute()
-
-
 	-- Double-tap detected
-	local isEquipped = char:FindFirstChildWhichIsA("Tool") and char:FindFirstChildWhichIsA("Tool"):GetAttribute("Type") == "Attack"
+	local isEquipped = char:FindFirstChildWhichIsA("Tool")
+		and char:FindFirstChildWhichIsA("Tool"):GetAttribute("Type") == "Attack"
+	-- Make something with anim handler
 	if isEquipped then
 		SprintAnim = RS.Animations.Weapons[char:FindFirstChildWhichIsA("Tool").Name].Movement.Sprint
 	else
-		SprintAnim = RS.Animations.Player.Main.Sprint
-	end			
-	shiftToSprint(SprintAnim)
+		SprintAnim = RS.Animations.Weapons[char:FindFirstChildWhichIsA("Tool").Name].Movement.Sprint
+	end
+	shiftToSprint()
 end
 
-
 function Sprint.Kill(inputObject)
-
-
 	shiftToSprint()
 end
 
@@ -114,14 +110,18 @@ hum.Changed:Connect(function()
 	local ragdoll = char:GetAttribute("IsRagdoll")
 	local attacking = char:GetAttribute("Attacking")
 
-	if  stunned or ragdoll or attacking or char.HumanoidRootPart.Anchored then
-		if isSprinting then shiftToSprint() end
+	if stunned or ragdoll or attacking or char.HumanoidRootPart.Anchored then
+		if isSprinting then
+			shiftToSprint()
+		end
 	end
 end)
 
 char.ChildAdded:Connect(function()
 	if char:FindFirstChildWhichIsA("Tool") then
-		if isSprinting then shiftToSprint() end --if we equip a tool and are sprinting we stop sprinting
+		if isSprinting then
+			shiftToSprint()
+		end --if we equip a tool and are sprinting we stop sprinting
 	end
 end)
 

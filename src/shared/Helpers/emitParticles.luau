@@ -11,8 +11,8 @@ local function clearAllParticles(effect)
 	emitAllParticles(effect)
 end
 
-local function emitParticles(effect, destroy: boolean)
-	if destroy  then
+local function emitParticles(effect, destroy: boolean?)
+	if destroy then
 		return clearAllParticles(effect)
 	end
 	local function emitAllParticles(parent)
@@ -25,8 +25,6 @@ local function emitParticles(effect, destroy: boolean)
 		end
 	end
 	emitAllParticles(effect)
-
 end
 
 return emitParticles
-

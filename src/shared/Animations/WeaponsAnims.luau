@@ -13,7 +13,7 @@ export type Weapon = {
 }
 
 export type Attkcs = {
-	[string] : Weapon  
+	[string]: Weapon,
 }
 Attkcs["Fist"] = {
 	["Heavy"] = "rbxassetid://80889299731223",
@@ -33,7 +33,6 @@ Attkcs["Fist"] = {
 	["Idle"] = "rbxassetid://91567634616046",
 	["UnEquip"] = "rbxassetid://76401194937920",
 	["Blocking"] = "rbxassetid://109266615151969",
-
 }
 
 Attkcs["Fist-r6"] = {
@@ -55,7 +54,6 @@ Attkcs["Fist-r6"] = {
 	--["UnEquip"] = "rbxassetid://15451005805",
 	["Blocking"] = "rbxassetid://119463100691422",
 	["GuardBreak"] = "rbxassetid://70952470480164",
-
 }
 
-return Attkcs:: {Attkcs}
+return Attkcs :: { Attkcs }
