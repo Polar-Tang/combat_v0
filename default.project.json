@@ -5,12 +5,10 @@
 
     "ReplicatedStorage": {
         "$path": "src/shared",
-		"Packages": {
-			"$className" : "Folder",
+	
 			"Nevermore": {
 				"$path": "node_modules/@quenty"
 			}
-		}
     },
 
     "ServerScriptService": {

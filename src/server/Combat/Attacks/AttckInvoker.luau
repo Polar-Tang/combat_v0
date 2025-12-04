@@ -3,6 +3,7 @@ local SSS = game:GetService("ServerScriptService")
 
 --||Binders||--
 local WeaponBinder = require(SSS.Combat.Weapons.WeaponBinder).WeaponBinder
+local CooldownBinder = require(SSS.Combat.Weapons.CooldownBinder).CooldownBinder
 
 --||Folder||--
 
@@ -112,6 +113,12 @@ CombatServer.swingEvent = function(plr, action)
 	newHitbox.AutoDestroy = false
 	newHitbox.Puncher = CHAR
 	------------ EXECUTE COMMAND ------------
+	print("WTF IS THIS SHIT? ", CooldownBinder)
+	local CooldownController = CooldownBinder:Get(CHAR)
+	print("CD : ", CooldownController:init(3))
+
+	print("nil and not error ", CooldownController:getCD())
+
 	command.Execute(CHAR, newHitbox)
 	------------ ON HIT FUNCTION ------------
 	-- This play when a humanoid is hit

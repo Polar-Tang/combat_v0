@@ -9,7 +9,7 @@ local SSS = game:GetService("ServerScriptService")
 ----------------------------- declaring process -----------------------------
 local AnimationUtils = RS.Animations.Utils
 
-local NeverMorePackages = RS.Packages.Nevermore
+local NeverMorePackages = RS.Nevermore
 local loader = NeverMorePackages:FindFirstChild("LoaderUtils", true).Parent
 local Nevermore = require(loader).bootstrapGame(NeverMorePackages)
 
@@ -25,6 +25,7 @@ local CooldownUtils = Nevermore("CooldownUtils")
 
 local HandlerAnimationBindler = require(AnimationUtils.AnimationHandlerBinder).init(serviceBag, Binder)
 local WeaponBinder = require(SSS.Combat.Weapons.WeaponBinder).init(serviceBag, Binder)
+-- local CooldownBinder = require(SSS.Combat.Weapons.CooldownBinder).init(serviceBag, Binder)
 
 ---------- COOLDOWN-BINDERS ----------
 local Cooldown = serviceBag:GetService(Nevermore("Cooldown"))
@@ -35,7 +36,6 @@ local TimeSyncService = serviceBag:GetService(Nevermore("TimeSyncService"))
 local AttacksBinders = require(SSS.Combat.AttackBinderProvider).new(BinderProvider, {
 	HandlerAnimationBindler,
 	WeaponBinder,
-	-- CooldownHandler,
 })
 
 serviceBag:GetService(AttacksBinders)
@@ -45,6 +45,13 @@ serviceBag:GetService(AttacksBinders)
 -- CooldownHandler.start()
 serviceBag:Init()
 serviceBag:Start()
+-- local testying = serviceBag:GetService(CooldownBinder)
+-- print("This is the service initilized i bet", testying)
+-- DO A NASTY SINGLETON
+
+local serviceShit = require(SSS.ServiceShit)
+serviceShit.init(serviceBag)
+
 -- Cooldown:Start(serviceBag)
 
 require(AnimationUtils.AnimationHandlerBinder).start()
@@ -62,8 +69,8 @@ nv.Value = 3
 task.delay(0.2, function()
 	local cd = Cooldown:Get(nv)
 	print("Cooldown:", cd)
-	print("Remaining:", cd:GetSecondsRemaining())
-	print("Active:", cd:IsActive())
+	print("GetTimePassed:", cd:GetTimePassed()) -- GetTimePassed: 0.2756490707397461
+	print("GetStartTime:", cd:GetStartTime()) -- GetStartTime: 1764843054.5570555
 end)
 ------------------------------------------------------------
 
@@ -93,6 +100,7 @@ Players.PlayerAdded:Connect(function(player)
 	local char = player.Character or player.CharacterAdded:Wait()
 	CollectionService:AddTag(char, "AnimationHandler")
 	CollectionService:AddTag(char, "Armed")
+	CollectionService:AddTag(char, "CD")
 
 	CombatMediator.PlayerAdded(player)
 	PlayerAnimationHandler:InitPlayer(player)

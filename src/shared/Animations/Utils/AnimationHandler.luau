@@ -51,14 +51,14 @@ type AnimationDescriptors = {
 }
 local CollectionService = game:GetService("CollectionService")
 
-function AnimationHandler.new(char): Options
+function AnimationHandler.new(char, serviceBag): Options
 	local self = setmetatable({}, AnimationHandler)
 
 	self.Char = char
 	self.animations = {}
 	self.animationDescriptors = {}
 	self.armName = ""
-
+	self._serviceBag = serviceBag
 	return self
 end
 

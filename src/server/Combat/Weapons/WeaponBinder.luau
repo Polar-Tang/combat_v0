@@ -5,13 +5,8 @@ local WeaponBinder = {}
 WeaponBinder.WeaponBinder = {}
 
 WeaponBinder.init = function(ServiceBag, Binder)
-	WeaponBinder.WeaponBinder = Binder.new(
-		"Armed",
-		require(script.Parent.WeaponCtx)
-	)
-	-- WeaponBinder.WeaponBinder:GetClassAddedSignal():Connect(function(handler, npcModel)
-		
-	-- end)
+	WeaponBinder.WeaponBinder = Binder.new("Armed", require(script.Parent.WeaponCtx))
+
 	return WeaponBinder.WeaponBinder
 end
 
