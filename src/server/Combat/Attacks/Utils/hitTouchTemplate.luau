@@ -8,7 +8,7 @@ local Utils = Combat.Attacks.Utils
 local CombatUtils = require(Utils.CombatUtils)
 
 --||BINDERS||--
-local NPCAnimBinder = require(RS.Animations.Utils.HandlerBinder).NPCAnimBinder
+local NPCAnimBinder = require(RS.Animations.Utils.AnimationHandlerBinder).NPCAnimBinder
 local WeaponBinder = require(Combat.Weapons.WeaponBinder).WeaponBinder
 
 --||Events||--
@@ -21,19 +21,21 @@ local Helpers = Combat.Attacks.Helpers
 local stunt_client = require(Helpers.stunt_client)
 local get_hit_sound = require(Helpers.get_hit_sound)
 return function(newHitbox, getStrength)
-	local CHAR : Model = newHitbox.Puncher
+	local CHAR: Model = newHitbox.Puncher
 	local HUM = CHAR:WaitForChild("Humanoid")
 	--newHitbox.Touched:Connect
-	return (function(hit,enemyHum)
+	return function(hit, enemyHum)
 		----------------------------------------------------
-		if enemyHum == HUM then return end
-		
-		local ENEMY_CHAR : Model = enemyHum.Parent
-		local Heavy =  get_hit_sound(CHAR)
+		if enemyHum == HUM then
+			return
+		end
+
+		local ENEMY_CHAR: Model = enemyHum.Parent
+		local Heavy = get_hit_sound(CHAR)
 		local Player = Players:GetPlayerFromCharacter(CHAR)
 		local HRP = CHAR:WaitForChild("HumanoidRootPart")
 		----------------------------------------------------
-		
+
 		local weaponData = WeaponBinder:Get(CHAR)
 		local Damage = weaponData.damage
 		local StunTime = weaponData.stun_time
@@ -41,32 +43,21 @@ return function(newHitbox, getStrength)
 		local MaxCombo = weaponData.max_combo
 		----------------------------------------------------
 
-		do 
-			if ENEMY_CHAR:GetAttribute("Parrying") 
-				and not Heavy 
-				and CombatUtils.CheckInfront(CHAR,ENEMY_CHAR) 
-			then 
-				CombatUtils.Parrying(CHAR,ENEMY_CHAR) 
-				return 
+		do
+			if ENEMY_CHAR:GetAttribute("Parrying") and not Heavy and CombatUtils.CheckInfront(CHAR, ENEMY_CHAR) then
+				CombatUtils.Parrying(CHAR, ENEMY_CHAR)
+				return
 			end
-			if 
-				ENEMY_CHAR:GetAttribute("IsBlocking") 
-				and not Heavy 
-				and CombatUtils.CheckInfront(CHAR,ENEMY_CHAR) 
-			then 
-				CombatUtils.Blocking(ENEMY_CHAR, Damage) 
-				return 
+			if ENEMY_CHAR:GetAttribute("IsBlocking") and not Heavy and CombatUtils.CheckInfront(CHAR, ENEMY_CHAR) then
+				CombatUtils.Blocking(ENEMY_CHAR, Damage)
+				return
 			end
-			if 
-				ENEMY_CHAR:GetAttribute("IsRagdoll") 
-				or ENEMY_CHAR:GetAttribute("Iframes") 
-				or enemyHum.Health <= 0 
-			then 
-				return 
+			if ENEMY_CHAR:GetAttribute("IsRagdoll") or ENEMY_CHAR:GetAttribute("Iframes") or enemyHum.Health <= 0 then
+				return
 			end
 
 			if Heavy then
-				CHAR:SetAttribute("Combo",4) 
+				CHAR:SetAttribute("Combo", 4)
 			end
 		end
 
@@ -83,29 +74,28 @@ return function(newHitbox, getStrength)
 		--enemyHrp.CFrame = CFrame.lookAt(enemyHrp.Position, hrp.Position)--makes the enemy look at you, disabled it cuz it doesnt look good lol
 
 		-- PLAY THE HIT FROM THE COMBO
-		--print("Stop animation playing feint") 
+		--print("Stop animation playing feint")
 		--print("NPCAnimBinder ", NPCAnimBinder)
-
-
-		
 
 		local kockback = CENTER * STRENGTH
 
-		if Heavy then Damage = HeavyDamage end
+		if Heavy then
+			Damage = HeavyDamage
+		end
 
 		if STRENGTH >= 35 then
 			local bv = Instance.new("BodyVelocity")
-			bv.MaxForce = Vector3.new(math.huge,0,math.huge)
+			bv.MaxForce = Vector3.new(math.huge, 0, math.huge)
 			bv.P = 50000
 			bv.Velocity = kockback
 			bv.Parent = ENEMYHRP
 
-			Debris:AddItem(bv,0.2)
+			Debris:AddItem(bv, 0.2)
 		end
 
 		ENEMYCHAR:SetAttribute("IsRagdoll", false)
 		if Damage then
-			enemyHum:TakeDamage(Damage)		
+			enemyHum:TakeDamage(Damage)
 			ENEMYHRP.Anchored = false
 		end
 
@@ -118,10 +108,8 @@ return function(newHitbox, getStrength)
 		ENEMYCHAR:SetAttribute("IsBlocking", false)
 
 		VFX_Event:FireAllClients("SwordHit", ENEMYCHAR)
-		VFX_Event:FireClient(Player,"SwordHitShake")
-
-
-	end)
+		VFX_Event:FireClient(Player, "SwordHitShake")
+	end
 end
 
 --[[

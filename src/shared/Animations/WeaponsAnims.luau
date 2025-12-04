@@ -56,4 +56,4 @@ Attkcs["Fist-r6"] = {
 	["GuardBreak"] = "rbxassetid://70952470480164",
 }
 
-return Attkcs :: { Attkcs }
+return Attkcs :: Attkcs

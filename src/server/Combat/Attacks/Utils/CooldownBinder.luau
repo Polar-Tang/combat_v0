@@ -4,11 +4,12 @@ local CooldownBinder = {}
 
 CooldownBinder.CD = {}
 
-function CooldownBinder.init (ServiceBag, CooldownShit)
+function CooldownBinder.init(ServiceBag, CooldownShit)
 	-- Inject the service bag into the damn binder
-	CooldownShit:Init(ServiceBag)
-	CooldownBinder.CD = CooldownShit
-	CooldownBinder.CD:Start()
+	-- CooldownShit:Init(ServiceBag)
+	-- local nv = Instance.new("NumberValue")
+	-- CooldownBinder.CD = CooldownShit.new(ServiceBag)
+	--CooldownBinder.CD:Start()
 
 	return CooldownBinder.CD
 end

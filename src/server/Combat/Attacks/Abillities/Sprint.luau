@@ -5,7 +5,7 @@ local SSS = game:GetService("ServerScriptService")
 
 local SoundFolder = SoundService:WaitForChild("SFX")
 local WeaponSoundFolder = SoundFolder:WaitForChild("Weapons")
-local NPCAnimBinder = require(RS.Animations.Utils.HandlerBinder).NPCAnimBinder
+local NPCAnimBinder = require(RS.Animations.Utils.AnimationHandlerBinder).NPCAnimBinder
 local WeaponBinder = require(SSS.Combat.Weapons.WeaponBinder).WeaponBinder
 
 -- attacks modules --

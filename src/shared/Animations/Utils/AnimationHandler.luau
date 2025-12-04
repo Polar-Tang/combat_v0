@@ -13,7 +13,6 @@ AnimationHandler.__index = AnimationHandler
 local Maid = require(script.Parent.Maid)
 type MaidType = typeof(Maid.new(...))
 
-
 export type AnimationsData = {
 	animationId: string,
 	AnimationTrack: AnimationTrack,
@@ -21,7 +20,7 @@ export type AnimationsData = {
 }
 
 export type AnimationMap = {
-	[string]: {Animation},
+	[string]: { Animation },
 }
 
 export type Options = {
@@ -30,7 +29,6 @@ export type Options = {
 	animations: AnimationMap?,
 	armName: string?,
 }
-
 
 local PRIORITY_LIST = {
 	Enum.AnimationPriority.Core,
@@ -44,12 +42,12 @@ local PRIORITY_LIST = {
 
 type AnimationDescriptor = {
 	Animation: Animation,
-	AnimationTrack: AnimationTrack?,
-	Maid: MaidType?
+	AnimationTrack: AnimationTrack,
+	Maid: MaidType,
 }
 
 type AnimationDescriptors = {
-	[string] : AnimationDescriptor
+	[string]: AnimationDescriptor,
 }
 local CollectionService = game:GetService("CollectionService")
 
@@ -60,7 +58,7 @@ function AnimationHandler.new(char): Options
 	self.animations = {}
 	self.animationDescriptors = {}
 	self.armName = ""
-	
+
 	return self
 end
 
@@ -72,7 +70,7 @@ If takes state true and animation name and preload true, playr and stop it inmed
 ]]
 function AnimationHandler:LoadAnimation(state: boolean, animaName: string, isPreload: boolean)
 	local current_animation: Animation = self.CurrentAnimation
-	
+
 	---- START ANIM ----
 	--print("self.animationDescriptors ", self.animationDescriptors)
 	local current_desc = self.animationDescriptors[animaName]
@@ -80,7 +78,7 @@ function AnimationHandler:LoadAnimation(state: boolean, animaName: string, isPre
 	local animationId = current_anim.animationId
 
 	local animator: Animator = self.animator
-	if not animator  then
+	if not animator then
 		animator = self.Char:WaitForChild("Humanoid").Animator
 	end
 
@@ -91,38 +89,33 @@ function AnimationHandler:LoadAnimation(state: boolean, animaName: string, isPre
 		self.animationDescriptors[animaName].AnimationTrack = animaTionTrack
 	end
 	if state and animaTionTrack then
-		--local isHighestPriority = animaTionTrack.Priority == Enum.AnimationPriority.Idle or animaTionTrack.Priority == Enum.AnimationPriority.Movement or animaTionTrack.Priority == Enum.AnimationPriority.Core 
-		local isHighestPriority =  (animaTionTrack.Priority == Enum.AnimationPriority.Action)  
+		--local isHighestPriority = animaTionTrack.Priority == Enum.AnimationPriority.Idle or animaTionTrack.Priority == Enum.AnimationPriority.Movement or animaTionTrack.Priority == Enum.AnimationPriority.Core
+		local isHighestPriority = (animaTionTrack.Priority == Enum.AnimationPriority.Action)
 		-- Don't know why the first animation loaded here is always animation priority action, in spite its ACTUALLY core, so pre-load it
 		if isHighestPriority and isPreload then
 			animaTionTrack:Play()
 			animaTionTrack:Stop()
 			return
 		else
-			
 			animaTionTrack:Play()
 		end
 
 		return animaTionTrack
 	end
-	
+
 	local current_track = self.animationDescriptors[animaName].AnimationTrack
 	---- STOP ANIM ----
 	if not state and current_track then
 		current_track:Stop()
 		return
-
 	elseif not state then
 		return
-	end 
+	end
 	---- STOP ANIM ----
 end
 function AnimationHandler:setCanEquipTools(state: boolean)
 	self.canEquipTools = state
-
 end
-
-
 
 function AnimationHandler:Destroy()
 	--print("[AnimationHandler] Destroyed for", self.npc)
@@ -132,13 +125,24 @@ end
 function AnimationHandler:registryAnims(anims: AnimationMap)
 	self.animations = anims
 end
+local animationsData = require(RS.Animations.WeaponsAnims)
+
+function AnimationHandler:Start(binder)
+	print("This shit is starting...")
+	if self.Char.Name == "Blocking" then
+		print("is this really happening?")
+		self:registryAnims(animationsData["Fist-r6"])
+		self:preloadAll()
+		self:LoadAnimation(true, "Blocking")
+	end
+end
 
 function AnimationHandler:preloadAll()
 	local anims = self.animations
-	local descriptors = {}:: {AnimationDescriptors}
-	
-	for k,v in pairs(anims) do
-		local descriptor: AnimationDescriptor =  {}
+	local descriptors = {} :: { AnimationDescriptors }
+
+	for k, v in pairs(anims) do
+		local descriptor: AnimationDescriptor = {} :: AnimationDescriptor
 		local newAnimation = Instance.new("Animation")
 		newAnimation.AnimationId = v
 		descriptor.Animation = newAnimation
@@ -146,27 +150,28 @@ function AnimationHandler:preloadAll()
 		self.animationDescriptors[k] = descriptor
 		self:LoadAnimation(true, k, true)
 	end
-	
+
 	--self.animationDescriptors = descriptors
 end
 
 type connArgs = {
-	callback: () -> (), 
-	animationName: string , 
-	animationEventName: string
-} 
+	callback: (Track: AnimationTrack, params: any) -> (),
+	animationName: string,
+	animationEventName: string,
+}
 function AnimationHandler:OnSignal(info: connArgs)
-	
 	local animName = info.animationName
 	local animationEventName = info.animationEventName
 	local descriptor: AnimationDescriptor = self.animationDescriptors[animName]
 
-	if descriptor.Maid[animationEventName] then return end
-	
-	local animationTracker = descriptor.AnimationTrack
-	local signal: RBXScriptSignal?
+	if descriptor.Maid and descriptor.Maid[animationEventName] then
+		return
+	end
 
-	if animationEventName == "EndedCon"  then
+	local animationTracker = descriptor.AnimationTrack
+	local signal: RBXScriptSignal
+
+	if animationEventName == "EndedCon" then
 		--print("animationTracker.Ended ", Maid.isMaid(animationTracker.Ended))
 		signal = animationTracker.Ended
 	else
@@ -182,13 +187,13 @@ end
 function AnimationHandler:ClearAnimation(animName)
 	local desc = self.animationDescriptors[animName]
 	if desc then
-		desc.Maid:DoCleaning()  -- disconnects ALL marker/ended/start connections
-		if desc.Track then desc.Track:Destroy() end
+		desc.Maid:DoCleaning() -- disconnects ALL marker/ended/start connections
+		if desc.Track then
+			desc.Track:Destroy()
+		end
 	end
 end
 
-
-
-export type AnimationHandler = typeof(AnimationHandler.new({}::Options))
+export type AnimationHandler = typeof(AnimationHandler.new({} :: Options))
 
 return AnimationHandler

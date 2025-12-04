@@ -1,17 +1,10 @@
 --||Services||--
-local RS = game:GetService("ReplicatedStorage")
-local SS = game:GetService("ServerStorage")
 local SSS = game:GetService("ServerScriptService")
-local SoundService = game:GetService("SoundService")
-local Debris = game:GetService("Debris")
 
 --||Binders||--
-local NPCAnimBinder = require(RS.Animations.Utils.HandlerBinder).NPCAnimBinder
 local WeaponBinder = require(SSS.Combat.Weapons.WeaponBinder).WeaponBinder
 
 --||Folder||--
-local remotes = RS:WaitForChild("Events")
-local AnimationsFolder = RS:WaitForChild("Animations")
 
 local CombatModules = SSS.Combat.Attacks
 
@@ -26,8 +19,6 @@ local AttackStuff = CombatModules.Utils
 local ServerCombatModule = require(AttackStuff.CombatUtils)
 local HitboxModule = require(AttackStuff.MuchachoHitbox)
 
-
-
 --||Settings||--
 local Max_Combo = 4
 
@@ -37,10 +28,7 @@ params.FilterType = Enum.RaycastFilterType.Exclude
 ------------------------------------------------------------------------------------------------------------------
 local CombatServer = {}
 
-
-
 local Attcks = CombatModules.Abillities
-
 
 CombatServer.swingEvent = function(plr, action)
 	print("action ", action)
@@ -52,8 +40,10 @@ CombatServer.swingEvent = function(plr, action)
 
 	---------------------- getting all the weapon stats ----------------------
 	local WeaponData = WeaponBinder:Get(CHAR)
-	if not WeaponData or not WeaponData.tool_name then return warn("WeaponData not found") end 
-	local Damage = WeaponData.damage	
+	if not WeaponData or not WeaponData.tool_name then
+		return warn("WeaponData not found")
+	end
+	local Damage = WeaponData.damage
 	local SwingReset = WeaponData.swing_reset
 	local StunTime = WeaponData.stun_time
 	local HitboxSize = WeaponData.hitbox_size
@@ -72,20 +62,23 @@ CombatServer.swingEvent = function(plr, action)
 	local swing = CHAR:GetAttribute("Swing")
 	local blocking = CHAR:GetAttribute("IsBlocking")
 
-	
-	local Heavy =  get_hit_sound(CHAR)
+	local Heavy = get_hit_sound(CHAR)
 
 	local IS_OCUPPED = attacking or stunned or swing or isRagdoll or Heavy
 
-	if IS_OCUPPED then return end
+	if IS_OCUPPED then
+		return
+	end
 	local command = require(Attcks:FindFirstChild(action))
 
-	if command.Type ~= "Attack"  then
+	if command.Type ~= "Attack" then
 		command.Execute(CHAR)
 		return
 	end
 	IS_OCUPPED = IS_OCUPPED or blocking
-	if IS_OCUPPED then return end
+	if IS_OCUPPED then
+		return
+	end
 
 	--------------------------PLAYER ATTRIBUTES----------------------------
 
@@ -106,7 +99,9 @@ CombatServer.swingEvent = function(plr, action)
 	----- hit box ----
 	local trail = get_trail(CHAR)
 	-- enable the trail for the hitbox
-	if trail then trail.Enabled = true end
+	if trail then
+		trail.Enabled = true
+	end
 
 	------------ CREATE HIT BOX ------------
 	local newHitbox = HitboxModule.CreateHitbox() --creating the hitbox
@@ -120,10 +115,6 @@ CombatServer.swingEvent = function(plr, action)
 	command.Execute(CHAR, newHitbox)
 	------------ ON HIT FUNCTION ------------
 	-- This play when a humanoid is hit
-	
-
-
-
 end
 
 return CombatServer

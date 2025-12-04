@@ -9,9 +9,8 @@ local SSS = game:GetService("ServerScriptService")
 ----------------------------- declaring process -----------------------------
 local AnimationUtils = RS.Animations.Utils
 
-
 local NeverMorePackages = RS.Packages.Nevermore
-local loader = NeverMorePackages:FindFirstChild("LoaderUtils", true ).Parent
+local loader = NeverMorePackages:FindFirstChild("LoaderUtils", true).Parent
 local Nevermore = require(loader).bootstrapGame(NeverMorePackages)
 
 local ServiceBag = Nevermore("ServiceBag")
@@ -19,49 +18,54 @@ local serviceBag = ServiceBag.new()
 
 ----------------------------- init process -----------------------------
 
-
 ---------- BINDERS ----------
 local Binder = Nevermore("Binder")
 local BinderProvider = Nevermore("BinderProvider")
+local CooldownUtils = Nevermore("CooldownUtils")
 
-local HandlerAnimationBindler = require(AnimationUtils.HandlerBinder).init(serviceBag, Binder)
+local HandlerAnimationBindler = require(AnimationUtils.AnimationHandlerBinder).init(serviceBag, Binder)
 local WeaponBinder = require(SSS.Combat.Weapons.WeaponBinder).init(serviceBag, Binder)
 
 ---------- COOLDOWN-BINDERS ----------
-local Cooldown = Nevermore("Cooldown")
--- local CooldownHandler = require(SSS.Combat.Attacks.Utils.CooldownBinder)
+local Cooldown = serviceBag:GetService(Nevermore("Cooldown"))
+local TimeSyncService = serviceBag:GetService(Nevermore("TimeSyncService"))
+-- local CooldownHandler = require(SSS.Combat.Attacks.Utils.CooldownBinder).init(ServiceBag, Cooldown)
 
 ---------- USE BINDER PORVIDER ----------
-local AttacksBinders = require(SSS.Combat.AttackBinderProvider).new(
-	BinderProvider,
-	{
-		HandlerAnimationBindler,
-		WeaponBinder,
-		-- CooldownHandler,
-	}
-)
+local AttacksBinders = require(SSS.Combat.AttackBinderProvider).new(BinderProvider, {
+	HandlerAnimationBindler,
+	WeaponBinder,
+	-- CooldownHandler,
+})
 
 serviceBag:GetService(AttacksBinders)
---[[
-	local BlockingNpc = game.Workspace.Blocking
-	local nv = Instance.new("NumberValue")
-	nv.Name = "AttackCooldown"
-	nv.Parent = BlockingNpc
-	nv:AddTag("Cooldown")
 
-]]
 ----- ------------------------ START SERVICEBAG -----------------------------
-serviceBag:Init()
+-- Cooldown:Init(serviceBag)
 -- CooldownHandler.start()
+serviceBag:Init()
 serviceBag:Start()
+-- Cooldown:Start(serviceBag)
+
+require(AnimationUtils.AnimationHandlerBinder).start()
 ---------------- Coldown test ----------------------------
 
---
---local cooldDownBLocking = CooldownHandler.CD:Get(BlockingNpc)
---print("cooldDownBLocking ", cooldDownBLocking)
+local npc = workspace.Blocking
+local nv = Instance.new("NumberValue")
+nv.Name = "AttackCooldown"
+nv.Parent = npc
+nv:AddTag("Cooldown")
 
+-- trigger cooldown
+nv.Value = 3
+
+task.delay(0.2, function()
+	local cd = Cooldown:Get(nv)
+	print("Cooldown:", cd)
+	print("Remaining:", cd:GetSecondsRemaining())
+	print("Active:", cd:IsActive())
+end)
 ------------------------------------------------------------
-
 
 local anims = RS.Animations
 
@@ -93,11 +97,10 @@ Players.PlayerAdded:Connect(function(player)
 	CombatMediator.PlayerAdded(player)
 	PlayerAnimationHandler:InitPlayer(player)
 	--local animHandler =PlayerAnimationHandler:GetHandler(player)
-	
 end)
 --||PlayerRemoving||--
 Players.PlayerRemoving:Connect(function(player)
-	PlayerAnimationHandler:RemovePlayer({player = player})
+	PlayerAnimationHandler:RemovePlayer({ player = player })
 end)
 
 --||Equipment||--
@@ -107,7 +110,7 @@ Equipment.OnServerEvent:Connect(function(player, data)
 	local char: Model = player.Character or player.CharacterAdded:Wait()
 	local arm = "RightLowerArm"
 	local HUM: Humanoid = char:WaitForChild("Humanoid")
-	
+
 	local animationHandler = HandlerAnimationBindler:Get(char)
 	local WeaponData = WeaponBinder:Get(char)
 	WeaponData:registryTool(tool.Name)
@@ -116,19 +119,18 @@ Equipment.OnServerEvent:Connect(function(player, data)
 		local tool_anims = animations[tool.Name]
 		animationHandler:registryAnims(tool_anims)
 		animationHandler:preloadAll()
-	else 
+	else
 		arm = "Right Arm"
-		local r6Name = tostring(tool.Name).."-r6"
+		local r6Name = tostring(tool.Name) .. "-r6"
 		local tool_anims = animations[r6Name]
 		animationHandler:registryAnims(tool_anims)
 		animationHandler:preloadAll()
 	end
 	local WeaponSFXFolder = SFXFolder.Weapons:FindFirstChild(tool.Name)
-	if not WeaponSFXFolder  then
+	if not WeaponSFXFolder then
 		return warn("Weapon folder not found")
 	end
-	if has_to_equip  then
-
+	if has_to_equip then
 		local M6D = Instance.new("Motor6D")
 		M6D.Name = "ToolGrip"
 		M6D.Parent = char[arm]
@@ -139,25 +141,24 @@ Equipment.OnServerEvent:Connect(function(player, data)
 		local EquipSound = WeaponSFXFolder:WaitForChild("Equip"):Clone()
 		EquipSound.Parent = char:WaitForChild("HumanoidRootPart")
 		EquipSound:Play()
-		Debris:AddItem(EquipSound,1)
+		Debris:AddItem(EquipSound, 1)
 
 		AnimationClient.Equip(char)
 	end
 
-	if not has_to_equip  then
+	if not has_to_equip then
 		tool.BodyAttach.Trail.Enabled = false
 
 		char[arm]:FindFirstChild("ToolGrip"):Destroy()
-		
+
 		AnimationClient.UnEquip(char)
-		
+
 		local UnEquipSound = WeaponSFXFolder:WaitForChild("UnEquip"):Clone()
 		UnEquipSound.Parent = char:WaitForChild("HumanoidRootPart")
 		UnEquipSound:Play()
-		Debris:AddItem(UnEquipSound,1)
-		
+		Debris:AddItem(UnEquipSound, 1)
+
 		local WeaponData = WeaponBinder:Get(char)
 		WeaponData:deleteToolData()
 	end
 end)
-
