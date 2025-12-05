@@ -45,12 +45,9 @@ serviceBag:GetService(AttacksBinders)
 -- CooldownHandler.start()
 serviceBag:Init()
 serviceBag:Start()
+_G.ServiceBag = serviceBag
 -- local testying = serviceBag:GetService(CooldownBinder)
 -- print("This is the service initilized i bet", testying)
--- DO A NASTY SINGLETON
-
-local serviceShit = require(SSS.ServiceShit)
-serviceShit.init(serviceBag)
 
 -- Cooldown:Start(serviceBag)
 

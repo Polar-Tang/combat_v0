@@ -17,23 +17,34 @@ local hitbox_start_stop = require(Helpers.hitbox_start_stop)
 --utils
 local Utils = CombatFolder.Utils
 local hitTouchTemplate = require(Utils.hitTouchTemplate)
-local Basic = {}
+
+local BaseAbility = require(SSS.Combat.AbilityFactory.BaseAbility)
+
+local Basic = setmetatable({}, BaseAbility)
+Basic.__index = Basic
+
+function Basic.new(config)
+	local self = BaseAbility.new(config)
+	setmetatable(self, Basic)
+	return self
+end
 
 -- RETURN THE WEAPON ANIMATION FOR THE NEXT COMBO
-Basic.getSwingAnimation = function(char, toolName): string
+function Basic:getSwingAnimation(): string
+	local char = self.Character
 	local combo = char:GetAttribute("Combo")
 
 	return "Swing" .. combo
 end
 
-Basic.Type = "Attack"
+function Basic:Execute(newHitbox)
+	local CHAR = self.Character
 
-Basic.Execute = function(CHAR, newHitbox)
 	local WeaponData = WeaponBinder:Get(CHAR)
 	local HUM = CHAR:WaitForChild("Humanoid")
 	local tool_name = WeaponData.tool_name
 
-	local swingName: string = Basic.getSwingAnimation(CHAR, tool_name)
+	local swingName: string = Basic:getSwingAnimation()
 	local animHandler = NPCAnimBinder:Get(CHAR)
 	animHandler:LoadAnimation(true, swingName)
 

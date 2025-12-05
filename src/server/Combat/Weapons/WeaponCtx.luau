@@ -9,14 +9,23 @@ WeaponStrat.__index = WeaponStrat
 
 local SoundFolder = SoundService:WaitForChild("SFX")
 local WeaponSoundFolder = SoundFolder:WaitForChild("Weapons")
-local CooldownController = require(WeaponsFodler.CooldownController)
 
-function WeaponStrat.new(char, serviceBag)
+
+function WeaponStrat.new(char: Model)
 	local self = setmetatable({}, WeaponStrat)
 	self.Char = char
-	self._serviceBag = serviceBag
-	self._cooldownController = CooldownController.new(char, serviceBag)
+	self._weapon = nil
+
 	return self
+end
+
+local Strategies = {
+	["Fist"] = require(WeaponsFodler.strategies.Fist),
+	["Sword"] = require(WeaponsFodler.strategies.Sword),
+	["Axe"] = require(WeaponsFodler.strategies.Axe),
+}
+function WeaponStrat:equiTool(toolName)
+	self._weapon = Strategies[toolName].new(self.Char)
 end
 
 function WeaponStrat:registryTool(toolName)

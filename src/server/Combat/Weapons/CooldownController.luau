@@ -2,6 +2,7 @@
 
 local RS = game:GetService("ReplicatedStorage")
 local CoolDOWN = require(RS.Nevermore.cooldown.Server.Binders.Cooldown)
+local serviceBag = _G.ServiceBag
 -- local SSS = game:GetService("ServerScriptService")
 
 -------------- TESTING ZONE --------------
@@ -9,7 +10,7 @@ local CoolDOWN = require(RS.Nevermore.cooldown.Server.Binders.Cooldown)
 local CooldownController = {}
 CooldownController.__index = CooldownController
 
-function CooldownController.new(char: Model, serviceBag)
+function CooldownController.new(char: Model)
 	-- Binder constructor
 	local self = setmetatable({}, CooldownController)
 
@@ -17,7 +18,6 @@ function CooldownController.new(char: Model, serviceBag)
 	self.currentCD = nil
 	self._cooldown = nil
 	self._inst = nil
-	self._serviceBag = serviceBag
 	return self
 end
 -- local require = require(RS.Nevermore.loader).load(script)
@@ -43,7 +43,6 @@ end
 function CooldownController:getCD()
 	-- local serviceShit = require(SSS.ServiceShit)
 	-- local serviceBag = serviceShit.serviceBag()
-	local serviceBag = self._serviceBag
 	print("serviceBag ", serviceBag)
 	local coolDown = serviceBag:GetService(CoolDOWN)
 	print("coolDown ", coolDown)

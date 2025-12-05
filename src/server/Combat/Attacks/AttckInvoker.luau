@@ -95,7 +95,6 @@ CombatServer.swingEvent = function(plr, action)
 	HUM.WalkSpeed = 7
 	HUM.JumpHeight = 0
 
-	local ragdoll = false -- HWAT IS THIS??
 	--------------------------SET PLAYER ATTRIBUTES----------------------------
 	----- hit box ----
 	local trail = get_trail(CHAR)

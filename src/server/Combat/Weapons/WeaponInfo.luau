@@ -14,6 +14,18 @@ type attack = {
 }
 ]]
 
+local basic_fist = {
+	damage = 4,
+	heavy_damage = 8,
+	cooldown = 0.1,
+	max_combo = 5,
+}
+
+local heavy_Fist = {
+	heavy_damage = 8,
+	cooldown = 10,
+}
+
 local info = {
 	["Blocking_General"] = {
 		Block_Reset_Time = 3, --the time it takes for the blocking value to go down after you last blocked
