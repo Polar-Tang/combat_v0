@@ -17,20 +17,18 @@ local ServiceBag = Nevermore("ServiceBag")
 local serviceBag = ServiceBag.new()
 
 ----------------------------- init process -----------------------------
+_G.FistBag = serviceBag
 
 ---------- BINDERS ----------
 local Binder = Nevermore("Binder")
 local BinderProvider = Nevermore("BinderProvider")
-local CooldownUtils = Nevermore("CooldownUtils")
 
 local HandlerAnimationBindler = require(AnimationUtils.AnimationHandlerBinder).init(serviceBag, Binder)
 local WeaponBinder = require(SSS.Combat.Weapons.WeaponBinder).init(serviceBag, Binder)
--- local CooldownBinder = require(SSS.Combat.Weapons.CooldownBinder).init(serviceBag, Binder)
 
 ---------- COOLDOWN-BINDERS ----------
 local Cooldown = serviceBag:GetService(Nevermore("Cooldown"))
-local TimeSyncService = serviceBag:GetService(Nevermore("TimeSyncService"))
--- local CooldownHandler = require(SSS.Combat.Attacks.Utils.CooldownBinder).init(ServiceBag, Cooldown)
+serviceBag:GetService(Nevermore("TimeSyncService"))
 
 ---------- USE BINDER PORVIDER ----------
 local AttacksBinders = require(SSS.Combat.AttackBinderProvider).new(BinderProvider, {
@@ -45,6 +43,7 @@ serviceBag:GetService(AttacksBinders)
 -- CooldownHandler.start()
 serviceBag:Init()
 serviceBag:Start()
+_G.FistBag = nil
 _G.ServiceBag = serviceBag
 -- local testying = serviceBag:GetService(CooldownBinder)
 -- print("This is the service initilized i bet", testying)

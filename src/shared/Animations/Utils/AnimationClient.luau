@@ -6,6 +6,8 @@ local RS = game:GetService("ReplicatedStorage")
 --||Animation Folder||--
 local AnimationFolder = RS:WaitForChild("Animations")
 
+-- TODO: SEE WHERE TO INITIALIZE SERVICE BAG, SERVER, OR REPLICATED STORAGE, HOW TO ACCESS IT
+-- TODO: COnsider in this folder, ReplicatedStorage/animations, to leave only three or two modules, OtherAnims, WeaponAnims, AnimationClient
 local NPCAnimBinder = require(RS.Animations.Utils.AnimationHandlerBinder).NPCAnimBinder
 
 ------------------------------------------------------------------------------------------------------------------
