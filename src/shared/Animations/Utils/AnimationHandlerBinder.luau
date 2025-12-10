@@ -1,3 +1,4 @@
+--[[
 local RS = game:GetService("ReplicatedStorage")
 
 local animationsData = require(RS.Animations.WeaponsAnims)
@@ -23,3 +24,4 @@ HandlerBinder.start = function()
 end
 
 return HandlerBinder
+]]

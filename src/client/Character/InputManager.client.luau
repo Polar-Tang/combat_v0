@@ -43,7 +43,7 @@ UserInputSer.InputBegan:Connect(function(input, IsTyping)
 		command.Execute()
 	elseif input.UserInputType == Enum.UserInputType.MouseButton1 and attckChck(char) and not isBlocking then
 		--lastMouseButton1Pressed = tick()
-		swingEvent:FireServer("Basic", char:FindFirstChildWhichIsA("Tool").Name)
+		swingEvent:FireServer(Enum.UserInputType.MouseButton1 , char:FindFirstChildWhichIsA("Tool").Name)
 		--[[task.spawn(function() --for hiding the inventory
 			StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false)
 			task.wait(.1)				
