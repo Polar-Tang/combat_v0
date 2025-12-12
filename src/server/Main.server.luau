@@ -4,7 +4,7 @@ local Players = game:GetService("Players")
 local SSS = game:GetService("ServerScriptService")
 
 --||Nevermore Shit||--
------------------------------ declaring process -----------------------------
+----------------------------- getting servicebag and loader -----------------------------
 
 local NeverMorePackages = RS.Nevermore
 local loader = NeverMorePackages:FindFirstChild("LoaderUtils", true).Parent
@@ -15,6 +15,10 @@ local serviceBag = ServiceBag.new()
 
 ----------------------------- init process -----------------------------
 _G.FistBag = serviceBag
+
+---------- COLDOWNS ----------
+local Cooldown = serviceBag:GetService(Nevermore("Cooldown"))
+local TimeSyncService = serviceBag:GetService(Nevermore("TimeSyncService"))
 
 ---------- BINDERS ----------
 local AnimationHandler = Nevermore("AnimationHandler")
@@ -29,7 +33,7 @@ local BinderProvider = Nevermore("BinderProvider")
 
 local AttacksBinders = BinderProvider.new("Binders", function(self, serviceBag)
 	for tag, contructor in pairs(Binders) do
-		self:Add(Binder.new(tag, contructor), serviceBag)
+		self:Add(Binder.new(tag, contructor), serviceBag, "test")
 	end
 end)
 
@@ -37,6 +41,7 @@ serviceBag:GetService(AttacksBinders)
 
 ----- ------------------------ START SERVICEBAG -----------------------------
 serviceBag:Init()
+Cooldown:Start()
 serviceBag:Start()
 _G.FistBag = nil
 _G.ServiceBag = serviceBag
@@ -51,7 +56,7 @@ _G.BinderProvider = AttacksBinders
 --[[
 	local npc = workspace.Blocking
 	local nv = Instance.new("NumberValue")
-	nv.Name = "AttackCooldown"
+	nv.Name = "TheTestOne"
 	nv.Parent = npc
 	nv:AddTag("Cooldown")
 	
@@ -64,6 +69,7 @@ _G.BinderProvider = AttacksBinders
 		print("GetTimePassed:", cd:GetTimePassed()) -- GetTimePassed: 0.2756490707397461
 		print("GetStartTime:", cd:GetStartTime()) -- GetStartTime: 1764843054.5570555
 	end)
+
 ]]
 ------------------------------------------------------------
 
@@ -84,5 +90,3 @@ end)
 Players.PlayerRemoving:Connect(function(player)
 	-- PlayerAnimationHandler:RemovePlayer({ player = player })
 end)
-
-
