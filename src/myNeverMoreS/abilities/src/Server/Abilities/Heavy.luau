@@ -26,13 +26,10 @@ function Heavy:Execute()
 	--Settin attr
 	self:SetAttributes()
 	-------------
-
-	-- HITBOX SHIT
 	local animHandler = self._animHandler
-	animHandler:LoadAnimation(true, "Heavy")
-	self:PlaySound("Heavy")
 
 	local hitFx = function()
+		self:PlaySound("Heavy")
 		print("Hit event reached ")
 		CHAR:SetAttribute("Attacking", false)
 		hitbox_start_stop(CHAR, newHitbox)
@@ -57,6 +54,12 @@ function Heavy:Execute()
 		animationName = "Heavy",
 		animationEventName = "EndedCon",
 	})
+
+	-- HITBOX SHIT
+	local track = animHandler:LoadAnimation(true, "Heavy")
+	print("Track length:", track.Length)
+	print("Track priority:", track.Priority)
+
 	-- local WeaponData = self.WeaponBinder:Get(CHAR)
 	--return CHAR:WaitForChild(WeaponData.tool_name):WaitForChild("BodyAttach"):FindFirstChild("Trail")
 	newHitbox.Touched:Connect(hitTouchTemplate(newHitbox, function(enemyHum)

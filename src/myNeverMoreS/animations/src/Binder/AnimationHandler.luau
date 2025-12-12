@@ -161,13 +161,27 @@ function AnimationHandler:OnSignal(info: connArgs)
 	local animName = info.animationName
 	local animationEventName = info.animationEventName
 	local descriptor: AnimationDescriptor = self.animationDescriptors[animName]
-
+	print("descriptor ", descriptor)
 	if descriptor.Maid and descriptor.Maid[animationEventName] then
 		return
 	end
 
 	local animationTracker = descriptor.AnimationTrack
 	local signal: RBXScriptSignal
+	print(
+		"Connecting marker:",
+		animationEventName,
+		"for animation:",
+		animName,
+		"track exists:",
+		descriptor.AnimationTrack ~= nil
+	)
+
+	-- if animName == "Heavy" then
+	-- 	for _, marker in ipairs(descriptor.AnimationTrack:GetTimeOfKeyframe("Hit")) do
+	-- 		print("Marker:", marker.Name)
+	-- 	end
+	-- end
 
 	if animationEventName == "EndedCon" then
 		--print("animationTracker.Ended ", Maid.isMaid(animationTracker.Ended))
@@ -186,8 +200,8 @@ function AnimationHandler:ClearAnimation(animName)
 	local desc = self.animationDescriptors[animName]
 	if desc then
 		desc.Maid:DoCleaning() -- disconnects ALL marker/ended/start connections
-		if desc.Track then
-			desc.Track:Destroy()
+		if desc.AnimationTrack then
+			desc.AnimationTrack:Destroy()
 		end
 	end
 end

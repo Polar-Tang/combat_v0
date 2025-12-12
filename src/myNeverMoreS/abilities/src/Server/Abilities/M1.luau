@@ -88,7 +88,8 @@ function Basic:Execute()
 	local hitFx = function()
 		CHAR:SetAttribute("Attacking", false)
 		hitbox_start_stop(CHAR, newHitbox)
-		print("m1 Hit event reached!! ")
+		print("m1 Hit event reached!! ") --Prints
+		self:PlaySound("Swing", 2)
 
 		CHAR:SetAttribute("Swing", false)
 	end
@@ -114,7 +115,6 @@ function Basic:Execute()
 	})
 
 	--WeaponData:PlaySwingSound()
-	self:PlaySound("Swing", 2)
 	local getStrnght = function(enemyHum)
 		local Strenght = 10
 		if current_combo == max_combo then
