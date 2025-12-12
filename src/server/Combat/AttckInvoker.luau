@@ -2,10 +2,8 @@ local serviceBag = _G.ServiceBag
 local BinderProvider = serviceBag:GetService(_G.BinderProvider)
 local WeaponBinder = BinderProvider:Get("Armed")
 
-
 ------------------------------------------------------------------------------------------------------------------
 local CombatServer = {}
-
 
 CombatServer.swingEvent = function(plr, action)
 	print("action ", action)
@@ -30,29 +28,12 @@ CombatServer.swingEvent = function(plr, action)
 	local swing = CHAR:GetAttribute("Swing")
 	local blocking = CHAR:GetAttribute("IsBlocking")
 
-
 	local IS_OCUPPED = attacking or stunned or swing or isRagdoll or blocking
 
 	if IS_OCUPPED then
 		return
 	end
-	
 
-	--------------------------PLAYER ATTRIBUTES----------------------------
-
-	--------------------------SET PLAYER ATTRIBUTES----------------------------
-
-	CHAR:SetAttribute("Attacking", true)
-	CHAR:SetAttribute("Swing", true)
-
-	-- change current animations?
-	--ServerCombatModule.stopAnims(hum)
-
-	HUM.WalkSpeed = 7
-	HUM.JumpHeight = 0
-
-	------------ CREATE HIT BOX ------------
-	
 	------------ EXECUTE COMMAND ------------
 	Weapon:Execute(action)
 	------------ ON HIT FUNCTION ------------

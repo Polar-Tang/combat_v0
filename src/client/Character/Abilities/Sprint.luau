@@ -58,27 +58,13 @@ function shiftToSprint()
 	if isSprinting and not debounce then
 		debounce = true
 
-		--if we are not attacking and are not stunned we reset our walkspeed
-		if not char:GetAttribute("Attacking") and not char:GetAttribute("Stunned") then
-			hum.WalkSpeed = walkSpeed
-		end
-
 		TS:Create(camera, TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), { FieldOfView = 70 })
 			:Play() --tweening the FOV
 		isSprinting = false
 
-		if SprintTrack then
-			SprintTrack:Stop()
-		end
-
-		char:SetAttribute("Sprinting", false)
-
-		task.wait(0.5) -- so we can't spam sprint
 		debounce = false
-	elseif not isSprinting and debounce == false then
+	elseif not isSprinting then
 		char:SetAttribute("Sprinting", true)
-
-		hum.WalkSpeed = runSpeed
 
 		TS:Create(camera, TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), { FieldOfView = 80 })
 			:Play() --tweening the FOV
@@ -89,14 +75,17 @@ function shiftToSprint()
 end
 
 function Sprint.Execute()
-	-- Double-tap detected
-	local isEquipped = char:FindFirstChildWhichIsA("Tool")
-		and char:FindFirstChildWhichIsA("Tool"):GetAttribute("Type") == "Attack"
-	-- Make something with anim handler
-	if isEquipped then
-		SprintAnim = RS.Animations.Weapons[char:FindFirstChildWhichIsA("Tool").Name].Movement.Sprint
-	else
-		SprintAnim = RS.Animations.Weapons[char:FindFirstChildWhichIsA("Tool").Name].Movement.Sprint
+	-- Some shit that need to be changed
+	do
+		-- Double-tap detected
+		local isEquipped = char:FindFirstChildWhichIsA("Tool")
+			and char:FindFirstChildWhichIsA("Tool"):GetAttribute("Type") == "Attack"
+		-- TODO: Make something with anim handler
+		if isEquipped then
+			SprintAnim = RS.Animations.Weapons[char:FindFirstChildWhichIsA("Tool").Name].Movement.Sprint
+		else
+			SprintAnim = RS.Animations.Weapons[char:FindFirstChildWhichIsA("Tool").Name].Movement.Sprint
+		end
 	end
 	shiftToSprint()
 end

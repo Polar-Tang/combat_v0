@@ -33,17 +33,21 @@ UserInputSer.InputBegan:Connect(function(input, IsTyping)
 	local command = InputManager.Bindings[input.KeyCode]
 	if input.KeyCode == Enum.KeyCode.Q and not isBlocking and command.Check() then
 		command.Execute()
+		swingEvent:FireServer(input.UserInputType)
 	elseif input.KeyCode == Enum.KeyCode.R and not isBlocking and attckChck(char) then --for the heavy attack
 		command.Execute()
+		swingEvent:FireServer(input.UserInputType)
 	elseif input.KeyCode == Enum.KeyCode.F and attckChck(char) and command.Check() then
 		print("block")
 		command.Execute()
+		swingEvent:FireServer(input.UserInputType)
 	elseif input.KeyCode == Enum.KeyCode.W and command.isIdle() and command.Check() then
 		print("WTF???")
 		command.Execute()
+		swingEvent:FireServer(input.UserInputType)
 	elseif input.UserInputType == Enum.UserInputType.MouseButton1 and attckChck(char) and not isBlocking then
 		--lastMouseButton1Pressed = tick()
-		swingEvent:FireServer(Enum.UserInputType.MouseButton1 , char:FindFirstChildWhichIsA("Tool").Name)
+		swingEvent:FireServer(input.UserInputType)
 		--[[task.spawn(function() --for hiding the inventory
 			StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false)
 			task.wait(.1)				
@@ -58,7 +62,6 @@ UserInputSer.InputEnded:Connect(function(input, isTyping)
 		return
 	end
 
-	local Stunned = char:GetAttribute("Stunned")
 	local command = InputManager.Bindings[input.KeyCode]
 
 	if input.KeyCode == Enum.KeyCode.F and attckChck() and not isBlocking then
