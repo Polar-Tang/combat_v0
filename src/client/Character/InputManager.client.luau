@@ -47,11 +47,11 @@ UserInputSer.InputBegan:Connect(function(input, IsTyping)
 		command.Execute()
 		GCD(1)
 		swingEvent:FireServer(input.UserInputType)
+		-- TODO: CREATE AN Heavy check
 	elseif input.KeyCode == Enum.KeyCode.R and not isBlocking and attckChck(char) then --for the heavy attack
 		command.Execute()
 		GCD(1)
-
-		swingEvent:FireServer(input.UserInputType)
+		swingEvent:FireServer(Enum.KeyCode.R)
 	elseif input.KeyCode == Enum.KeyCode.F and attckChck(char) and command.Check() then
 		print("block")
 		command.Execute()

@@ -1,5 +1,3 @@
-local Debris = game:GetService("Debris")
-
 local require = require(script.Parent.loader).load(script)
 
 -- Binders
@@ -80,13 +78,8 @@ function Basic:Execute()
 	animHandler:LoadAnimation(true, swingName)
 
 	--Settin attr
-	do
-		CHAR:SetAttribute("Attacking", true)
-		CHAR:SetAttribute("Swing", true)
-
-		HUM.WalkSpeed = 7
-		HUM.JumpHeight = 0
-	end
+	self:SetAttributes()
+	-------------
 
 	local current_combo = CHAR:GetAttribute("Combo")
 	self:_ChangeCombo()
@@ -95,13 +88,8 @@ function Basic:Execute()
 	local hitFx = function()
 		CHAR:SetAttribute("Attacking", false)
 		hitbox_start_stop(CHAR, newHitbox)
-		--HERE SHOULD GO THE COOLDOWNS
-		-- if current_combo == max_combo then
-		-- 	task.wait(1)
-		-- else
-		-- 	task.wait(self.swing_reset)
-		-- end
-		--_cooldown
+		print("m1 Hit event reached!! ")
+
 		CHAR:SetAttribute("Swing", false)
 	end
 	animHandler:OnSignal({
@@ -137,14 +125,6 @@ function Basic:Execute()
 	end
 
 	newHitbox.Touched:Connect(hitTouchTemplate(newHitbox, getStrnght, self))
-end
-
-function Basic:PlaySound(nameSound: string, lifeTime: number?)
-	local dur = lifeTime or 2
-	local Sound = self.sound_folder[nameSound]:Clone()
-	Sound.Parent = self.character:WaitForChild("HumanoidRootPart")
-	Sound:Play()
-	Debris:AddItem(Sound, dur)
 end
 
 return Basic

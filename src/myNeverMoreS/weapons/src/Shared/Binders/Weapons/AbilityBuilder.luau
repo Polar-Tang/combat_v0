@@ -2,8 +2,8 @@ local require = require(script.Parent.loader).load(script)
 
 local ALL_ABILITIES = {
 	["M1"] = require("M1"),
-	-- ["Sprint"] = require("Sprint"),
-	-- ["Heavy"] = require("Heavy"),
+	["Sprint"] = require("Sprint"),
+	["Heavy"] = require("Heavy"),
 	["Blocking"] = require("Blocking"),
 }
 

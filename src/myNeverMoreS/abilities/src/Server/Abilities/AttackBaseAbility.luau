@@ -1,7 +1,3 @@
-local SoundService = game:GetService("SoundService")
-local SoundFolder = SoundService.SFX
-local WeaponSoundFolder = SoundFolder.Weapons
-
 local require = require(script.Parent.loader).load(script)
 local HitboxModule = require("MuchachoHitbox")
 local get_trail = require("get_trail")
@@ -22,8 +18,8 @@ type AttackBaseAbilityConfig = {
 }
 
 function AttackBaseAbility.new(config)
+	print("QUE PASA COPN ESTA MIERAAAAA")
 	local self = setmetatable(BaseAbility.new(config), AttackBaseAbility)
-	print("QUE PASA COPN ESTA MIERAAAAA", self)
 	self.name = config.name
 	self.cooldown = config._cooldown or 0
 	self.damage = config.damage or 0
@@ -31,7 +27,6 @@ function AttackBaseAbility.new(config)
 	self._max_combo = config._max_combo
 	self.hitbox_size = config.hitbox_size
 	self.hitbox_offset = config.hitbox_offset
-	self.sound_folder = WeaponSoundFolder[config.tool_name]
 	self.stun_time = config.stun_time
 	-- BINDERS
 	self._serviceBag = config._serviceBag
@@ -70,6 +65,17 @@ function AttackBaseAbility:createHitBox()
 	newHitbox.AutoDestroy = false
 	newHitbox.Puncher = CHAR
 	return newHitbox
+end
+
+function AttackBaseAbility:SetAttributes()
+	local CHAR = self.character
+	local HUM = CHAR:WaitForChild("Humanoid")
+
+	CHAR:SetAttribute("Attacking", true)
+	CHAR:SetAttribute("Swing", true)
+
+	HUM.WalkSpeed = 7
+	HUM.JumpHeight = 0
 end
 
 return AttackBaseAbility

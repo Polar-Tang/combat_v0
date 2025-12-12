@@ -12,7 +12,7 @@ Fist.__index = Fist
 
 function Fist.new(char, serviceBag)
 	local self = setmetatable(WeaponBase.new(char, serviceBag, WeaponStats), Fist)
-	print("fucking self ", self)
+	self.tool_name = "Fist"
 	self:_createAbilities()
 
 	return self
@@ -34,12 +34,16 @@ function Fist:_createAbilities()
 			stun_time = self.stun_time,
 			tool_name = "Fist",
 		})
-		:Add(Enum.KeyCode.F, "Blocking", {
-			name = "Blocking",
-			type = "Defense",
-			character = self.char,
-			-- _cooldown = attackData.Heavy.cooldown,
-		})
+		:Add(
+			Enum.KeyCode.F,
+			"Blocking",
+			Table.merge({
+				name = "Blocking",
+				type = "Defense",
+				character = self.char,
+				-- _cooldown = attackData.Heavy.cooldown,
+			}, self)
+		)
 		:Add(
 			Enum.KeyCode.W,
 			"Sprint",
@@ -49,15 +53,20 @@ function Fist:_createAbilities()
 				_cooldown = attackData.Sprint.cooldown,
 			}, self)
 		)
+		:Add(
+			Enum.KeyCode.R,
+			"Heavy",
+			Table.merge({
+				name = "Heavy",
+				type = "Attack",
+				_cooldown = attackData.Heavy.cooldown,
+				damage = attackData.Heavy.damage,
+				hitbox_size = attackData.Heavy.hitbox_size,
+				character = self.char,
+			}, self)
+		)
 		:Build()
-	--[[:Add(Enum.KeyCode.R, "Heavy", {
-			name = "Heavy",
-			type = "Attack",
-			_cooldown = attackData.Heavy.cooldown,
-			damage = attackData.Heavy.damage,
-			hitbox_size = attackData.Heavy.hitbox_size,
-			character = self.char,
-		})]]
+
 	-- here goes the defence abilities
 
 	-- This shit was intended to reduce the blocking atribute every second
@@ -80,6 +89,7 @@ function Fist:Execute(action: string)
 	if not self.attacks[action] then
 		return
 	end
+	print("self.attacks[action] ", self.attacks[action])
 	self.attacks[action]:Execute()
 end
 

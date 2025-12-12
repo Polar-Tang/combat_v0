@@ -17,13 +17,13 @@ local BaseAbility = require("BaseAbility")
 
 local Blocking = setmetatable({}, BaseAbility)
 Blocking.__index = Blocking
+Blocking.Type = "Defense"
 
 function Blocking.new(config)
-	local self = BaseAbility.new(config)
-	setmetatable(self, Blocking)
+	local self = setmetatable(BaseAbility.new(config), Blocking)
+
 	return self
 end
-Blocking.Type = "Defense"
 
 function Blocking:Execute()
 	--||Settings||--
@@ -54,7 +54,7 @@ function Blocking:Execute()
 		character:SetAttribute("Parrying", false)
 		character:SetAttribute("LastStopTime", currentTime)
 		character.Humanoid.WalkSpeed = walk_speed_normal
-		
+
 		local AnimationHandler = AnimationHandler:Get(character)
 		AnimationHandler:LoadAnimation(false, "Blocking")
 	end

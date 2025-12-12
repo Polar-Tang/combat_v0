@@ -16,13 +16,13 @@ export type Attkcs = {
 	[string]: Weapon,
 }
 Attkcs["Fist"] = {
-	["Heavy"] = "rbxassetid://80889299731223",
+	["Heavy"] = "rbxassetid://104504282683043",
 	["Swing1"] = "rbxassetid://82035883154975",
 	["Swing2"] = "rbxassetid://128850067271793",
 	["Swing3"] = "rbxassetid://135638578236815",
 	["Swing4"] = "rbxassetid://124560167736177",
 	["Swing5"] = "rbxassetid://98992071933663",
-	["HeavyHit"] = "rbxassetid://80889299731223",
+
 	["Hit1"] = "rbxassetid://82035883154975",
 	["Hit2"] = "rbxassetid://128850067271793",
 	["Hit3"] = "rbxassetid://135638578236815",

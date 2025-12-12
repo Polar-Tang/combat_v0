@@ -1,8 +1,5 @@
 --||Services||--
-local RS = game:GetService("ReplicatedStorage")
-local uis = game:GetService("UserInputService")
 local TS = game:GetService("TweenService")
-local StarterGui = game:GetService("StarterGui")
 
 --||Character||--
 local plr = game:GetService("Players").LocalPlayer
@@ -13,15 +10,6 @@ local char = plr.Character
 
 --||Camera||--
 local camera = game.Workspace.CurrentCamera
-
---||Events||--
-local remotes = RS:WaitForChild("Events")
-local swingEvent = remotes:WaitForChild("Swing")
-
---||Settings||--
-local lastMouseButton1Pressed = 0
-local TimeToFeint = 0.25
-local FeintDebounce = false
 
 local HeavyDebounce = false
 local HeavyCooldown = 10
@@ -38,8 +26,6 @@ function Combat.Execute()
 		and not char:GetAttribute("Swing")
 		and not char:GetAttribute("Attacking")
 	then
-		swingEvent:FireServer("Heavy", char:FindFirstChildWhichIsA("Tool").Name)
-
 		HeavyDebounce = true
 
 		task.spawn(function()
@@ -88,7 +74,9 @@ end
 ]]
 
 function Combat.Check()
-	return char:FindFirstChildWhichIsA("Tool") and char:FindFirstChildWhichIsA("Tool"):GetAttribute("Type") == "Attack"
+	return char:FindFirstChildWhichIsA("Tool")
+		and char:FindFirstChildWhichIsA("Tool"):GetAttribute("Type") == "Attack"
+		and HeavyCooldown
 end
 
 --uis.InputBegan:Connect(function(key, isTyping)

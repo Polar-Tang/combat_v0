@@ -1,7 +1,3 @@
--- [[ By @Liam
---Here you can handle the stats for the weapons
---]]
-
 local module = {}
 
 local basic_fist = {
