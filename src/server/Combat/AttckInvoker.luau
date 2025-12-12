@@ -6,19 +6,14 @@ local WeaponBinder = BinderProvider:Get("Armed")
 local CombatServer = {}
 
 CombatServer.swingEvent = function(plr, action)
-	print("action ", action)
 	---------------------- CONSTANS ----------------------
 	local CHAR = plr.Character
-	local HUM = CHAR:WaitForChild("Humanoid")
-	------------------------------------------------------
 
-	---------------------- getting all the weapon stats ----------------------
+	---------------------- getting weapon stats ----------------------
 	local Weapon = WeaponBinder:Get(CHAR)
 	if not Weapon or not Weapon.tool_name then
 		return warn("Weapon not found")
 	end
-
-	--Feinting(CHAR,HUM,action) --feinting function
 
 	--------------------------PLAYER ATTRIBUTES----------------------------
 
@@ -35,9 +30,9 @@ CombatServer.swingEvent = function(plr, action)
 	end
 
 	------------ EXECUTE COMMAND ------------
+	print("action ", action)
 	Weapon:Execute(action)
 	------------ ON HIT FUNCTION ------------
-	-- This play when a humanoid is hit
 end
 
 return CombatServer

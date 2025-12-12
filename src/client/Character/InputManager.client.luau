@@ -9,9 +9,19 @@ local plr = game:GetService("Players").LocalPlayer
 local char = plr.Character or plr.CharacterAdded:Wait()
 print("char ", char)
 
+--helpers functions
 local attckChck = function()
 	local tool = char:FindFirstChildWhichIsA("Tool")
 	return tool and char:FindFirstChildWhichIsA("Tool"):GetAttribute("Type") == "Attack"
+end
+
+local isCD = false
+-- FUCK DRY
+local function GCD(secs: number)
+	isCD = true
+	task.delay(secs, function()
+		isCD = false
+	end)
 end
 
 local InputManager = {}
@@ -27,27 +37,39 @@ InputManager.Bindings = {
 local isBlocking = char:GetAttribute("IsBlocking")
 
 UserInputSer.InputBegan:Connect(function(input, IsTyping)
-	if IsTyping then
+	if IsTyping or isCD then
+		print("not run")
 		return
 	end
+	print("run")
 	local command = InputManager.Bindings[input.KeyCode]
 	if input.KeyCode == Enum.KeyCode.Q and not isBlocking and command.Check() then
 		command.Execute()
+		GCD(1)
 		swingEvent:FireServer(input.UserInputType)
 	elseif input.KeyCode == Enum.KeyCode.R and not isBlocking and attckChck(char) then --for the heavy attack
 		command.Execute()
+		GCD(1)
+
 		swingEvent:FireServer(input.UserInputType)
 	elseif input.KeyCode == Enum.KeyCode.F and attckChck(char) and command.Check() then
 		print("block")
 		command.Execute()
+		GCD(1)
+
 		swingEvent:FireServer(input.UserInputType)
 	elseif input.KeyCode == Enum.KeyCode.W and command.isIdle() and command.Check() then
-		print("WTF???")
 		command.Execute()
+		swingEvent:FireServer(Enum.KeyCode.W)
+
+		GCD(1)
+
 		swingEvent:FireServer(input.UserInputType)
 	elseif input.UserInputType == Enum.UserInputType.MouseButton1 and attckChck(char) and not isBlocking then
 		--lastMouseButton1Pressed = tick()
+
 		swingEvent:FireServer(input.UserInputType)
+		GCD(1)
 		--[[task.spawn(function() --for hiding the inventory
 			StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false)
 			task.wait(.1)				

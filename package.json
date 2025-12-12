@@ -2,6 +2,7 @@
   "dependencies": {
     "@quenty/binder": "^14.25.2",
     "@quenty/cooldown": "^11.26.2",
+    "@quenty/ik": "^15.34.2",
     "@quenty/maid": "^3.5.0",
     "@quenty/servicebag": "^11.13.1"
   }

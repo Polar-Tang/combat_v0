@@ -2,28 +2,28 @@
   "name": "combat_shit@v0",
   "tree": {
     "$className": "DataModel",
-
     "ReplicatedStorage": {
-        "$path": "src/shared",
-	
-			"Nevermore": {
-				"$path": "node_modules/@quenty"
-			}
+      "$path": "src/shared",
+      "Nevermore": {
+        "$path": [
+          "node_modules/@quenty",
+          "src/myNeverMoreS"
+        ]
+      }
     },
-
     "ServerScriptService": {
-        "$path": "src/server"
+      "$path": "src/server"
     },
     "StarterPack": {
       "$path": "src/Tools"
     },
     "StarterPlayer": {
       "StarterPlayerScripts": {
-          "$path": "src/client/UI"
+        "$path": "src/client/UI"
       },
       "StarterCharacterScripts": {
-          "$path": "src/client/Character"
-        }
+        "$path": "src/client/Character"
+      }
     },
     "StarterGui": {
       "$path": "src/client/StarterGui"

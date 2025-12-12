@@ -1,9 +1,5 @@
 --the script got changed a bit after the video so some lines are not 100% the same, keep that in mind
 
---||Services||--
-local RS = game:GetService("ReplicatedStorage")
-local uis = game:GetService("UserInputService")
-
 --||Variables||--
 local plr = game.Players.LocalPlayer
 local char = plr.Character
@@ -15,18 +11,10 @@ local debounce = false
 local lastKeyPressTime = 0
 
 --||Settings||--
-local runSpeed = 18
-local walkSpeed = 14
 local doubleTapTimeThreshold = 0.3 --the time "window" you have to double tap W to start sprinting, so you have 0.3 seconds to double press W and start sprinting
 
 --||Animations||--
-local SprintTrack: AnimationTrack? = nil
-local SprintAnim: Animation? = nil
 
---||Helpers||--
-local AttachChck = require(script.Parent.Helpers.AttackCheck)
-
-local CheckingForValues = require(RS.Helpers.CheckingForValues)
 ------------------------------------------------------------------------------------------------------------------
 
 local Sprint = {}
@@ -44,10 +32,6 @@ function Sprint.Check()
 
 	-- Check for double-tap
 	local isDoubleTap = (currentTime - lastKeyPressTime) <= doubleTapTimeThreshold
-	print("currentTime - lastKeyPressTime ", currentTime - lastKeyPressTime)
-	print("lastKeyPressTime ", lastKeyPressTime)
-	print("currentTime ", currentTime)
-	print("isDoubleTap ", isDoubleTap)
 
 	lastKeyPressTime = currentTime
 
@@ -75,18 +59,6 @@ function shiftToSprint()
 end
 
 function Sprint.Execute()
-	-- Some shit that need to be changed
-	do
-		-- Double-tap detected
-		local isEquipped = char:FindFirstChildWhichIsA("Tool")
-			and char:FindFirstChildWhichIsA("Tool"):GetAttribute("Type") == "Attack"
-		-- TODO: Make something with anim handler
-		if isEquipped then
-			SprintAnim = RS.Animations.Weapons[char:FindFirstChildWhichIsA("Tool").Name].Movement.Sprint
-		else
-			SprintAnim = RS.Animations.Weapons[char:FindFirstChildWhichIsA("Tool").Name].Movement.Sprint
-		end
-	end
 	shiftToSprint()
 end
 
