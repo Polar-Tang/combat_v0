@@ -46,6 +46,10 @@ function WeaponBase:_createAbilities()
 	error("Overwrite this method in child class")
 end
 
+function WeaponBase:GetAction()
+	error("Overwrite this method in child class")
+end
+
 function WeaponBase:Execute()
 	error("Overwrite this method in child class")
 end

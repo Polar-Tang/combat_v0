@@ -7,6 +7,7 @@ local CooldownController = require("CooldownController")
 local hitbox_start_stop = require("hitbox_start_stop")
 --utils
 local hitTouchTemplate = require("hitTouchTemplate")
+local DebrisFX = require("DebrisFX")
 
 --classes
 local AttackBaseAbility = require("AttackBaseAbility")
@@ -87,10 +88,9 @@ function Basic:Execute()
 	local max_combo = self._max_combo
 	local hitFx = function()
 		CHAR:SetAttribute("Attacking", false)
+		print("newHitbox ", newHitbox)
 		hitbox_start_stop(CHAR, newHitbox)
-		print("m1 Hit event reached!! ") --Prints
 		self:PlaySound("Swing", 2)
-
 		CHAR:SetAttribute("Swing", false)
 	end
 	animHandler:OnSignal({
@@ -115,10 +115,25 @@ function Basic:Execute()
 	})
 
 	--WeaponData:PlaySwingSound()
-	local getStrnght = function(enemyHum)
+	local getStrnght = function(hit, enemyHum)
 		local Strenght = 10
 		if current_combo == max_combo then
+			self.RagdollService:Tag(enemyHum)
+			task.delay(.5, function()
+			self.RagdollService:Untag(enemyHum)
+			end)
+			DebrisFX:GroundSmash({
+				position = hit.Position,
+				amount = 14,
+				velocity = 70,
+				material = Enum.Material.Slate,
+				dust = true,
+				shockwave = true,
+				sizeRange = Vector2.new(1, 2.5),
+				lifetime = 2.5,
+			})
 			Strenght = 35
+
 		end
 
 		return { Strength = Strenght }

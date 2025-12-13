@@ -1,6 +1,5 @@
 --||Services||--
 local RS = game:GetService("ReplicatedStorage")
-local RunService = game:GetService("RunService")
 local repStore = game:GetService("ReplicatedStorage")
 local Debris: Debris = game:GetService("Debris")
 
@@ -17,9 +16,8 @@ local char = plr.Character
 local hum = char:WaitForChild("Humanoid")
 
 --||Other||--
-local CurrentButton = ""
 local DashDebouce = false
-
+local Cooldown = 2
 --||Animations||--
 local lcdl = require(RS.Animations.OtherAnims)
 local dashAnims = lcdl.Dash
@@ -41,11 +39,10 @@ local EmitParticles = require(Helpers.emitParticles)
 --||Dash VFX||--
 local dashVFX = RS.Effects.Speed
 
--- variables
-local Cooldown = 2
-local keyPress
+
 
 ------------------------------------------------------------------------------------------------------------------
+local Dash = {}
 
 local function getMoveDirection()
 	local rootPart = hum.RootPart
@@ -56,12 +53,30 @@ local function getMoveDirection()
 	return moveDirection.Unit
 end
 
-local Dash = {}
+function getMouseDir()
+	local CurrentButton = ""
+	local moveDirection = getMoveDirection()
+	local dotForward = moveDirection:Dot(Vector3.new(0, 0, -1))
+	local dotBackward = moveDirection:Dot(Vector3.new(0, 0, 1))
+	local dotLeft = moveDirection:Dot(Vector3.new(-1, 0, 0))
+	local dotRight = moveDirection:Dot(Vector3.new(1, 0, 0))
+
+	if dotForward > 0.5 then
+		CurrentButton = "SButton"
+	elseif dotBackward > 0.5 then
+		CurrentButton = "WButton"
+	elseif dotLeft > 0.5 then
+		CurrentButton = "AButton"
+	elseif dotRight > 0.5 then
+		CurrentButton = "DButton"
+	end
+	return CurrentButton
+end
 
 function Dash.Execute()
 	local rotX90 = CFrame.Angles(0, 0, 0)
-	keyPress = true
 	local function dashVFXUtil()
+		local CurrentButton = ""
 		local speed = dashVFX:Clone()
 		local root = char.HumanoidRootPart
 		--local camCF = cam.CFrame
@@ -93,6 +108,9 @@ function Dash.Execute()
 		EmitParticles(speed)
 		Debris:AddItem(speed, 0.5)
 	end
+
+	local CurrentButton = getMouseDir()
+
 	if CurrentButton == "WButton" then
 		DashDebouce = true
 		DashEvent:FireServer("WButton")
@@ -138,34 +156,6 @@ function Dash.Execute()
 		end)
 	end
 end
-
-RunService.Heartbeat:Connect(function()
-	-- Run this only once the key is pressed
-	if not keyPress then
-		return
-	end
-	local moveDirection = getMoveDirection()
-	if moveDirection.Magnitude > 0 then
-		local dotForward = moveDirection:Dot(Vector3.new(0, 0, -1))
-		local dotBackward = moveDirection:Dot(Vector3.new(0, 0, 1))
-		local dotLeft = moveDirection:Dot(Vector3.new(-1, 0, 0))
-		local dotRight = moveDirection:Dot(Vector3.new(1, 0, 0))
-
-		if dotForward > 0.5 then
-			CurrentButton = "SButton"
-		elseif dotBackward > 0.5 then
-			CurrentButton = "WButton"
-		elseif dotLeft > 0.5 then
-			CurrentButton = "AButton"
-		elseif dotRight > 0.5 then
-			CurrentButton = "DButton"
-		end
-		keyPress = false
-	else --this is when the character is not moving, so is idle
-		CurrentButton = ""
-		keyPress = false
-	end
-end)
 
 function Dash.Check()
 	return CheckingForValues(char, DashDebouce)

@@ -10,7 +10,7 @@ local basic_fist = {
 }
 
 local heavy_Fist = {
-	heavy_damage = 8,
+	damage = 8,
 	hitbox_size = Vector3.new(5.5, 5.5, 5),
 	hitbox_offset = CFrame.new(0, 0, -2.5),
 

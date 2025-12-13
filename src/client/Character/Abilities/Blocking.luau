@@ -1,7 +1,3 @@
---||Services||--
-local RS = game:GetService("ReplicatedStorage")
-local SS = game:GetService("ServerStorage")
-local uis = game:GetService("UserInputService")
 local SoundService = game:GetService("SoundService")
 local Debris = game:GetService("Debris")
 local StarterGui = game:GetService("StarterGui")
@@ -11,7 +7,6 @@ local plr = game:GetService("Players").LocalPlayer
 local char = plr.Character
 
 --||Events / Ui||--
-local blockingEvent = RS:WaitForChild("Events").Swing
 local blockingUi = plr.PlayerGui:WaitForChild("BlockingUi")
 
 --||Folder||--
@@ -37,7 +32,6 @@ function Blocking.Execute() --function for starting to block
 	if attacking or Stunned or IsRagdoll or Blocking then return end
 
 	debounce = true
-	blockingEvent:FireServer("Blocking")
 	blockingUi.MainFrame.Visible = true
 	local BlockSound = SFXFolder.Weapons:WaitForChild(char:FindFirstChildWhichIsA("Tool").Name):WaitForChild("BlockingStart"):Clone()
 	BlockSound.Parent = char:WaitForChild("HumanoidRootPart")
@@ -48,7 +42,6 @@ function Blocking.Execute() --function for starting to block
 end 
 
 function Blocking.Kill() --function for stoping to block
-	blockingEvent:FireServer("Blocking")
 	if char:GetAttribute("Blocking") == 0 then blockingUi.MainFrame.Visible = false	end
 	local BlockSound = SFXFolder.Weapons:WaitForChild(char:FindFirstChildWhichIsA("Tool").Name):WaitForChild("BlockingStop"):Clone()
 	BlockSound.Parent = char:WaitForChild("HumanoidRootPart")

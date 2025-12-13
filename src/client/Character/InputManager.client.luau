@@ -57,14 +57,13 @@ UserInputSer.InputBegan:Connect(function(input, IsTyping)
 		command.Execute()
 		GCD(1)
 
-		swingEvent:FireServer(input.UserInputType)
+		swingEvent:FireServer(Enum.KeyCode.F)
 	elseif input.KeyCode == Enum.KeyCode.W and command.isIdle() and command.Check() then
-		command.Execute()
-		swingEvent:FireServer(Enum.KeyCode.W)
+		-- command.Execute()
+		-- SPRINT needs a tire/energy system to be cool, so it's better to ignore it
+		-- swingEvent:FireServer(Enum.KeyCode.W)
 
-		GCD(1)
-
-		swingEvent:FireServer(input.UserInputType)
+		-- GCD(1)
 	elseif input.UserInputType == Enum.UserInputType.MouseButton1 and attckChck(char) and not isBlocking then
 		--lastMouseButton1Pressed = tick()
 
@@ -85,11 +84,12 @@ UserInputSer.InputEnded:Connect(function(input, isTyping)
 	end
 
 	local command = InputManager.Bindings[input.KeyCode]
-
+	
 	if input.KeyCode == Enum.KeyCode.F and attckChck() and not isBlocking then
 		command.Kill()
+		swingEvent:FireServer(Enum.KeyCode.F)
 	elseif input.KeyCode == Enum.KeyCode.W and command.Check() then
-		command.Kill()
+		-- command.Kill()
 	end
 end)
 

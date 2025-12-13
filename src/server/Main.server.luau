@@ -18,8 +18,9 @@ _G.FistBag = serviceBag
 
 ---------- COLDOWNS ----------
 local Cooldown = serviceBag:GetService(Nevermore("Cooldown"))
-local TimeSyncService = serviceBag:GetService(Nevermore("TimeSyncService"))
-
+serviceBag:GetService(Nevermore("TimeSyncService"))
+---------- OTHERS ----------
+serviceBag:GetService(Nevermore("RagdollService"))
 ---------- BINDERS ----------
 local AnimationHandler = Nevermore("AnimationHandler")
 local Binder = Nevermore("Binder")
@@ -37,9 +38,8 @@ local AttacksBinders = BinderProvider.new("Binders", function(self, serviceBag)
 	end
 end)
 
-serviceBag:GetService(AttacksBinders)
-
 ----- ------------------------ START SERVICEBAG -----------------------------
+serviceBag:GetService(AttacksBinders)
 serviceBag:Init()
 Cooldown:Start()
 serviceBag:Start()
@@ -74,7 +74,7 @@ _G.BinderProvider = AttacksBinders
 ------------------------------------------------------------
 
 --||PlayerAdded||--
-
+local Ragdoll = Nevermore("Ragdoll")
 local CombatMediator = require(SSS.Combat.CombatMediator)
 local CollectionService = game:GetService("CollectionService")
 Players.PlayerAdded:Connect(function(player)
@@ -82,9 +82,13 @@ Players.PlayerAdded:Connect(function(player)
 	CollectionService:AddTag(char, "AnimationHandler")
 	CollectionService:AddTag(char, "Armed")
 	CollectionService:AddTag(char, "CD")
-
+	------------------ TEST ------------------
 	CombatMediator.PlayerAdded(player)
-	--local animHandler =PlayerAnimationHandler:GetHandler(player)
+	-- TODO: test this
+	local hum: Humanoid = char:WaitForChild("Humanoid")
+	hum.Died:Connect(function()  
+		Ragdoll:Tag(hum)
+	end)
 end)
 --||PlayerRemoving||--
 Players.PlayerRemoving:Connect(function(player)

@@ -1,5 +1,5 @@
 --Services
--- Hope this not crash
+-- The weapon context strategy
 local SoundService = game:GetService("SoundService")
 local SoundFolder = SoundService.SFX
 local WeaponSoundFolder = SoundFolder.Weapons
@@ -29,7 +29,9 @@ end
 function Weapon:EquiTool(toolName)
 	self._weapon = Strategies[toolName].new(self.Char, self._serviceBag)
 end
-
+function Weapon:GetAction(action)
+	return self._weapon:GetAction(action)
+end
 function Weapon:registryTool(toolName)
 	local WeaponStats = WeaponInfo:getweapon(toolName)
 	self.tool_name = toolName

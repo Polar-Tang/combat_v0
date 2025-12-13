@@ -9,6 +9,9 @@
         "Quenty": {
           "$path": "node_modules/@quenty"
         },
+        "QuentyStudios": {
+          "$path": "node_modules/@quentystudios"
+        },
         "Custom": {
           "$path": "src/myNeverMoreS"
         }

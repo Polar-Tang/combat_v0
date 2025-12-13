@@ -323,7 +323,7 @@ end
 
 function muchacho_hitbox:_visualize()
 	if not self.Visualizer then return end
-
+	print("Fucking self ", self)
 	local point_type = typeof(self.CFrame)
 	local point_cframe = get_CFrame[point_type](self.CFrame)
 

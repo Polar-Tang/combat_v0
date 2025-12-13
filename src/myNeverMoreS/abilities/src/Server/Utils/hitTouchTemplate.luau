@@ -14,7 +14,7 @@ local VFX_Event: RemoteEvent = remotes.VFX
 
 --local hitbox_start_stop = require(Helpers.hitbox_start_stop)
 local stunt_client = require("stunt_client")
-local get_hit_sound = require("get_hit_sound")
+
 return function(newHitbox, getStrength, weaponData)
 	local CHAR: Model = newHitbox.Puncher
 	local HUM = CHAR:WaitForChild("Humanoid")
@@ -26,14 +26,12 @@ return function(newHitbox, getStrength, weaponData)
 		end
 
 		local ENEMY_CHAR: Model = enemyHum.Parent
-		local Heavy = get_hit_sound(CHAR)
 		local Player = Players:GetPlayerFromCharacter(CHAR)
 		local HRP = CHAR:WaitForChild("HumanoidRootPart")
 		----------------------------------------------------
 
 		local Damage = weaponData.damage
 		local StunTime = weaponData.stun_time
-		local HeavyDamage = weaponData.heavy_damage
 		----------------------------------------------------
 
 		--[[
@@ -61,7 +59,7 @@ return function(newHitbox, getStrength, weaponData)
 
 		local CENTER = (ENEMYHRP.Position - HRP.Position).Unit
 		--local STRENGTH = 10
-		local data = getStrength(enemyHum)
+		local data = getStrength(hit, enemyHum)
 		local STRENGTH = data.Strength
 
 		---------------------- HIT: ANIM, DAMAGA ----------------------
@@ -73,9 +71,6 @@ return function(newHitbox, getStrength, weaponData)
 
 		local kockback = CENTER * STRENGTH
 
-		if Heavy then
-			Damage = HeavyDamage
-		end
 
 		if STRENGTH >= 35 then
 			local bv = Instance.new("BodyVelocity")
@@ -102,7 +97,7 @@ return function(newHitbox, getStrength, weaponData)
 		ENEMYCHAR:SetAttribute("IsBlocking", false)
 
 		VFX_Event:FireAllClients("SwordHit", ENEMYCHAR)
-		VFX_Event:FireClient(Player, "SwordHitShake")
+		VFX_Event:FireClient(Player, "SwordHitShake")		
 	end
 end
 

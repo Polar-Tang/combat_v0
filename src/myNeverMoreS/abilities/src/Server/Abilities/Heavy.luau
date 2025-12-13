@@ -3,6 +3,7 @@ local AttackBaseAbility = require("AttackBaseAbility")
 
 local hitTouchTemplate = require("hitTouchTemplate")
 local hitbox_start_stop = require("hitbox_start_stop")
+local DebrisFX = require("DebrisFX")
 
 local Heavy = setmetatable({}, AttackBaseAbility)
 Heavy.__index = Heavy
@@ -27,6 +28,7 @@ function Heavy:Execute()
 	self:SetAttributes()
 	-------------
 	local animHandler = self._animHandler
+	animHandler:LoadAnimation(true, "Heavy")
 
 	local hitFx = function()
 		self:PlaySound("Heavy")
@@ -56,13 +58,24 @@ function Heavy:Execute()
 	})
 
 	-- HITBOX SHIT
-	local track = animHandler:LoadAnimation(true, "Heavy")
-	print("Track length:", track.Length)
-	print("Track priority:", track.Priority)
 
 	-- local WeaponData = self.WeaponBinder:Get(CHAR)
 	--return CHAR:WaitForChild(WeaponData.tool_name):WaitForChild("BodyAttach"):FindFirstChild("Trail")
-	newHitbox.Touched:Connect(hitTouchTemplate(newHitbox, function(enemyHum)
+	newHitbox.Touched:Connect(hitTouchTemplate(newHitbox, function(hit, enemyHum)
+		self.RagdollService:Tag(enemyHum)
+			task.delay(.5, function()
+			self.RagdollService:Untag(enemyHum)
+			end)
+		DebrisFX:GroundSmash({
+			position = hit.Position,
+			amount = 14,
+			velocity = 70,
+			material = Enum.Material.Slate,
+			dust = true,
+			shockwave = true,
+			sizeRange = Vector2.new(1, 2.5),
+			lifetime = 2.5,
+		})
 		return { Strength = 50 }
 	end, self))
 end

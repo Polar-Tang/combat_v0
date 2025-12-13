@@ -62,6 +62,8 @@ function Fist:_createAbilities()
 				_cooldown = attackData.Heavy.cooldown,
 				damage = attackData.Heavy.damage,
 				hitbox_size = attackData.Heavy.hitbox_size,
+				hitbox_offset = attackData.Basic.hitbox_offset,
+
 				character = self.char,
 			}, self)
 		)
@@ -89,8 +91,12 @@ function Fist:Execute(action: string)
 	if not self.attacks[action] then
 		return
 	end
-	print("self.attacks[action] ", self.attacks[action])
 	self.attacks[action]:Execute()
+end
+
+function Fist:GetAction(action: string)
+	print("action ", action)
+	return self.attacks[action]
 end
 
 return Fist

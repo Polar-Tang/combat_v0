@@ -8,7 +8,6 @@ local require = require(script.Parent.loader).load(script)
 
 --||Modules||--
 
-local AnimationHandler = require("AnimationHandler")
 local stunt_client = require("stunt_client")
 
 -- SETTING CHARACTER ATTRIBUTES TO THE CHARACTER, REDUCES ITS VELOCITY
@@ -27,21 +26,23 @@ end
 
 function Blocking:Execute()
 	--||Settings||--
-	local character = self.Character
-	local WeaponBinder = self._serviceBag:GetService(require("Weapon"))
+	local character = self.char
+	print("Damn self ", self)
 
-	local parry_time = WeaponBinder.parry_time
-	local walk_speed_normal = WeaponBinder.walk_speed_normal
-	local walk_speed_blocking = WeaponBinder.walk_speed_blocking
+	local parry_time = self.parry_time
+	local walk_speed_normal = self.walk_speed_normal
+	local walk_speed_blocking = self.walk_speed_blocking
 	local isBlocking = character:GetAttribute("IsBlocking")
 	local currentTime = tick()
 	print("IsBlocking", character:GetAttribute("IsBlocking"))
+	-- Blocking:Stop()
+	local AnimationHandler = self.AnimationHandler
+
 	if not isBlocking then
 		character:SetAttribute("IsBlocking", true)
 		character:SetAttribute("LastStopTime", 0)
 		character.Humanoid.WalkSpeed = walk_speed_blocking
 
-		local AnimationHandler = AnimationHandler:Get(character)
 		AnimationHandler:LoadAnimation(true, "Blocking")
 
 		task.spawn(function()
@@ -50,13 +51,7 @@ function Blocking:Execute()
 			character:SetAttribute("Parrying", false)
 		end)
 	elseif isBlocking then
-		character:SetAttribute("IsBlocking", false)
-		character:SetAttribute("Parrying", false)
-		character:SetAttribute("LastStopTime", currentTime)
-		character.Humanoid.WalkSpeed = walk_speed_normal
-
-		local AnimationHandler = AnimationHandler:Get(character)
-		AnimationHandler:LoadAnimation(false, "Blocking")
+		self:Stop()
 	end
 end
 
@@ -80,7 +75,7 @@ function Blocking:_GuardBreak(): boolean?
 		Debris:AddItem(BlockSound, 2)
 	end
 
-	local animHandler = AnimationHandler:Get(char)
+	local animHandler = self.AnimationHandler
 	animHandler:LoadAnimation(true, "GuardBreak")
 
 	-- CHANGE THE PLAYER UI
@@ -98,6 +93,20 @@ function Blocking:_GuardBreak(): boolean?
 	-- RESET BLOCKING
 	char:SetAttribute("Blocking", 0)
 	return true
+end
+
+function Blocking:Stop()
+	local char = self.character
+	local walk_speed_normal = self.walk_speed_normal
+	local hum: Humanoid = self.humanoid
+	hum.WalkSpeed = walk_speed_normal
+
+	--ATT
+	char:SetAttribute("IsBlocking", false)
+	char:SetAttribute("Parrying", false)
+	char:SetAttribute("LastStopTime", tick())
+	char:SetAttribute("Blocking", 0)
+	self.AnimationHandler:LoadAnimation(false, "Blocking")
 end
 
 function Blocking:OnDefended()
