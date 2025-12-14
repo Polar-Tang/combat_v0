@@ -27,9 +27,8 @@ type weaponStats = {
 	run_speed: number,
 }
 
-function WeaponBase.new(char: Model, serviceBag, config: weaponStats): WeaponBase
-	print("damn config ", config)
-	local damn_data = config
+function WeaponBase.new(char: Model, serviceBag): WeaponBase
+	local damn_data = {}
 	damn_data.char = char
 	damn_data._serviceBag = serviceBag
 	local self = setmetatable(damn_data, WeaponBase)

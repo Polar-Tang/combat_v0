@@ -20,12 +20,22 @@ function BaseAbility.new(config)
 	self._serviceBag = config._serviceBag
 	self._cooldownController = CooldownController.new(config.character, config._serviceBag, config)
 	
-	local BinderProvider = self._serviceBag:GetService(_G.BinderProvider)
-	self.WeaponBinder = BinderProvider:Get("Armed"):Get(config.character)
-	self.AnimationHandler = BinderProvider:Get("AnimationHandler"):Get(config.character)
-	
 	self.RagdollService = self._serviceBag:GetService(require("Ragdoll"))
 	
+	-- BINDERS
+	assert(_G.BinderProvider, "Binder Provider not initialized")
+	-- Get the animation binder
+	local BinderProvider = self._serviceBag:GetService(_G.BinderProvider)
+	-- weapon Binder
+	local WeaponBinder = BinderProvider:Get("Armed")
+	self._weaponHandler = WeaponBinder:Get(self.character)
+
+	-- Animation Binder
+	local AnimationBinder = BinderProvider:Get("AnimationHandler")
+	self._animHandler = AnimationBinder:Get(self.character)
+
+
+
 	return self
 end
 

@@ -5,7 +5,7 @@ local SoundFolder = SoundService.SFX
 local WeaponSoundFolder = SoundFolder.Weapons
 local Debris = game:GetService("Debris")
 local require = require(script.Parent.loader).load(script)
-local WeaponInfo = require("WeaponInfo")
+
 local BaseObject = require("BaseObject")
 local Weapon = {}
 Weapon.__index = Weapon
@@ -19,6 +19,12 @@ function Weapon.new(char: Model, serviceBag)
 	self.Char = char
 	self._weapon = nil
 	self._serviceBag = serviceBag
+	self.Humanoid = char:WaitForChild("Humanoid")
+	if self.Humanoid.RigType == Enum.HumanoidRigType.R15 then
+		self.armName = "RightLowerArm"
+	else
+		self.armName = "Right Arm"
+	end
 	return self
 end
 
@@ -26,25 +32,60 @@ function Weapon:Execute(action)
 	self._weapon:Execute(action)
 end
 
-function Weapon:EquiTool(toolName)
+function Weapon:EquiTool(tool)
+	local toolName = tool.Name
+
+	if not Strategies[toolName] then
+		warn("Weapon not found")
+		return
+	end
 	self._weapon = Strategies[toolName].new(self.Char, self._serviceBag)
+	self.tool = tool
+
+	local arm = self.Char:FindFirstChild(self.armName)
+	if not arm then
+		warn(string.format("The %s should has a %s", self.Char.Name, self.armName))
+		return
+	end
+
+	local M6D = Instance.new("Motor6D")
+	M6D.Name = "ToolGrip"
+	M6D.Parent = arm
+
+	arm.ToolGrip.Part0 = arm
+	arm.ToolGrip.Part1 = self.Char[toolName].BodyAttach
 end
+
+function Weapon:UnequiTool()
+	if not self.tool then
+		warn("No tool equiped")
+		return
+	end
+	self.tool.BodyAttach.Trail.Enabled = false
+
+	local arm = self.Char:FindFirstChild(self.armName)
+	arm:FindFirstChild("ToolGrip"):Destroy()
+
+	local UnEquipSound = self.Folder:WaitForChild("UnEquip"):Clone()
+	UnEquipSound.Parent = self.Char:WaitForChild("HumanoidRootPart")
+	UnEquipSound:Play()
+	Debris:AddItem(UnEquipSound, 1)
+
+	self:deleteToolData()
+end
+
 function Weapon:GetAction(action)
 	return self._weapon:GetAction(action)
 end
 function Weapon:registryTool(toolName)
-	local WeaponStats = WeaponInfo:getweapon(toolName)
-	self.tool_name = toolName
-	self.damage = WeaponStats.damage
-	self.swing_reset = WeaponStats.swing_reset
-	self.stun_time = WeaponStats.stun_time
-	self.hitbox_size = WeaponStats.hitbox_size
-	self.hitbox_offset = WeaponStats.hitbox_offset
-	self.heavy_damage = WeaponStats.heavy_damage
-	self.heavy_hitbox_size = WeaponStats.heavy_hitbox_size
-	self.max_combo = WeaponStats.max_combo
+	local f = WeaponSoundFolder:FindFirstChild(toolName)
+	if not f then
+		warn("Weapon not found")
+		return
+	end
 
-	self.Folder = WeaponSoundFolder[toolName]
+	self.Folder = f
+	self.tool_name = toolName
 end
 
 -- TODO: create a method that lookup the attack by the given name, and do call coolDownControler.init(attck.reset_time), API between weapon controller and ability controller
@@ -56,6 +97,8 @@ function Weapon:deleteToolData()
 		end
 		self[k] = nil
 	end
+	self.tool = nil
+
 end
 
 -- If the sound thing causes issue we move it to a facade

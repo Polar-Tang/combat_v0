@@ -14,7 +14,7 @@ export type PlayerAnimationHandler = {
 
 }
 
-function PlayerAnimationHandler:InitPlayer(player, handler): AnimationHandler
+function PlayerAnimationHandler:InitPlayer(player, handler)
 	if not player  then
 		warn("Player not found")
 		return

@@ -80,13 +80,9 @@ function AnimationHandler:LoadAnimation(state: boolean, animaName: string, isPre
 	end
 	self:_ensurePreload(animaName)
 	local current_desc = self:_getDescriptor(animaName)
-	local current_anim = current_desc.Animation
 	local animaTionTrack: AnimationTrack = current_desc.AnimationTrack
 
-	if not animaTionTrack then
-		animaTionTrack = self.animator:LoadAnimation(current_anim)
-		self.animationDescriptors[animaName].AnimationTrack = animaTionTrack
-	end
+	
 	if state and animaTionTrack then
 		
 		animaTionTrack:Play()
@@ -200,10 +196,15 @@ end
 
 local animationsData = require(RS.Animations.WeaponsAnims)
 
+function AnimationHandler:Init(binder)
+	print("running start here")
+	
+end
+
 function AnimationHandler:Start(binder)
+	print("running start here")
 	if self.Char.Name == "Blocking" then
 		self:registryAnims(animationsData["Fist-r6"])
-		self:preloadAll()
 		self:LoadAnimation(true, "Blocking")
 	end
 end
@@ -223,6 +224,7 @@ function AnimationHandler:OnSignal(info: connArgs)
 
 	local animationTracker = descriptor.AnimationTrack
 	local signal: RBXScriptSignal
+	--[[
 	print(
 		"Connecting marker:",
 		animationEventName,
@@ -231,7 +233,7 @@ function AnimationHandler:OnSignal(info: connArgs)
 		"track exists:",
 		descriptor.AnimationTrack ~= nil
 	)
-
+	]]
 	-- if animName == "Heavy" then
 	-- 	for _, marker in ipairs(descriptor.AnimationTrack:GetTimeOfKeyframe("Hit")) do
 	-- 		print("Marker:", marker.Name)

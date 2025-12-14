@@ -1,25 +1,26 @@
 local require = require(script.Parent.loader).load(script)
 local WeaponBase = require("WeaponBase")
 local AbilityBuilder = require("AbilityBuilder")
-local WeaponInfo = require("WeaponInfo")
 local Table = require("Table")
 
--- code smell here
-local WeaponStats = WeaponInfo:getweapon("Fist")
+local WeaponInfo = Table.readonly(require("WeaponInfo"))
+local WeaponStats = WeaponInfo.info.Fist
 
 local Fist = setmetatable({}, WeaponBase)
 Fist.__index = Fist
 
 function Fist.new(char, serviceBag)
-	local self = setmetatable(WeaponBase.new(char, serviceBag, WeaponStats), Fist)
-	self.tool_name = "Fist"
+	local self = setmetatable(WeaponBase.new(char, serviceBag), Fist)
 	self:_createAbilities()
-
+	print("damn self ", self)
 	return self
 end
 
 function Fist:_createAbilities()
 	local attackData = WeaponStats["attacks"]
+	if self.char.Name == "virtual_nautilus" then
+		print()
+	end
 	-- attacks of type Attack and maybe Movement in the future
 	self.attacks = AbilityBuilder.new(self.char, self._serviceBag)
 		:Add(Enum.UserInputType.MouseButton1, "M1", {
@@ -31,42 +32,44 @@ function Fist:_createAbilities()
 			hitbox_offset = attackData.Basic.hitbox_offset,
 			character = self.char,
 			_max_combo = attackData.Basic.max_combo,
+			stun_time = attackData.Basic.stun_time,
+			tool_name = "Fist",
+		})
+		:Add(Enum.KeyCode.F, "Blocking", {
+			name = "Blocking",
+			type = "Defense",
+			character = self.char,
+			_cooldown = attackData.Basic.cooldown,
+			damage = attackData.Basic.damage,
+			hitbox_size = attackData.Basic.hitbox_size,
+			hitbox_offset = attackData.Basic.hitbox_offset,
+			_max_combo = attackData.Basic.max_combo,
 			stun_time = self.stun_time,
 			tool_name = "Fist",
 		})
-		:Add(
-			Enum.KeyCode.F,
-			"Blocking",
-			Table.merge({
-				name = "Blocking",
-				type = "Defense",
-				character = self.char,
-				-- _cooldown = attackData.Heavy.cooldown,
-			}, self)
-		)
-		:Add(
-			Enum.KeyCode.W,
-			"Sprint",
-			Table.merge({
-				name = "Sprint",
-				type = "Movement",
-				_cooldown = attackData.Sprint.cooldown,
-			}, self)
-		)
-		:Add(
-			Enum.KeyCode.R,
-			"Heavy",
-			Table.merge({
-				name = "Heavy",
-				type = "Attack",
-				_cooldown = attackData.Heavy.cooldown,
-				damage = attackData.Heavy.damage,
-				hitbox_size = attackData.Heavy.hitbox_size,
-				hitbox_offset = attackData.Basic.hitbox_offset,
-
-				character = self.char,
-			}, self)
-		)
+		:Add(Enum.KeyCode.W, "Sprint", {
+			name = "Sprint",
+			type = "Movement",
+			_cooldown = attackData.Sprint.cooldown,
+			character = self.char,
+			damage = attackData.Basic.damage,
+			hitbox_size = attackData.Basic.hitbox_size,
+			hitbox_offset = attackData.Basic.hitbox_offset,
+			_max_combo = attackData.Basic.max_combo,
+			stun_time = self.stun_time,
+			tool_name = "Fist",
+		})
+		:Add(Enum.KeyCode.R, "Heavy", {
+			name = "Heavy",
+			type = "Attack",
+			_cooldown = attackData.Heavy.cooldown,
+			damage = attackData.Heavy.damage,
+			hitbox_size = attackData.Heavy.hitbox_size,
+			hitbox_offset = attackData.Heavy.hitbox_offset,
+			character = self.char,
+			stun_time = attackData.Heavy.stun_time,
+			tool_name = "Fist",
+		})
 		:Build()
 
 	-- here goes the defence abilities

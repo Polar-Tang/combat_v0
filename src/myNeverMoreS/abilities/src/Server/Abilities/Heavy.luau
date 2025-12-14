@@ -12,6 +12,8 @@ Heavy.Type = "Attack"
 
 function Heavy.new(config)
 	local self = setmetatable(AttackBaseAbility.new(config), Heavy)
+	print("QUE PASA COPN ESTA MIERAAAAA ", config)
+	print("fucking self ", self)
 
 	return self
 end
@@ -59,7 +61,7 @@ function Heavy:Execute()
 
 	-- HITBOX SHIT
 
-	-- local WeaponData = self.WeaponBinder:Get(CHAR)
+	-- local WeaponData = self._weaponHandler:Get(CHAR)
 	--return CHAR:WaitForChild(WeaponData.tool_name):WaitForChild("BodyAttach"):FindFirstChild("Trail")
 	newHitbox.Touched:Connect(hitTouchTemplate(newHitbox, function(hit, enemyHum)
 		self.RagdollService:Tag(enemyHum)

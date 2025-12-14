@@ -36,7 +36,7 @@ function Blocking:Execute()
 	local currentTime = tick()
 	print("IsBlocking", character:GetAttribute("IsBlocking"))
 	-- Blocking:Stop()
-	local AnimationHandler = self.AnimationHandler
+	local AnimationHandler = self._animHandler
 
 	if not isBlocking then
 		character:SetAttribute("IsBlocking", true)
@@ -75,7 +75,7 @@ function Blocking:_GuardBreak(): boolean?
 		Debris:AddItem(BlockSound, 2)
 	end
 
-	local animHandler = self.AnimationHandler
+	local animHandler = self._animHandler
 	animHandler:LoadAnimation(true, "GuardBreak")
 
 	-- CHANGE THE PLAYER UI
@@ -106,7 +106,7 @@ function Blocking:Stop()
 	char:SetAttribute("Parrying", false)
 	char:SetAttribute("LastStopTime", tick())
 	char:SetAttribute("Blocking", 0)
-	self.AnimationHandler:LoadAnimation(false, "Blocking")
+	self._animHandler:LoadAnimation(false, "Blocking")
 end
 
 function Blocking:OnDefended()

@@ -18,29 +18,8 @@ type AttackBaseAbilityConfig = {
 }
 
 function AttackBaseAbility.new(config)
-	print("QUE PASA COPN ESTA MIERAAAAA")
 	local self = setmetatable(BaseAbility.new(config), AttackBaseAbility)
-	self.name = config.name
-	self.cooldown = config._cooldown or 0
-	self.damage = config.damage or 0
-	self._lastSwing = 0
-	self._max_combo = config._max_combo
-	self.hitbox_size = config.hitbox_size
-	self.hitbox_offset = config.hitbox_offset
-	self.stun_time = config.stun_time
-	-- BINDERS
-	self._serviceBag = config._serviceBag
-	assert(_G.BinderProvider, "Binder Provider not initialized")
-	-- Get the animation binder
-	local BinderProvider = self._serviceBag:GetService(_G.BinderProvider)
-	-- weapon Binder
-	local WeaponBinder = BinderProvider:Get("Armed")
-	self._weaponHandler = WeaponBinder:Get(self.character)
-
-	-- Animation Binder
-	local AnimationBinder = BinderProvider:Get("AnimationHandler")
-	self._animHandler = AnimationBinder:Get(self.character)
-
+	
 	return self
 end
 

@@ -25,7 +25,7 @@ function Sprint:Execute()
 	self._cooldownController:init(self.cooldown)
 	local hum = char:WaitForChild("Humanoid")
 	hum.WalkSpeed = self.walk_speed_normal
-	self.AnimationHandler:LoadAnimation(true, "Sprint")
+	self._animHandler:LoadAnimation(true, "Sprint")
 
 	char:SetAttribute("Sprinting", true)
 end

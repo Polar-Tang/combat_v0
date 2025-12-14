@@ -43,6 +43,7 @@ function Basic:_ChangeCombo()
 
 	-- If the last hit was after 3 seconds, reset the combo
 	if not self._comboController:getCD() then
+		print("current combo ", char:GetAttribute("Combo"))
 		char:SetAttribute("Combo", 1)
 		self._comboController:init(3)
 		return
@@ -72,6 +73,7 @@ function Basic:Execute()
 	local CHAR = self.character
 
 	local HUM = CHAR:WaitForChild("Humanoid")
+	self:_ChangeCombo()
 
 	local swingName: string = self:getSwingAnimation()
 
@@ -83,7 +85,6 @@ function Basic:Execute()
 	-------------
 
 	local current_combo = CHAR:GetAttribute("Combo")
-	self:_ChangeCombo()
 
 	local max_combo = self._max_combo
 	local hitFx = function()

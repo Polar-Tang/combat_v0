@@ -1,13 +1,14 @@
+local Debris = game:GetService("Debris")
 local anim = {}
-
 --||Animation Folder||--
 local serviceBag = _G.ServiceBag
 
 local BinderProvider = serviceBag:GetService(_G.BinderProvider)
 local NPCAnimBinder = BinderProvider:Get("AnimationHandler")
+local WeaponBinder = BinderProvider:Get("Armed")
 -- TODO: SEE WHERE TO INITIALIZE SERVICE BAG, SERVER, OR REPLICATED STORAGE, HOW TO ACCESS IT
 -- TODO: COnsider in this folder, ReplicatedStorage/animations, to leave only three or two modules, OtherAnims, WeaponAnims, AnimationClient
--- local NPCAnimBinder = 
+-- local NPCAnimBinder =
 
 ------------------------------------------------------------------------------------------------------------------
 
@@ -26,6 +27,9 @@ anim.Equip = function(char: Model)
 	local AnimationHandler = NPCAnimBinder:Get(char)
 	AnimationHandler:LoadAnimation(true, "Equip")
 
+	local weapon = WeaponBinder:Get(char)
+	local EquipSound = weapon.Folder:WaitForChild("Equip"):Clone()
+		
 	--EquipAnim[char]:GetMarkerReachedSignal("Equipped"):Connect(
 	-- make a higher order function that take the tanimation track as a parameter
 	-- PENDING. SUPPORT AN EQUIP ANIMATION WHICH IS A TRASITION TO IDLE
@@ -33,11 +37,15 @@ anim.Equip = function(char: Model)
 	-- IN SUCH CASE PLAY THIS char:SetAttribute("Swing",true) --so the player can't attack while still equipping
 	local onEquipp = function(animTrack)
 		char:SetAttribute("Swing", false)
+		AnimationHandler:LoadAnimation(true, "Idle")
+		EquipSound.Parent = char:WaitForChild("HumanoidRootPart")
+		EquipSound:Play()
+		Debris:AddItem(EquipSound, 1)
 		--animTrack:Play()
 	end
 	AnimationHandler:OnSignal({
 		callback = onEquipp,
-		animationName = "Idle",
+		animationName = "Equip",
 		animationEventName = "Equipped",
 	})
 

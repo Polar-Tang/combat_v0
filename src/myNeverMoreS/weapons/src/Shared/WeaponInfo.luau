@@ -7,12 +7,14 @@ local basic_fist = {
 	max_combo = 5,
 	hitbox_size = Vector3.new(5, 5, 4.5),
 	hitbox_offset = CFrame.new(0, 0, -2.5),
+	stun_time = 1.7,
 }
 
 local heavy_Fist = {
 	damage = 8,
 	hitbox_size = Vector3.new(5.5, 5.5, 5),
 	hitbox_offset = CFrame.new(0, 0, -2.5),
+	stun_time = 1.7,
 
 	cooldown = 10,
 }
@@ -73,6 +75,8 @@ local info = {
 		max_combo = 4,
 	},
 }
+
+module.info = info
 
 function module:getweapon(WeaponName: string)
 	return info[WeaponName]

@@ -2,7 +2,7 @@
 local RS = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local SSS = game:GetService("ServerScriptService")
-
+local StarterPack = game:GetService("StarterPack")
 --||Nevermore Shit||--
 ----------------------------- getting servicebag and loader -----------------------------
 
@@ -46,33 +46,31 @@ serviceBag:Start()
 _G.FistBag = nil
 _G.ServiceBag = serviceBag
 _G.BinderProvider = AttacksBinders
--- local testying = serviceBag:GetService(CooldownBinder)
--- print("This is the service initilized i bet", testying)
 
--- Cooldown:Start(serviceBag)
+------------------Once initilized-------------------------------
+local BinderProviderStarted = serviceBag:GetService(_G.BinderProvider)
+local weaponBinder = BinderProviderStarted:Get("Armed")
+-- local BinderProvider = self._serviceBag:GetService(_G.BinderProvider)
+-- 	-- weapon Binder
+-- 	local WeaponBinder = BinderProvider:Get("Armed")
+local FistTool = StarterPack:FindFirstChild("Fist")
+weaponBinder:GetClassAddedSignal():Connect(function(warrior)
+	print("warrior ", warrior)
+	if warrior.Char.Name == "Blocking" then
+		warrior:EquiTool(FistTool)
+	end
+end)
 
--- require(AnimationUtils.AnimationHandlerBinder).start()
----------------- Coldown test ----------------------------
---[[
-	local npc = workspace.Blocking
-	local nv = Instance.new("NumberValue")
-	nv.Name = "TheTestOne"
-	nv.Parent = npc
-	nv:AddTag("Cooldown")
-	
-	-- trigger cooldown
-	nv.Value = 3
-	
-	task.delay(0.2, function()
-		local cd = Cooldown:Get(nv)
-		print("Cooldown:", cd)
-		print("GetTimePassed:", cd:GetTimePassed()) -- GetTimePassed: 0.2756490707397461
-		print("GetStartTime:", cd:GetStartTime()) -- GetStartTime: 1764843054.5570555
-	end)
+local AnimBinder = BinderProviderStarted:Get("AnimationHandler")
+local Anims = game:GetService("ReplicatedStorage").Animations
+local weaponAnims = require(Anims.WeaponsAnims)
 
-]]
-------------------------------------------------------------
+AnimBinder:GetClassAddedSignal():Connect(function(character)
+	character:registryAnims(weaponAnims["Fist-r6"])
+	character:LoadAnimation(true, "Blocking")
+end)
 
+------------------Do binder stuff-------------------------------
 --||PlayerAdded||--
 local Ragdoll = Nevermore("Ragdoll")
 local CombatMediator = require(SSS.Combat.CombatMediator)
@@ -86,7 +84,7 @@ Players.PlayerAdded:Connect(function(player)
 	CombatMediator.PlayerAdded(player)
 	-- TODO: test this
 	local hum: Humanoid = char:WaitForChild("Humanoid")
-	hum.Died:Connect(function()  
+	hum.Died:Connect(function()
 		Ragdoll:Tag(hum)
 	end)
 end)
