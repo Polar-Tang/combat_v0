@@ -16,7 +16,6 @@ local VFX_Event: RemoteEvent = remotes.VFX
 local stunt_client = require("stunt_client")
 
 return function(newHitbox, getStrength, weaponData)
-	print("WeaponData ", weaponData)
 	local CHAR: Model = newHitbox.Puncher
 	local HUM = CHAR:WaitForChild("Humanoid")
 	--newHitbox.Touched:Connect

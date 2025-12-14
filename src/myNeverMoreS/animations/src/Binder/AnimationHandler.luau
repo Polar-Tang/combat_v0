@@ -197,12 +197,10 @@ end
 local animationsData = require(RS.Animations.WeaponsAnims)
 
 function AnimationHandler:Init(binder)
-	print("running start here")
 	
 end
 
 function AnimationHandler:Start(binder)
-	print("running start here")
 	if self.Char.Name == "Blocking" then
 		self:registryAnims(animationsData["Fist-r6"])
 		self:LoadAnimation(true, "Blocking")

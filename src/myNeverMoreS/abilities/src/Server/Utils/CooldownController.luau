@@ -72,7 +72,6 @@ end
 function CooldownController:IsReady(): boolean
 	assert(self._inst, "Do CooldownController:init(currentCD: number) first")
 	local CD = self:getCD()
-	print("CD ", CD)
 	return self.currentCD - CD:GetTimePassed() >= 0
 end
 

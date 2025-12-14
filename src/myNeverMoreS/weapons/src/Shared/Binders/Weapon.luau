@@ -121,7 +121,6 @@ end
 function Weapon:PlayHeavySound(lifeTime: number?)
 	local dur = lifeTime or 4
 	local HeavySound = WeaponSoundFolder:WaitForChild(self.tool_name):WaitForChild("Heavy"):Clone() -- the sound is very important
-	print("play havy sound")
 	HeavySound.Parent = self.Char.HumanoidRootPart
 	HeavySound:Play()
 	Debris:AddItem(HeavySound, dur)

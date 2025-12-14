@@ -74,11 +74,9 @@ end
 anim.Blocking = function(char: Model)
 	local AnimationHandler = NPCAnimBinder:Get(char)
 	AnimationHandler:LoadAnimation(true, "Blocking")
-	print("NPCAnimBinder ", NPCAnimBinder)
 end
 
 anim.UnBlocking = function(char: Model)
-	print("NPCAnimBinder ", NPCAnimBinder)
 	local AnimationHandler = NPCAnimBinder:Get(char)
 	AnimationHandler:LoadAnimation(false, "Blocking")
 end

@@ -1,6 +1,5 @@
 return function(enemyChar)
 	task.spawn(function()				
-		print("back by impact")
 		if enemyChar.HumanoidRootPart:FindFirstChildWhichIsA("BodyVelocity") then enemyChar.HumanoidRootPart:FindFirstChildWhichIsA("BodyVelocity"):Destroy() end
 		local backForce = Instance.new("BodyVelocity")
 		backForce.MaxForce = Vector3.new(1,0,1) * 30000

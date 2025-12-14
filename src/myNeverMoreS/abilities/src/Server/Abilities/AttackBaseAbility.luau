@@ -22,7 +22,6 @@ function AttackBaseAbility.new(config)
 	
 	return self
 end
-
 function AttackBaseAbility:createHitBox()
 	local CHAR = self.character
 	local hitbox_offset = self.hitbox_offset
@@ -35,6 +34,7 @@ function AttackBaseAbility:createHitBox()
 	end
 	local params = OverlapParams.new()
 	params.FilterType = Enum.RaycastFilterType.Exclude
+	params.FilterDescendantsInstances = {CHAR}
 
 	local newHitbox = HitboxModule.CreateHitbox() --creating the hitbox
 	newHitbox.Size = hitbox_size
@@ -43,6 +43,7 @@ function AttackBaseAbility:createHitBox()
 	newHitbox.OverlapParams = params
 	newHitbox.AutoDestroy = false
 	newHitbox.Puncher = CHAR
+	newHitbox.DetectionMode = "HitOnce"
 	return newHitbox
 end
 

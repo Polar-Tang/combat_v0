@@ -55,7 +55,6 @@ local weaponBinder = BinderProviderStarted:Get("Armed")
 -- 	local WeaponBinder = BinderProvider:Get("Armed")
 local FistTool = StarterPack:FindFirstChild("Fist")
 weaponBinder:GetClassAddedSignal():Connect(function(warrior)
-	print("warrior ", warrior)
 	if warrior.Char.Name == "Blocking" then
 		warrior:EquiTool(FistTool)
 	end

@@ -7,7 +7,7 @@ local swingEvent = remotes:WaitForChild("Swing")
 -- constants
 local plr = game:GetService("Players").LocalPlayer
 local char = plr.Character or plr.CharacterAdded:Wait()
-print("char ", char)
+--print("char ", char)
 
 --helpers functions
 local attckChck = function()
@@ -38,10 +38,10 @@ local isBlocking = char:GetAttribute("IsBlocking")
 
 UserInputSer.InputBegan:Connect(function(input, IsTyping)
 	if IsTyping or isCD then
-		print("not run")
+		--print("not run")
 		return
 	end
-	print("run")
+	--print("run")
 	local command = InputManager.Bindings[input.KeyCode]
 	if input.KeyCode == Enum.KeyCode.Q and not isBlocking and command.Check() then
 		command.Execute()
@@ -53,14 +53,14 @@ UserInputSer.InputBegan:Connect(function(input, IsTyping)
 		GCD(1)
 		swingEvent:FireServer(Enum.KeyCode.R)
 	elseif input.KeyCode == Enum.KeyCode.F and attckChck(char) and command.Check() then
-		print("block")
+		--print("block")
 		command.Execute()
 		GCD(1)
 
 		swingEvent:FireServer(Enum.KeyCode.F)
 	elseif input.KeyCode == Enum.KeyCode.W and command.isIdle() and command.Check() then
 		-- command.Execute()
-		-- SPRINT needs a tire/energy system to be cool, so it's better to ignore it
+		-- S--print needs a tire/energy system to be cool, so it's better to ignore it
 		-- swingEvent:FireServer(Enum.KeyCode.W)
 
 		-- GCD(1)
@@ -151,12 +151,12 @@ if UserInputSer.TouchEnabled then
 
 end
 
-	---------------- SPRINTING
+	---------------- S--printING
 	if uis.TouchEnabled then
 	local MobileButtons = plr.PlayerGui:WaitForChild("MobileButtons"):WaitForChild("MobileButtons2")
 
-	MobileButtons.Sprint.Activated:Connect(function()		
-		shiftToSprint()
+	MobileButtons.S--print.Activated:Connect(function()		
+		shiftToS--print()
 	end)
 end	
 

@@ -18,7 +18,8 @@ Basic.__index = Basic
 -- Config is the data created by the weapon through the builder
 function Basic.new(config)
 	local self = setmetatable(AttackBaseAbility.new(config), Basic)
-	self._comboController = CooldownController.new(config.character, config._serviceBag, config)
+	self._comboController = CooldownController.new(config.character, config._serviceBag, config)	
+	self.hitBox = self:createHitBox()
 
 	return self
 end
@@ -43,7 +44,7 @@ function Basic:_ChangeCombo()
 
 	-- If the last hit was after 3 seconds, reset the combo
 	if not self._comboController:getCD() then
-		print("current combo ", char:GetAttribute("Combo"))
+		-- print("current combo ", char:GetAttribute("Combo"))
 		char:SetAttribute("Combo", 1)
 		self._comboController:init(3)
 		return
@@ -69,7 +70,6 @@ function Basic:Execute()
 		return
 	end
 	self._cooldownController:init(self.cooldown)
-	local newHitbox = self:createHitBox()
 	local CHAR = self.character
 
 	local HUM = CHAR:WaitForChild("Humanoid")
@@ -89,8 +89,7 @@ function Basic:Execute()
 	local max_combo = self._max_combo
 	local hitFx = function()
 		CHAR:SetAttribute("Attacking", false)
-		print("newHitbox ", newHitbox)
-		hitbox_start_stop(CHAR, newHitbox)
+		
 		self:PlaySound("Swing", 2)
 		CHAR:SetAttribute("Swing", false)
 	end
@@ -140,7 +139,7 @@ function Basic:Execute()
 		return { Strength = Strenght }
 	end
 
-	newHitbox.Touched:Connect(hitTouchTemplate(newHitbox, getStrnght, self))
+	self.hitBox.Touched:Connect(hitTouchTemplate(self.hitBox, getStrnght, self))
 end
 
 return Basic

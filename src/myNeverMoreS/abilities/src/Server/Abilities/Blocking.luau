@@ -27,14 +27,13 @@ end
 function Blocking:Execute()
 	--||Settings||--
 	local character = self.char
-	print("Damn self ", self)
 
 	local parry_time = self.parry_time
 	local walk_speed_normal = self.walk_speed_normal
 	local walk_speed_blocking = self.walk_speed_blocking
 	local isBlocking = character:GetAttribute("IsBlocking")
 	local currentTime = tick()
-	print("IsBlocking", character:GetAttribute("IsBlocking"))
+	-- print("IsBlocking", character:GetAttribute("IsBlocking"))
 	-- Blocking:Stop()
 	local AnimationHandler = self._animHandler
 
@@ -57,7 +56,7 @@ end
 
 function Blocking:_GuardBreak(): boolean?
 	local char = self.character
-	print("enemyChar:GetAttribute('Blocking')  ", char:GetAttribute("Blocking"))
+	-- print("enemyChar:GetAttribute('Blocking')  ", char:GetAttribute("Blocking"))
 	-- client effects
 	RS.Events.VFX:FireAllClients("GuardBreak", char)
 	local WeaponBinder = self._serviceBag:GetService(require("Weapon"))
@@ -87,7 +86,7 @@ function Blocking:_GuardBreak(): boolean?
 	end
 
 	local enemyH = char:WaitForChild("Humanoid")
-	print("enemyH ", enemyH)
+	-- print("enemyH ", enemyH)
 	stunt_client(enemyH, 3)
 
 	-- RESET BLOCKING

@@ -8,10 +8,8 @@ local swingEvent = Events.Swing
 local remotes = RS.Events
 local Equipment = remotes.Equipment
 
-
 local animations = require(RS.Animations.WeaponsAnims)
 local AnimationClient = require(ReplicatedStorage.Animations.Utils.AnimationClient)
-
 
 --local blockingEvent = Events.Blocking
 
@@ -32,7 +30,7 @@ function CombatMediator.PlayerAdded(player: Player)
 	char:SetAttribute("Iframes", false)
 	char:SetAttribute("IsBlocking", false)
 	char:SetAttribute("Blocking", 0)
-	char:SetAttribute("Parrying", false)		
+	char:SetAttribute("Parrying", false)
 end
 
 local AttckInvoker = script.Parent.AttckInvoker
@@ -43,6 +41,7 @@ local combatServer = require(AttckInvoker)
 swingEvent.OnServerEvent:Connect(combatServer.swingEvent)
 
 --||Equipment||--
+
 Equipment.OnServerEvent:Connect(function(player, data)
 	local tool = data.tool
 	local has_to_equip = data.has_to_equip
@@ -50,12 +49,25 @@ Equipment.OnServerEvent:Connect(function(player, data)
 	local arm = "RightLowerArm"
 	local HUM: Humanoid = char:FindFirstChild("Humanoid")
 
-	if not HUM then return end
-
+	if not HUM then
+		return
+	end
+	debug.profilebegin("AnimationHandler:Get")
 	local animationHandler = AnimationHandler:Get(char)
+	debug.profileend()
+
+	debug.profilebegin("WeaponBinder:Get")
 	local WeaponHandler = WeaponBinder:Get(char)
+	debug.profileend()
+
+	debug.profilebegin("registryTool")
 	WeaponHandler:registryTool(tool.Name)
+	debug.profileend()
+	
+	debug.profilebegin("EquiTool")
 	WeaponHandler:EquiTool(tool)
+	debug.profileend()
+
 	if HUM.RigType == Enum.HumanoidRigType.R15 then
 		arm = "RightLowerArm"
 		local tool_anims = animations[tool.Name]
@@ -71,7 +83,6 @@ Equipment.OnServerEvent:Connect(function(player, data)
 	end
 	if not has_to_equip then
 		AnimationClient.UnEquip(char)
-		
 	end
 end)
 
@@ -81,44 +92,43 @@ local DashEvent = RS.Events.Dash
 
 local range = 45
 
-DashEvent.OnServerEvent:Connect(function(Player,DashButton)
+DashEvent.OnServerEvent:Connect(function(Player, DashButton)
 	local Character = Player.Character
 	local CharacterParts = {
 		HumRp = Character.HumanoidRootPart,
 		Hum = Character.Humanoid,
 	}
-	
+
 	local SoundEfx = SoundService.SFX.Other.Dust:Clone()
-	SoundEfx.Parent = CharacterParts.HumRp 
+	SoundEfx.Parent = CharacterParts.HumRp
 	SoundEfx:Play()
-	game.Debris:AddItem(SoundEfx,1.4)
-	
+	game.Debris:AddItem(SoundEfx, 1.4)
+
 	if DashButton == "WButton" then
-		local WVelocity = Instance.new("BodyVelocity",CharacterParts.HumRp)
+		local WVelocity = Instance.new("BodyVelocity", CharacterParts.HumRp)
 		WVelocity.MaxForce = Vector3.new(50000, 0, 50000)
 		WVelocity.Velocity = (CharacterParts.HumRp.CFrame.LookVector * range)
 		WVelocity.Name = "WDashVelocity"
-		game.Debris:AddItem(WVelocity,0.2)
+		game.Debris:AddItem(WVelocity, 0.2)
 	elseif DashButton == "SButton" then
-		local SVelocity = Instance.new("BodyVelocity",CharacterParts.HumRp)
+		local SVelocity = Instance.new("BodyVelocity", CharacterParts.HumRp)
 		SVelocity.MaxForce = Vector3.new(50000, 0, 50000)
 		SVelocity.Velocity = (CharacterParts.HumRp.CFrame.LookVector * -range)
 		SVelocity.Name = "SDashVelocity"
-		game.Debris:AddItem(SVelocity,0.2)
+		game.Debris:AddItem(SVelocity, 0.2)
 	elseif DashButton == "AButton" then
-		local AVelocity = Instance.new("BodyVelocity",CharacterParts.HumRp)
+		local AVelocity = Instance.new("BodyVelocity", CharacterParts.HumRp)
 		AVelocity.MaxForce = Vector3.new(50000, 0, 50000)
 		AVelocity.Velocity = (CharacterParts.HumRp.CFrame.RightVector * -range)
 		AVelocity.Name = "ADashVelocity"
-		game.Debris:AddItem(AVelocity,0.2)
+		game.Debris:AddItem(AVelocity, 0.2)
 	elseif DashButton == "DButton" then
-		local DVelocity = Instance.new("BodyVelocity",CharacterParts.HumRp)
+		local DVelocity = Instance.new("BodyVelocity", CharacterParts.HumRp)
 		DVelocity.MaxForce = Vector3.new(50000, 0, 50000)
 		DVelocity.Velocity = (CharacterParts.HumRp.CFrame.RightVector * range)
 		DVelocity.Name = "DDashVelocity"
-		game.Debris:AddItem(DVelocity,0.2)
+		game.Debris:AddItem(DVelocity, 0.2)
 	end
 end)
-
 
 return CombatMediator

@@ -104,7 +104,6 @@ function Dash.Execute()
 		speed.CFrame = speedOrientation
 
 		speed.Parent = char
-		print("speed ", speed)
 		EmitParticles(speed)
 		Debris:AddItem(speed, 0.5)
 	end

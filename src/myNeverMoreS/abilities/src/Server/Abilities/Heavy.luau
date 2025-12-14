@@ -12,9 +12,6 @@ Heavy.Type = "Attack"
 
 function Heavy.new(config)
 	local self = setmetatable(AttackBaseAbility.new(config), Heavy)
-	print("QUE PASA COPN ESTA MIERAAAAA ", config)
-	print("fucking self ", self)
-
 	return self
 end
 -- TODO: DEBUG THIS SHIT
@@ -34,7 +31,6 @@ function Heavy:Execute()
 
 	local hitFx = function()
 		self:PlaySound("Heavy")
-		print("Hit event reached ")
 		CHAR:SetAttribute("Attacking", false)
 		hitbox_start_stop(CHAR, newHitbox)
 		CHAR:SetAttribute("Swing", false)

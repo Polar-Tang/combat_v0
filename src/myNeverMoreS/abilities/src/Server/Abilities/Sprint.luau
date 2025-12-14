@@ -12,7 +12,6 @@ Sprint.__index = Sprint
 -- Config is the data created by the weapon through the builder
 function Sprint.new(config)
 	local self = setmetatable(BaseAbility.new(config), Sprint)
-	print("Fcuking self ", self)
 	return self
 end
 

@@ -12,15 +12,12 @@ Fist.__index = Fist
 function Fist.new(char, serviceBag)
 	local self = setmetatable(WeaponBase.new(char, serviceBag), Fist)
 	self:_createAbilities()
-	print("damn self ", self)
 	return self
 end
 
 function Fist:_createAbilities()
 	local attackData = WeaponStats["attacks"]
-	if self.char.Name == "virtual_nautilus" then
-		print()
-	end
+	
 	-- attacks of type Attack and maybe Movement in the future
 	self.attacks = AbilityBuilder.new(self.char, self._serviceBag)
 		:Add(Enum.UserInputType.MouseButton1, "M1", {
@@ -98,7 +95,6 @@ function Fist:Execute(action: string)
 end
 
 function Fist:GetAction(action: string)
-	print("action ", action)
 	return self.attacks[action]
 end
 
