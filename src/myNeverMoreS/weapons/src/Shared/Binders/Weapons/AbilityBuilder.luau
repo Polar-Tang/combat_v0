@@ -40,6 +40,7 @@ function AbilityBuilder:Add(inputKey, abilityName, config: WeaponStats)
 	self._map[inputKey] = newAbility
 	if config.type == "Defense" then
 		self.character:GetAttributeChangedSignal(config.name):Connect(function(...)
+			print("Connecting ", ...)
 			self._map[inputKey]:OnDefended(...)
 		end)
 	end
