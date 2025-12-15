@@ -34,12 +34,16 @@ function Weapon:Execute(action)
 end
 -- TODO: very weapon will have an onDefended connection, which will be fired by the hiboxHit event
 
-function Weapon:OnDefended()
-	self._weapon:OnDefended()
+function Weapon:OnIncomingAttack(context)
+	if self._activeDefense then
+		self._activeDefense:OnDefend(context)
+	else
+		self:TakeHit(context)
+	end
 end
 
-function Weapon:GetAbilityStats(action)
-	return Table.merge(self._weapon:GetAction(action), self)
+function Weapon:OnDefended()
+	self._weapon:OnDefended()
 end
 
 function Weapon:EquiTool(tool)
@@ -87,6 +91,7 @@ end
 function Weapon:GetAction(action)
 	return self._weapon:GetAction(action)
 end
+
 function Weapon:registryTool(toolName)
 	local f = WeaponSoundFolder:FindFirstChild(toolName)
 	if not f then

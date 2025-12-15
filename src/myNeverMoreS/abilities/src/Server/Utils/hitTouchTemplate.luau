@@ -19,12 +19,17 @@ return function(parentClass, getStrength)
 	local newHitbox = parentClass.hitBox
 
 	local CHAR: Model = newHitbox.Puncher
+	local BinderProvider = parentClass._serviceBag:GetService(_G.BinderProvider)
+	-- weapon Binder
+	local WeaponBinder = BinderProvider:Get("Armed")
 	--newHitbox.Touched:Connect
 	return function(hit, enemyHum)
 		----------------------------------------------------
 		-- TODO: destroy the old hitboxes un Unequip tool
 		local ENEMY_CHAR: Model = enemyHum.Parent
-		local Player = Players:GetPlayerFromCharacter(CHAR)
+		local weaponEnemy = WeaponBinder:Get(ENEMY_CHAR)
+		weaponEnemy:OnIncomingAttack()
+
 		local HRP = CHAR:WaitForChild("HumanoidRootPart")
 		----------------------------------------------------
 
@@ -35,7 +40,6 @@ return function(parentClass, getStrength)
 		-- Heavy will be an attribute set by the heavy attack, execute()
 		-- CheckInfront will be an utility directly by the weapon
 		-- CombatUtils.Blocking could be a weapon method too, self._weapon[strategy].blockig
-		parentClass:OnDefended()
 		--[[
 		
 		do
@@ -99,7 +103,10 @@ return function(parentClass, getStrength)
 		ENEMYCHAR:SetAttribute("IsBlocking", false)
 
 		VFX_Event:FireAllClients("SwordHit", ENEMYCHAR)
-		VFX_Event:FireClient(Player, "SwordHitShake")
+		local Player = Players:GetPlayerFromCharacter(CHAR)
+		if Player then
+			VFX_Event:FireClient(Player, "SwordHitShake")
+		end
 	end
 end
 
