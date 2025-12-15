@@ -220,14 +220,11 @@ local hs = game:GetService("HttpService")
 -- TEST: see if normal require don't break anything
 local GoodSignal = require(script.Parent.GoodSignal)
 
-
-
 local muchacho_hitbox = {}
 muchacho_hitbox.__index = muchacho_hitbox
 
-local HITBOX_COLOR = Color3.fromRGB(255,0,0)
+local HITBOX_COLOR = Color3.fromRGB(255, 0, 0)
 local HITBOX_TRANSPARENCY = 1
-
 
 local adornment_form = {
 	["Proportion"] = {
@@ -272,28 +269,31 @@ local spatial_query = {
 }
 
 local function find(a, tbl)
-	for _, a_ in ipairs(tbl) do 
-		if a_==a then return true end 
+	for _, a_ in ipairs(tbl) do
+		if a_ == a then
+			return true
+		end
 	end
 end
 
 local function difference(a, b)
 	local ret = {}
 	for _, v in ipairs(a) do
-		if not find(v,b) then table.insert(ret, v) end
+		if not find(v, b) then
+			table.insert(ret, v)
+		end
 	end
-	
+
 	return ret
 end
 
 local hitboxes = {}
 
-
 function muchacho_hitbox.CreateHitbox()
 	return setmetatable({
 		Visualizer = true,
 		DetectionMode = "Default",
-		AutoDestroy = true,	
+		AutoDestroy = true,
 		Key = hs:GenerateGUID(false),
 		Puncher = nil,
 		HitList = {},
@@ -307,11 +307,10 @@ function muchacho_hitbox.CreateHitbox()
 
 		OverlapParams = OverlapParams.new(),
 
-		Size = Vector3.new(0,0,0),
+		Size = Vector3.new(0, 0, 0),
 		Shape = Enum.PartType.Block,
-		CFrame = CFrame.new(0,0,0),
-		Offset = CFrame.new(0,0,0)
-
+		CFrame = CFrame.new(0, 0, 0),
+		Offset = CFrame.new(0, 0, 0),
 	}, muchacho_hitbox)
 end
 
@@ -322,8 +321,9 @@ function muchacho_hitbox:FindHitbox(key)
 end
 
 function muchacho_hitbox:_visualize()
-	if not self.Visualizer then return end
-	print("Fucking self ", self)
+	if not self.Visualizer then
+		return
+	end
 	local point_type = typeof(self.CFrame)
 	local point_cframe = get_CFrame[point_type](self.CFrame)
 
@@ -344,13 +344,17 @@ function muchacho_hitbox:_visualize()
 end
 
 function muchacho_hitbox:_InsertTouchingParts(part)
-	if table.find(self.TouchingParts, part) then return end
+	if table.find(self.TouchingParts, part) then
+		return
+	end
 
 	table.insert(self.TouchingParts, part)
 end
 
 function muchacho_hitbox:_FindTouchEnded(parts)
-	if not self.TouchingParts[1] then return end
+	if not self.TouchingParts[1] then
+		return
+	end
 
 	local mode = self.DetectionMode
 	local differences = difference(self.TouchingParts, parts)
@@ -378,12 +382,10 @@ function muchacho_hitbox:_cast()
 			self:_InsertTouchingParts(hit)
 
 			self.Touched:Fire(hit, humanoid)
-
 		elseif mode == "ConstantDetection" and humanoid then
 			self:_InsertTouchingParts(hit)
 
 			self.Touched:Fire(hit, humanoid)
-
 		elseif mode == "HitOnce" and humanoid then
 			self:_InsertTouchingParts(hit)
 
@@ -392,12 +394,10 @@ function muchacho_hitbox:_cast()
 
 			self:Stop()
 			break
-
 		elseif mode == "HitParts" then
 			self:_InsertTouchingParts(hit)
 
 			self.Touched:Fire(hit)
-
 		end
 	end
 end
@@ -427,7 +427,7 @@ function muchacho_hitbox:Start()
 	hitboxes[self.Key] = self
 
 	-- looping the hitbox
-	task.spawn(function()	
+	task.spawn(function()
 		self.Connection = rs.Heartbeat:Connect(function()
 			self:_visualize()
 			self:_cast()
@@ -439,7 +439,9 @@ function muchacho_hitbox:Stop()
 	-- clear hitbox
 	self:_clear()
 
-	if not self.AutoDestroy then return end
+	if not self.AutoDestroy then
+		return
+	end
 
 	-- terminate hitbox
 	self.Touched:DisconnectAll()

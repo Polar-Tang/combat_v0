@@ -20,19 +20,18 @@ Blocking.Type = "Defense"
 
 function Blocking.new(config)
 	local self = setmetatable(BaseAbility.new(config), Blocking)
-
 	return self
 end
 
 function Blocking:Execute()
 	--||Settings||--
-	local character = self.char
+	local character = self.character
 
 	local parry_time = self.parry_time
-	local walk_speed_normal = self.walk_speed_normal
+	-- local walk_speed_normal = self.walk_speed_normal
 	local walk_speed_blocking = self.walk_speed_blocking
 	local isBlocking = character:GetAttribute("IsBlocking")
-	local currentTime = tick()
+	-- local currentTime = tick()
 	-- print("IsBlocking", character:GetAttribute("IsBlocking"))
 	-- Blocking:Stop()
 	local AnimationHandler = self._animHandler
@@ -110,10 +109,9 @@ end
 
 function Blocking:OnDefended()
 	local char = self.character
-	local WeaponBinder = self._serviceBag:GetService(require("Weapon"))
-	local weaponHandler = WeaponBinder:Get(char)
-	local toolName = weaponHandler.tool_name
+	local toolName = self.tool_name
 
+	print("Blocking ", char:GetAttribute("Blocking"))
 	if not char:GetAttribute("Blocking") then
 		return
 	end

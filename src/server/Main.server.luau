@@ -65,8 +65,10 @@ local Anims = game:GetService("ReplicatedStorage").Animations
 local weaponAnims = require(Anims.WeaponsAnims)
 
 AnimBinder:GetClassAddedSignal():Connect(function(character)
-	character:registryAnims(weaponAnims["Fist-r6"])
-	character:LoadAnimation(true, "Blocking")
+	if character.Char.Name == "Blocking" then
+		character:registryAnims(weaponAnims["Fist-r6"])
+		character:LoadAnimation(true, "Blocking")
+	end
 end)
 
 ------------------Do binder stuff-------------------------------

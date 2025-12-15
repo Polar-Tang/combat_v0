@@ -16,6 +16,7 @@ function AbilityBuilder.new(char, serviceBag)
 		character = char,
 		_map = {},
 		_serviceBag = serviceBag,
+		OnDefended = nil,
 	}, AbilityBuilder)
 end
 
@@ -39,10 +40,9 @@ function AbilityBuilder:Add(inputKey, abilityName, config: WeaponStats)
 	local newAbility = AbilityClass.new(config)
 	self._map[inputKey] = newAbility
 	if config.type == "Defense" then
-		self.character:GetAttributeChangedSignal(config.name):Connect(function(...)
-			print("Connecting ", ...)
-			self._map[inputKey]:OnDefended(...)
-		end)
+		function self.OnDefended()
+			newAbility:OnDefended()
+		end
 	end
 
 	return self

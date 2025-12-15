@@ -15,26 +15,29 @@ local VFX_Event: RemoteEvent = remotes.VFX
 --local hitbox_start_stop = require(Helpers.hitbox_start_stop)
 local stunt_client = require("stunt_client")
 
-return function(newHitbox, getStrength, weaponData)
+return function(parentClass, getStrength)
+	local newHitbox = parentClass.hitBox
+
 	local CHAR: Model = newHitbox.Puncher
-	local HUM = CHAR:WaitForChild("Humanoid")
 	--newHitbox.Touched:Connect
 	return function(hit, enemyHum)
 		----------------------------------------------------
-		if enemyHum == HUM then
-			return
-		end
-
+		-- TODO: destroy the old hitboxes un Unequip tool
 		local ENEMY_CHAR: Model = enemyHum.Parent
 		local Player = Players:GetPlayerFromCharacter(CHAR)
 		local HRP = CHAR:WaitForChild("HumanoidRootPart")
 		----------------------------------------------------
 
-		local Damage = weaponData.damage
-		local StunTime = weaponData.stun_time
+		local Damage = parentClass.damage
+		local StunTime = parentClass.stun_time
 		----------------------------------------------------
-
+		-- Handling the hit blocking
+		-- Heavy will be an attribute set by the heavy attack, execute()
+		-- CheckInfront will be an utility directly by the weapon
+		-- CombatUtils.Blocking could be a weapon method too, self._weapon[strategy].blockig
+		parentClass:OnDefended()
 		--[[
+		
 		do
 			if ENEMY_CHAR:GetAttribute("Parrying") and not Heavy and CombatUtils.CheckInfront(CHAR, ENEMY_CHAR) then
 				CombatUtils.Parrying(CHAR, ENEMY_CHAR)
@@ -71,7 +74,6 @@ return function(newHitbox, getStrength, weaponData)
 
 		local kockback = CENTER * STRENGTH
 
-
 		if STRENGTH >= 35 then
 			local bv = Instance.new("BodyVelocity")
 			bv.MaxForce = Vector3.new(math.huge, 0, math.huge)
@@ -97,7 +99,7 @@ return function(newHitbox, getStrength, weaponData)
 		ENEMYCHAR:SetAttribute("IsBlocking", false)
 
 		VFX_Event:FireAllClients("SwordHit", ENEMYCHAR)
-		VFX_Event:FireClient(Player, "SwordHitShake")		
+		VFX_Event:FireClient(Player, "SwordHitShake")
 	end
 end
 

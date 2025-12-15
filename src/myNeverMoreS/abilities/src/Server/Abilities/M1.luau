@@ -18,7 +18,7 @@ Basic.__index = Basic
 -- Config is the data created by the weapon through the builder
 function Basic.new(config)
 	local self = setmetatable(AttackBaseAbility.new(config), Basic)
-	self._comboController = CooldownController.new(config.character, config._serviceBag, config)	
+	self._comboController = CooldownController.new(config.character, config._serviceBag, config)
 	self.hitBox = self:createHitBox()
 
 	return self
@@ -89,7 +89,7 @@ function Basic:Execute()
 	local max_combo = self._max_combo
 	local hitFx = function()
 		CHAR:SetAttribute("Attacking", false)
-		
+		hitbox_start_stop(self.character, self.hitBox)
 		self:PlaySound("Swing", 2)
 		CHAR:SetAttribute("Swing", false)
 	end
@@ -119,8 +119,8 @@ function Basic:Execute()
 		local Strenght = 10
 		if current_combo == max_combo then
 			self.RagdollService:Tag(enemyHum)
-			task.delay(.5, function()
-			self.RagdollService:Untag(enemyHum)
+			task.delay(0.5, function()
+				self.RagdollService:Untag(enemyHum)
 			end)
 			DebrisFX:GroundSmash({
 				position = hit.Position,
@@ -133,13 +133,14 @@ function Basic:Execute()
 				lifetime = 2.5,
 			})
 			Strenght = 35
-
 		end
 
 		return { Strength = Strenght }
 	end
 
-	self.hitBox.Touched:Connect(hitTouchTemplate(self.hitBox, getStrnght, self))
+	self.hitBox.Touched:Connect(
+		hitTouchTemplate(self._weaponHandler:GetAbilityStats(Enum.UserInputType.MouseButton1), getStrnght)
+	)
 end
 
 return Basic

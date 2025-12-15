@@ -59,11 +59,11 @@ function Heavy:Execute()
 
 	-- local WeaponData = self._weaponHandler:Get(CHAR)
 	--return CHAR:WaitForChild(WeaponData.tool_name):WaitForChild("BodyAttach"):FindFirstChild("Trail")
-	newHitbox.Touched:Connect(hitTouchTemplate(newHitbox, function(hit, enemyHum)
+	newHitbox.Touched:Connect(hitTouchTemplate(self, function(hit, enemyHum)
 		self.RagdollService:Tag(enemyHum)
-			task.delay(.5, function()
+		task.delay(0.5, function()
 			self.RagdollService:Untag(enemyHum)
-			end)
+		end)
 		DebrisFX:GroundSmash({
 			position = hit.Position,
 			amount = 14,
@@ -75,7 +75,11 @@ function Heavy:Execute()
 			lifetime = 2.5,
 		})
 		return { Strength = 50 }
-	end, self))
+	end))
+end
+
+function Heavy:test()
+	print("test me")
 end
 
 return Heavy

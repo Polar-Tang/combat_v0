@@ -5,6 +5,7 @@ local SoundFolder = SoundService.SFX
 local WeaponSoundFolder = SoundFolder.Weapons
 local Debris = game:GetService("Debris")
 local require = require(script.Parent.loader).load(script)
+local Table = require("Table")
 
 local BaseObject = require("BaseObject")
 local Weapon = {}
@@ -30,6 +31,15 @@ end
 
 function Weapon:Execute(action)
 	self._weapon:Execute(action)
+end
+-- TODO: very weapon will have an onDefended connection, which will be fired by the hiboxHit event
+
+function Weapon:OnDefended()
+	self._weapon:OnDefended()
+end
+
+function Weapon:GetAbilityStats(action)
+	return Table.merge(self._weapon:GetAction(action), self)
 end
 
 function Weapon:EquiTool(tool)
@@ -98,7 +108,6 @@ function Weapon:deleteToolData()
 		self[k] = nil
 	end
 	self.tool = nil
-
 end
 
 -- If the sound thing causes issue we move it to a facade

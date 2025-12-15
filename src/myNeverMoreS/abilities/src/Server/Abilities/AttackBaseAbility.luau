@@ -19,7 +19,7 @@ type AttackBaseAbilityConfig = {
 
 function AttackBaseAbility.new(config)
 	local self = setmetatable(BaseAbility.new(config), AttackBaseAbility)
-	
+
 	return self
 end
 function AttackBaseAbility:createHitBox()
@@ -34,7 +34,7 @@ function AttackBaseAbility:createHitBox()
 	end
 	local params = OverlapParams.new()
 	params.FilterType = Enum.RaycastFilterType.Exclude
-	params.FilterDescendantsInstances = {CHAR}
+	params.FilterDescendantsInstances = { CHAR }
 
 	local newHitbox = HitboxModule.CreateHitbox() --creating the hitbox
 	newHitbox.Size = hitbox_size
@@ -44,6 +44,7 @@ function AttackBaseAbility:createHitBox()
 	newHitbox.AutoDestroy = false
 	newHitbox.Puncher = CHAR
 	newHitbox.DetectionMode = "HitOnce"
+	-- newHitbox:Start()
 	return newHitbox
 end
 

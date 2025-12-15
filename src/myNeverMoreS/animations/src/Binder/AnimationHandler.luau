@@ -82,9 +82,7 @@ function AnimationHandler:LoadAnimation(state: boolean, animaName: string, isPre
 	local current_desc = self:_getDescriptor(animaName)
 	local animaTionTrack: AnimationTrack = current_desc.AnimationTrack
 
-	
 	if state and animaTionTrack then
-		
 		animaTionTrack:Play()
 
 		return animaTionTrack
@@ -119,9 +117,7 @@ end
 
 -- Declare the firast animation track and set ptreload to true in the descriptor
 function AnimationHandler:_ensurePreload(animaName)
-	
 	if self.animationDescriptors[animaName].preloaded then
-		warn("Animation already preloaded")
 		return
 	end
 	self:_initDescriptior(animaName)
@@ -132,7 +128,8 @@ function AnimationHandler:_ensurePreload(animaName)
 
 	-- Load the animation and declare it
 	do
-		local animaTionTrack: AnimationTrack = self.animator:LoadAnimation(self.animationDescriptors[animaName].Animation)
+		local animaTionTrack: AnimationTrack =
+			self.animator:LoadAnimation(self.animationDescriptors[animaName].Animation)
 		animaTionTrack:Play()
 		animaTionTrack:Play(0)
 		animaTionTrack:AdjustSpeed(0)
@@ -196,9 +193,7 @@ end
 
 local animationsData = require(RS.Animations.WeaponsAnims)
 
-function AnimationHandler:Init(binder)
-	
-end
+function AnimationHandler:Init(binder) end
 
 function AnimationHandler:Start(binder)
 	if self.Char.Name == "Blocking" then

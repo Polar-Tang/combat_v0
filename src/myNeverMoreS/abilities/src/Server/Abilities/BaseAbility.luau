@@ -17,11 +17,12 @@ function BaseAbility.new(config)
 
 	self.sound_folder = WeaponSoundFolder[config.tool_name]
 
+	self.walk_speed_blocking = config.walk_speed_blocking
 	self._serviceBag = config._serviceBag
 	self._cooldownController = CooldownController.new(config.character, config._serviceBag, config)
-	
+
 	self.RagdollService = self._serviceBag:GetService(require("Ragdoll"))
-	
+
 	-- BINDERS
 	assert(_G.BinderProvider, "Binder Provider not initialized")
 	-- Get the animation binder
@@ -33,8 +34,6 @@ function BaseAbility.new(config)
 	-- Animation Binder
 	local AnimationBinder = BinderProvider:Get("AnimationHandler")
 	self._animHandler = AnimationBinder:Get(self.character)
-
-
 
 	return self
 end

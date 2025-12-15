@@ -17,9 +17,9 @@ end
 
 function Fist:_createAbilities()
 	local attackData = WeaponStats["attacks"]
-	
+
 	-- attacks of type Attack and maybe Movement in the future
-	self.attacks = AbilityBuilder.new(self.char, self._serviceBag)
+	self.attacks, self.OnDefended = AbilityBuilder.new(self.char, self._serviceBag)
 		:Add(Enum.UserInputType.MouseButton1, "M1", {
 			name = "Basic",
 			type = "Attack",
@@ -41,7 +41,9 @@ function Fist:_createAbilities()
 			hitbox_size = attackData.Basic.hitbox_size,
 			hitbox_offset = attackData.Basic.hitbox_offset,
 			_max_combo = attackData.Basic.max_combo,
-			stun_time = self.stun_time,
+			walk_speed_blocking = WeaponStats.walk_speed_blocking,
+			parry_time = WeaponStats.parry_time,
+			walk_speed_normal = WeaponStats.walk_speed_normal,
 			tool_name = "Fist",
 		})
 		:Add(Enum.KeyCode.W, "Sprint", {
@@ -53,7 +55,6 @@ function Fist:_createAbilities()
 			hitbox_size = attackData.Basic.hitbox_size,
 			hitbox_offset = attackData.Basic.hitbox_offset,
 			_max_combo = attackData.Basic.max_combo,
-			stun_time = self.stun_time,
 			tool_name = "Fist",
 		})
 		:Add(Enum.KeyCode.R, "Heavy", {
@@ -65,10 +66,10 @@ function Fist:_createAbilities()
 			hitbox_offset = attackData.Heavy.hitbox_offset,
 			character = self.char,
 			stun_time = attackData.Heavy.stun_time,
+
 			tool_name = "Fist",
 		})
 		:Build()
-
 	-- here goes the defence abilities
 
 	-- This shit was intended to reduce the blocking atribute every second
@@ -85,6 +86,13 @@ function Fist:_createAbilities()
 		end)
 	]]
 	return self
+end
+
+function Fist:OnDefended()
+	if not self.OnDefended then
+		return
+	end
+	self.OnDefended()
 end
 
 function Fist:Execute(action: string)
