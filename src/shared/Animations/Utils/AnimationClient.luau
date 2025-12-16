@@ -6,8 +6,6 @@ local serviceBag = _G.ServiceBag
 local BinderProvider = serviceBag:GetService(_G.BinderProvider)
 local NPCAnimBinder = BinderProvider:Get("AnimationHandler")
 local WeaponBinder = BinderProvider:Get("Armed")
--- TODO: SEE WHERE TO INITIALIZE SERVICE BAG, SERVER, OR REPLICATED STORAGE, HOW TO ACCESS IT
--- TODO: COnsider in this folder, ReplicatedStorage/animations, to leave only three or two modules, OtherAnims, WeaponAnims, AnimationClient
 -- local NPCAnimBinder =
 
 ------------------------------------------------------------------------------------------------------------------
@@ -67,8 +65,22 @@ end
 
 anim.UnEquip = function(char: Model) --function for UnEquip animation
 	local AnimationHandler = NPCAnimBinder:Get(char)
-	AnimationHandler:LoadAnimation(true, "Equip")
 	AnimationHandler:LoadAnimation(true, "UnEquip")
+	local onUnEquipp = function(animTrack)
+		char:SetAttribute("Swing", false)
+		AnimationHandler:LoadAnimation(false, "Idle")
+		-- EquipSound.Parent = char:WaitForChild("HumanoidRootPart")
+		-- EquipSound:Play()
+		-- Debris:AddItem(EquipSound, 1)
+		--animTrack:Play()
+	end
+	AnimationHandler:OnSignal({
+		callback = onUnEquipp,
+		animationName = "UnEquip",
+		animationEventName = "EndedCon",
+	})
+
+
 end
 
 anim.Blocking = function(char: Model)

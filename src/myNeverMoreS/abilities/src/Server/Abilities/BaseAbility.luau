@@ -50,4 +50,10 @@ function BaseAbility:Execute(char)
 	error("Execute must be overridden in subclass")
 end
 
+function BaseAbility:Destroy()
+	setmetatable(self, nil)
+	self = nil
+	print("Ability deleted")
+end
+
 return BaseAbility

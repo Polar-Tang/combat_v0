@@ -76,7 +76,7 @@ end
 function Combat.Check()
 	return char:FindFirstChildWhichIsA("Tool")
 		and char:FindFirstChildWhichIsA("Tool"):GetAttribute("Type") == "Attack"
-		and HeavyCooldown
+		and HeavyDebounce
 end
 
 --uis.InputBegan:Connect(function(key, isTyping)

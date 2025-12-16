@@ -70,7 +70,12 @@ function Fist:_createAbilities()
 			tool_name = "Fist",
 		})
 		:Build()
-	-- here goes the defence abilities
+
+	if self.attacks then
+		for _, ability in pairs(self.attacks) do
+			self._maid:GiveTask(ability)
+		end
+	end
 
 	-- This shit was intended to reduce the blocking atribute every second
 	--[[
@@ -97,6 +102,10 @@ end
 
 function Fist:GetAction(action: string)
 	return self.attacks[action]
+end
+
+function Fist:UnEquip()
+	return self:Destroy()
 end
 
 return Fist

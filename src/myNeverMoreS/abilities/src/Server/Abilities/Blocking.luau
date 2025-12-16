@@ -10,17 +10,18 @@ local require = require(script.Parent.loader).load(script)
 
 local stunt_client = require("stunt_client")
 local DefenseBaseAbility = require("DefenseBaseAbility")
+local CombatConstants = require("AbilityConstants")
 
 -- SETTING CHARACTER ATTRIBUTES TO THE CHARACTER, REDUCES ITS VELOCITY
 ------------------------------------------------------------------------------------------------------------------
-local BaseAbility = require("BaseAbility")
 
-local Blocking = setmetatable(DefenseBaseAbility, BaseAbility)
+local Blocking = setmetatable({}, DefenseBaseAbility)
 Blocking.__index = Blocking
 Blocking.Type = "Defense"
 
 function Blocking.new(config)
 	local self = setmetatable(DefenseBaseAbility.new(config), Blocking)
+	self.priority = CombatConstants.DefensePriority["PERFECT_BLOCK"]
 	return self
 end
 
@@ -60,11 +61,8 @@ function Blocking:_GuardBreak(): boolean?
 	-- print("enemyChar:GetAttribute('Blocking')  ", char:GetAttribute("Blocking"))
 	-- client effects
 	RS.Events.VFX:FireAllClients("GuardBreak", char)
-	local WeaponBinder = self._serviceBag:GetService(require("Weapon"))
 
-	local weaponHandler = WeaponBinder:Get(char)
-
-	local toolName = weaponHandler.tool_name
+	local toolName = self.tool_name
 	--stopAnims(char.Humanoid)
 
 	-- PLAY GUARDBREAK SOUND
@@ -90,9 +88,37 @@ function Blocking:_GuardBreak(): boolean?
 	-- print("enemyH ", enemyH)
 	stunt_client(enemyH, 3)
 
-	-- RESET BLOCKING
-	char:SetAttribute("Blocking", 0)
+	self:Stop()
 	return true
+end
+
+function Blocking:Process(context)
+	local char = self.character
+	local toolName = self.tool_name
+
+	if not char:GetAttribute("Blocking") then
+		return
+	end
+
+	RS.Events.VFX:FireAllClients("BlockingHit", char)
+
+	local attValue = char:GetAttribute("Blocking")
+	--char:SetAttribute("Blocking", attValue + damage * 2.75)
+	char:SetAttribute("Blocking", attValue + 20)
+
+	if char:GetAttribute("Blocking") >= 100 then
+		self:_GuardBreak()
+	end
+	
+	-- Play blocked sound
+	do
+		local BlockSound = SFXFolder.Weapons[toolName].Blocked:Clone()
+		BlockSound.Parent = char:WaitForChild("HumanoidRootPart")
+		BlockSound:Play()
+		Debris:AddItem(BlockSound, 2)
+	end
+	context.blocked = true
+	return context
 end
 
 function Blocking:Stop()
@@ -109,35 +135,12 @@ function Blocking:Stop()
 	self._animHandler:LoadAnimation(false, "Blocking")
 	self:Deactivate()
 end
-
-function Blocking:Process(context)
-	local char = self.character
-	local toolName = self.tool_name
-
-	print("Blocking ", char:GetAttribute("Blocking"))
-	if not char:GetAttribute("Blocking") then
-		return
-	end
-
-	if char:GetAttribute("Blocking") >= 100 then
-		self:_GuardBreak()
-	end
-
-	RS.Events.VFX:FireAllClients("BlockingHit", char)
-
-	local attValue = char:GetAttribute("Blocking")
-	--char:SetAttribute("Blocking", attValue + damage * 2.75)
-	char:SetAttribute("Blocking", attValue + 20)
-
-	-- Play blocked sound
-	do
-		local BlockSound = SFXFolder.Weapons[toolName].Blocked:Clone()
-		BlockSound.Parent = char:WaitForChild("HumanoidRootPart")
-		BlockSound:Play()
-		Debris:AddItem(BlockSound, 2)
-	end
+-- TODO: test enum types as keys
+function Blocking:Deactivate()
+    self.isActive = false
+    self._weaponHandler:ClearActiveDefense(self.priority)
+    -- Stop animation, etc.
 end
-
 --[[for i,v in pairs(workspace.Npcs:GetChildren()) do
 	v:GetAttributeChangedSignal("Blocking"):Connect(function()
 		onBlockingChanged(v)

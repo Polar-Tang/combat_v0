@@ -1,4 +1,3 @@
--- TODO: turn this into the binder method
 local require = require(script.Parent.loader).load(script)
 local stunHandler = require("StunHandlerV2")
 

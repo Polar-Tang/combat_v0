@@ -46,27 +46,26 @@ Equipment.OnServerEvent:Connect(function(player, data)
 	local tool = data.tool
 	local has_to_equip = data.has_to_equip
 	local char: Model = player.Character or player.CharacterAdded:Wait()
-	local arm = "RightLowerArm"
 	local HUM: Humanoid = char:FindFirstChild("Humanoid")
 
 	if not HUM then
 		return
 	end
-	debug.profilebegin("AnimationHandler:Get")
 	local animationHandler = AnimationHandler:Get(char)
-	debug.profileend()
 
-	debug.profilebegin("WeaponBinder:Get")
 	local WeaponHandler = WeaponBinder:Get(char)
-	debug.profileend()
 
-	debug.profilebegin("registryTool")
-	WeaponHandler:registryTool(tool.Name)
-	debug.profileend()
+	if not has_to_equip then
+		-- AnimationClient.UnEquip(char)
+		WeaponHandler:UnequiTool()
+		AnimationClient.UnEquip(char)
+		return
+	end
+	print("it continues, even with ", has_to_equip)
 	
-	debug.profilebegin("EquiTool")
 	WeaponHandler:EquiTool(tool)
-	debug.profileend()
+	WeaponHandler:registryTool(tool.Name)
+	local arm = "RightLowerArm"
 
 	if HUM.RigType == Enum.HumanoidRigType.R15 then
 		arm = "RightLowerArm"
@@ -78,12 +77,8 @@ Equipment.OnServerEvent:Connect(function(player, data)
 		local tool_anims = animations[r6Name]
 		animationHandler:registryAnims(tool_anims)
 	end
-	if has_to_equip then
-		AnimationClient.Equip(char)
-	end
-	if not has_to_equip then
-		AnimationClient.UnEquip(char)
-	end
+
+	AnimationClient.Equip(char)
 end)
 
 ------------------------------------------------------------------------------------------------------------------

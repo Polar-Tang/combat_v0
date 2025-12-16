@@ -49,17 +49,6 @@ _G.BinderProvider = AttacksBinders
 
 ------------------Once initilized-------------------------------
 local BinderProviderStarted = serviceBag:GetService(_G.BinderProvider)
-local weaponBinder = BinderProviderStarted:Get("Armed")
--- local BinderProvider = self._serviceBag:GetService(_G.BinderProvider)
--- 	-- weapon Binder
--- 	local WeaponBinder = BinderProvider:Get("Armed")
-local FistTool = StarterPack:FindFirstChild("Fist")
-weaponBinder:GetClassAddedSignal():Connect(function(warrior)
-	if warrior.Char.Name == "Blocking" then
-		warrior:EquiTool(FistTool)
-		warrior:Execute("Blocking")
-	end
-end)
 
 local AnimBinder = BinderProviderStarted:Get("AnimationHandler")
 local Anims = game:GetService("ReplicatedStorage").Animations
@@ -68,7 +57,20 @@ local weaponAnims = require(Anims.WeaponsAnims)
 AnimBinder:GetClassAddedSignal():Connect(function(character)
 	if character.Char.Name == "Blocking" then
 		character:registryAnims(weaponAnims["Fist-r6"])
-		character:LoadAnimation(true, "Blocking")
+		-- character:LoadAnimation(true, "Blocking")
+	end
+end)
+
+local weaponBinder = BinderProviderStarted:Get("Armed")
+-- local BinderProvider = self._serviceBag:GetService(_G.BinderProvider)
+-- 	-- weapon Binder
+-- 	local WeaponBinder = BinderProvider:Get("Armed")
+local FistTool = StarterPack:FindFirstChild("Fist")
+weaponBinder:GetClassAddedSignal():Connect(function(warrior)
+	if warrior.Char.Name == "Blocking" then
+		warrior:registryTool("Fist")
+		warrior:EquiTool(FistTool)
+		warrior:Execute(Enum.KeyCode.F)
 	end
 end)
 

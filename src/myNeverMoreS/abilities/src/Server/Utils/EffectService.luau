@@ -32,7 +32,7 @@ export type effectHitCtx = {
 		Humanoid: Humanoid,
 		HRP: BasePart
 	},
-	GroundSmash: {
+	groundSmash: {
 		position: Vector3,
 		amount : number,
 		velocity : number,
@@ -62,14 +62,13 @@ function EffectService:Apply(context: effectHitCtx)
 
 	if context.ragdoll then
 		RagdollService:Tag(defender_humanoid)
-		print("ragdolled")
 		task.delay(context.ragdoll.duration, function()
 			RagdollService:Untag(defender_humanoid)
 		end)
 	end
-
-	if context.GroundSmash then
-		local GConfig = context.GroundSmash
+	print("context ", context)
+	if context.groundSmash then
+		local GConfig = context.groundSmash
 		DebrisFX:GroundSmash({
 			position = GConfig.position,
 			amount = GConfig.amount,

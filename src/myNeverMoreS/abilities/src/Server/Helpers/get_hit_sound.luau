@@ -1,4 +1,3 @@
--- TODO: turn this into the binder method
 local SoundService = game:GetService("SoundService")
 local SoundFolder = SoundService.SFX
 

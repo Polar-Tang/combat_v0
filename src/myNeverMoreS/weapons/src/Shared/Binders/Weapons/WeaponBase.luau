@@ -1,6 +1,8 @@
 -- Weapon.lua
 local require = require(script.Parent.loader).load(script)
 local get_trail = require("get_trail")
+local Maid = require("Maid")
+
 local WeaponBase = {}
 WeaponBase.__index = WeaponBase
 
@@ -32,7 +34,7 @@ function WeaponBase.new(char: Model, serviceBag): WeaponBase
 	damn_data.char = char
 	damn_data._serviceBag = serviceBag
 	local self = setmetatable(damn_data, WeaponBase)
-
+	self._maid = Maid.new()
 	-- enable the trail for the hitbox
 	local trail = get_trail(char)
 	if trail then
@@ -58,6 +60,7 @@ function WeaponBase:Start()
 end
 
 function WeaponBase:Destroy()
+	self._maid:DoCleaning()
 	self = nil
 end
 

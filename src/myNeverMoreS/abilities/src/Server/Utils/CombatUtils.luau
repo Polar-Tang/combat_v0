@@ -1,36 +1,6 @@
 --||Services||--
 --[[
-	local RS = game:GetService("ReplicatedStorage")
-	local SSS = game:GetService("ServerScriptService")
-	local SoundService = game:GetService("SoundService")
-	local Debris = game:GetService("Debris")
-	
-	-- COMBAT UTTILITIES
-	local module = {}
-	
-	--||Folders||--
-	local CombatStuff = SSS.Combat.Attacks
-	local SFXFolder = SoundService.SFX
-	local require = require(script.Parent.loader).load(script)
-	
-	--||Modules||--
-	local stunt_client = require("stunt_client")
-	local AnimationHandler = require("AnimationHandler")
-	
-	--TODO: migrate this logic to abiliti abstract/ cooldown controller
-	local lastSwing = {}
-	local Max_Combo = 3
-	------------------------------------------------------------------------------------------------------------------
-	
-	-- Play a client VFX, play a break sound, play guardbreak animation, change player UI, stunt enemy and reset blocking
-	-- RETURN TRU IF GUARD BREAKS
-	
-	
-	---------------- stopAnimation function ----------------
-	
-	
-	--
-	
+
 	
 	--function for parrying the enemies hit, --enemy is the one that parryed
 	module.Parrying = function(char, enemyChar): nil

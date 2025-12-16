@@ -35,34 +35,50 @@ end
 function Weapon:Execute(action)
 	self._weapon:Execute(action)
 end
--- TODO: very weapon will have an onDefended connection, which will be fired by the hiboxHit event
 function Weapon:TakeHit(context)
 	EffectService:Apply(context)
 end
 
 function Weapon:OnIncomingAttack(context)
 	-- Context should be modified through the chain, and the last in the change is TakeHit
-	task.spawn(self:OnDefend(context))
+	task.spawn(function()
+		self:OnDefend(context)
+	end)
 end
 
 function Weapon:OnDefend(context)
-    -- Chain of Responsibility pattern
-    local modifiedContext = context
-    
-    for _, modifier in ipairs(self._defenseChain) do
-        modifiedContext = modifier:Process(modifiedContext)
-        
-        -- If a modifier blocks completely, stop the chain
-        if modifiedContext.blocked then
-            break
-        end
-    end
+	-- Chain of Responsibility pattern
+	local modifiedContext = context
+
+	for _, description in ipairs(self._defenseChain) do
+		local modifier = description.modifier
+		modifiedContext = modifier:Process(modifiedContext)
+
+		-- If a modifier blocks completely, stop the chain
+		if modifiedContext.blocked then
+			return
+		end
+	end
 	self:TakeHit(modifiedContext)
 end
 
--- TODO: considering using a enum type, a key which give order of priority so use active defenses as middlewares
 function Weapon:SetActiveDefense(class)
-	table.insert(self._defenseChain, class)
+	table.insert(self._defenseChain, {
+        modifier = class,
+        priority = class.priority
+    })
+	
+	table.sort(self._defenseChain, function(a, b)
+        return a.priority < b.priority
+    end)
+end
+
+function Weapon:ClearActiveDefense(priority)
+	for index, desc in ipairs(self._defenseChain) do 
+		if desc.priority == priority then
+			table.remove(self._defenseChain, index)
+		end
+	end
 end
 
 function Weapon:OnDefended()
@@ -71,7 +87,6 @@ end
 
 function Weapon:EquiTool(tool)
 	local toolName = tool.Name
-
 	if not Strategies[toolName] then
 		warn("Weapon not found")
 		return
@@ -107,8 +122,7 @@ function Weapon:UnequiTool()
 	UnEquipSound.Parent = self.Char:WaitForChild("HumanoidRootPart")
 	UnEquipSound:Play()
 	Debris:AddItem(UnEquipSound, 1)
-
-	self:deleteToolData()
+	self._weapon:UnEquip()
 end
 
 function Weapon:GetAction(action)
@@ -126,17 +140,7 @@ function Weapon:registryTool(toolName)
 	self.tool_name = toolName
 end
 
--- TODO: create a method that lookup the attack by the given name, and do call coolDownControler.init(attck.reset_time), API between weapon controller and ability controller
 
-function Weapon:deleteToolData()
-	for k, v in pairs(self) do
-		if k == "Char" then
-			continue
-		end
-		self[k] = nil
-	end
-	self.tool = nil
-end
 
 -- If the sound thing causes issue we move it to a facade
 function Weapon:PlaySound(lifeTime: number?, nameSound: string)
@@ -148,6 +152,7 @@ function Weapon:PlaySound(lifeTime: number?, nameSound: string)
 end
 
 function Weapon:PlaySwingSound(lifeTime: number?)
+	print("Do you meant to use PlaySound ", debug.traceback())
 	local dur = lifeTime or 1
 	local SwordSwingSound = self.Folder:WaitForChild("Swing"):Clone()
 	SwordSwingSound.Parent = self.Char:WaitForChild("HumanoidRootPart")
@@ -156,6 +161,8 @@ function Weapon:PlaySwingSound(lifeTime: number?)
 end
 
 function Weapon:PlayHeavySound(lifeTime: number?)
+	print("Do you meant to use PlaySound ", debug.traceback())
+
 	local dur = lifeTime or 4
 	local HeavySound = WeaponSoundFolder:WaitForChild(self.tool_name):WaitForChild("Heavy"):Clone() -- the sound is very important
 	HeavySound.Parent = self.Char.HumanoidRootPart

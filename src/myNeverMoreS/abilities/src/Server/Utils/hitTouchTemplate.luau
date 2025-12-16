@@ -40,7 +40,6 @@ return function(parentClass)
 	--newHitbox.Touched:Connect
 	return function(hit, enemyHum)
 		----------------------------------------------------
-		-- TODO: destroy the old hitboxes un Unequip tool
 		local context = {
 			Defender = {},
 			Attacker = {},
@@ -70,7 +69,8 @@ return function(parentClass)
 		if parentClass.groundSmash then
 			parentClass.groundSmash.position = hit.Position
 		end
-
+		
+		context.groundSmash = parentClass.groundSmash
 		context.damage = parentClass.damage
 		context.stunt_time = parentClass.stun_time
 		context.serviceBag = parentClass.serviceBag

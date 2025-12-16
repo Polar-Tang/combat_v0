@@ -68,6 +68,9 @@ function Basic:Execute()
 	if self._cooldownController:getCD() then
 		return
 	end
+	if self.hitCon then
+		self.hitCon:Disconnect()
+	end
 	self._cooldownController:init(self.cooldown)
 	local CHAR = self.character
 
@@ -136,7 +139,7 @@ function Basic:Execute()
 		serviceBag = self._serviceBag,
 		strength = 50,
 		ragdoll = {
-			duration =1,
+			duration = 0.5,
 		},
 		groundSmash = groundSmash,
 		damage = self.damage,
@@ -145,7 +148,7 @@ function Basic:Execute()
 	}
 	-- describe more data used fot the effect
 	data.strength = strength
-	self.hitBox.Touched:Connect(hitTouchTemplate(data))
+	self.hitCon = self.hitBox.Touched:Connect(hitTouchTemplate(data))
 end
 
 return Basic

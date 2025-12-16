@@ -61,7 +61,6 @@ end
 
 function Blocking.Check()
 	return not debounce 
-	
 end
 
 function Blocking.IsBlocking()
