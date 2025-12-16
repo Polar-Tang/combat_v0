@@ -114,14 +114,35 @@ function Basic:Execute()
 	})
 
 	local strength: number
+	local groundSmash = nil
 
 	if current_combo == max_combo then
 		strength = 35
+		groundSmash = {
+			position = nil,
+			amount = 14,
+			velocity = 70,
+			material = Enum.Material.Slate,
+			dust = true,
+			shockwave = true,
+			sizeRange = Vector2.new(1, 2.5),
+			lifetime = 2.5,
+		}
 	else
 		strength = 10
 	end
-	local data = self
 
+	local data = {
+		serviceBag = self._serviceBag,
+		strength = 50,
+		ragdoll = {
+			duration =1,
+		},
+		groundSmash = groundSmash,
+		damage = self.damage,
+		hitBox = self.hitBox,
+		stun_time = self.stun_time,
+	}
 	-- describe more data used fot the effect
 	data.strength = strength
 	self.hitBox.Touched:Connect(hitTouchTemplate(data))

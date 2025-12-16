@@ -3,7 +3,6 @@ local AttackBaseAbility = require("AttackBaseAbility")
 
 local hitTouchTemplate = require("hitTouchTemplate")
 local hitbox_start_stop = require("hitbox_start_stop")
-local DebrisFX = require("DebrisFX")
 
 local Heavy = setmetatable({}, AttackBaseAbility)
 Heavy.__index = Heavy
@@ -12,6 +11,8 @@ Heavy.Type = "Attack"
 
 function Heavy.new(config)
 	local self = setmetatable(AttackBaseAbility.new(config), Heavy)
+	self.hitBox = self:createHitBox()
+
 	return self
 end
 -- TODO: DEBUG THIS SHIT
@@ -21,7 +22,7 @@ function Heavy:Execute()
 	end
 	self._cooldownController:init(self.cooldown)
 	local CHAR = self.character
-	local newHitbox = self:createHitBox()
+	local newHitbox = self.hitBox
 
 	--Settin attr
 	self:SetAttributes()
@@ -57,25 +58,31 @@ function Heavy:Execute()
 
 	-- HITBOX SHIT
 
-	-- local WeaponData = self._weaponHandler:Get(CHAR)
-	--return CHAR:WaitForChild(WeaponData.tool_name):WaitForChild("BodyAttach"):FindFirstChild("Trail")
-	newHitbox.Touched:Connect(hitTouchTemplate(self, function(hit, enemyHum)
-		self.RagdollService:Tag(enemyHum)
-		task.delay(0.5, function()
-			self.RagdollService:Untag(enemyHum)
-		end)
-		DebrisFX:GroundSmash({
-			position = hit.Position,
-			amount = 14,
-			velocity = 70,
-			material = Enum.Material.Slate,
-			dust = true,
-			shockwave = true,
-			sizeRange = Vector2.new(1, 2.5),
-			lifetime = 2.5,
-		})
-		return { Strength = 50 }
-	end))
+	local groundSmash = {
+		position = nil,
+		amount = 14,
+		velocity = 70,
+		material = Enum.Material.Slate,
+		dust = true,
+		shockwave = true,
+		sizeRange = Vector2.new(1, 2.5),
+		lifetime = 2.5,
+	}
+
+	local ragdoll = {
+		duration = 1
+	}
+	local data = {
+		serviceBag = self._serviceBag,
+		strength = 50,
+		ragdoll = ragdoll,
+		groundSmash = groundSmash,
+		damage = self.damage,
+		hitBox = newHitbox,
+		stun_time = self.stun_time
+	}
+
+	newHitbox.Touched:Connect(hitTouchTemplate(data))
 end
 
 function Heavy:test()

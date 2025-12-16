@@ -40,6 +40,7 @@ function AbilityBuilder:Add(inputKey, abilityName, config: WeaponStats)
 	local newAbility = AbilityClass.new(config)
 	self._map[inputKey] = newAbility
 	if config.type == "Defense" then
+		-- local ability = DefenseAbility.new
 		function self.OnDefended()
 			newAbility:OnDefended()
 		end

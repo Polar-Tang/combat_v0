@@ -1,24 +1,62 @@
+export type effectHitCtx = {
+	Defender: {
+		Character: Model,
+		Humanoid: Humanoid,
+		HRP: BasePart
+	},
+	Attacker: {
+		Character: Model,
+		Humanoid: Humanoid,
+		HRP: BasePart
+	},
+	groundSmash: {
+		position: Vector3,
+		amount : number,
+		velocity : number,
+		material : EnumItem,
+		dust : boolean ,
+		shockwave : boolean,
+		sizeRange : Vector2,
+		lifetime : number,
+	},
+	strength: number,
+	damage: number,
+	kockback: Vector3,
+	stunt_time: number,
+	ragdoll: {
+		isRag: boolean,
+		duration: number
+	},
+	serviceBag: any
+}
+
 return function(parentClass)
 	local newHitbox = parentClass.hitBox
 
 	local CHAR: Model = newHitbox.Puncher
-	local BinderProvider = parentClass._serviceBag:GetService(_G.BinderProvider)
+	local BinderProvider = parentClass.serviceBag:GetService(_G.BinderProvider)
 	-- weapon Binder
 	local WeaponBinder = BinderProvider:Get("Armed")
 	--newHitbox.Touched:Connect
 	return function(hit, enemyHum)
 		----------------------------------------------------
 		-- TODO: destroy the old hitboxes un Unequip tool
-		local context = {}
-		context.Defender_Humanoid = enemyHum
+		local context = {
+			Defender = {},
+			Attacker = {},
+			groundSmash = {},
+			ragdoll = {}
+		} :: effectHitCtx
+		context.Defender.Humanoid = enemyHum
+		context.Attacker.Character = CHAR
 
 		local ENEMY_CHAR: Model = enemyHum.Parent
-		context.Defender = ENEMY_CHAR
+		context.Defender.Character = ENEMY_CHAR
 
 		context.strength = parentClass.strength
 
 		local ENEMYHRP = ENEMY_CHAR:WaitForChild("HumanoidRootPart")
-		context.Defender_HRP = ENEMYHRP
+		context.Defender.HRP = ENEMYHRP
 
 		local HRP = CHAR:WaitForChild("HumanoidRootPart")
 		local CENTER = (ENEMYHRP.Position - HRP.Position).Unit
@@ -26,10 +64,17 @@ return function(parentClass)
 		context.kockback = kockback
 		----------------------------------------------------
 		-- LAST BUT NOT LEAST, IMPORTANT DATA FROM THE PARENT
-		context.damage = parentClass.damage
-		context.stun_time = parentClass.stun_time
-		context._serviceBag = parentClass._serviceBag
+		-- Overwrites groundSMash, if it exists it lacks the hit position, only know by this module
+		context.id = newHitbox.Key
+		if parentClass.groundSmash then
+			parentClass.groundSmash.position = hit.Position
+		end
 
+		context.damage = parentClass.damage
+		context.stunt_time = parentClass.stun_time
+		context.serviceBag = parentClass.serviceBag
+		context.ragdoll = parentClass.ragdoll
+		
 		local weaponEnemy = WeaponBinder:Get(ENEMY_CHAR)
 		weaponEnemy:OnIncomingAttack(context)
 

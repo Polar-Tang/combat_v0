@@ -88,11 +88,9 @@ function Fist:_createAbilities()
 	return self
 end
 
-function Fist:OnDefended()
-	if not self.OnDefended then
-		return
-	end
-	self.OnDefended()
+-- Called by the weapon context when it recives an attack
+function Fist:OnDefended(ctx)
+	self.OnDefended
 end
 
 function Fist:Execute(action: string)
