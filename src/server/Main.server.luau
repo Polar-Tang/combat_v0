@@ -57,6 +57,7 @@ local FistTool = StarterPack:FindFirstChild("Fist")
 weaponBinder:GetClassAddedSignal():Connect(function(warrior)
 	if warrior.Char.Name == "Blocking" then
 		warrior:EquiTool(FistTool)
+		warrior:Execute("Blocking")
 	end
 end)
 

@@ -9,17 +9,18 @@ local require = require(script.Parent.loader).load(script)
 --||Modules||--
 
 local stunt_client = require("stunt_client")
+local DefenseBaseAbility = require("DefenseBaseAbility")
 
 -- SETTING CHARACTER ATTRIBUTES TO THE CHARACTER, REDUCES ITS VELOCITY
 ------------------------------------------------------------------------------------------------------------------
 local BaseAbility = require("BaseAbility")
 
-local Blocking = setmetatable({}, BaseAbility)
+local Blocking = setmetatable(DefenseBaseAbility, BaseAbility)
 Blocking.__index = Blocking
 Blocking.Type = "Defense"
 
 function Blocking.new(config)
-	local self = setmetatable(BaseAbility.new(config), Blocking)
+	local self = setmetatable(DefenseBaseAbility.new(config), Blocking)
 	return self
 end
 
@@ -48,6 +49,7 @@ function Blocking:Execute()
 			task.wait(parry_time)
 			character:SetAttribute("Parrying", false)
 		end)
+		self:Activate()
 	elseif isBlocking then
 		self:Stop()
 	end
@@ -105,9 +107,10 @@ function Blocking:Stop()
 	char:SetAttribute("LastStopTime", tick())
 	char:SetAttribute("Blocking", 0)
 	self._animHandler:LoadAnimation(false, "Blocking")
+	self:Deactivate()
 end
 
-function Blocking:OnDefended()
+function Blocking:Process(context)
 	local char = self.character
 	local toolName = self.tool_name
 

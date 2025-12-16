@@ -66,6 +66,7 @@ return function(parentClass)
 		-- LAST BUT NOT LEAST, IMPORTANT DATA FROM THE PARENT
 		-- Overwrites groundSMash, if it exists it lacks the hit position, only know by this module
 		context.id = newHitbox.Key
+		
 		if parentClass.groundSmash then
 			parentClass.groundSmash.position = hit.Position
 		end

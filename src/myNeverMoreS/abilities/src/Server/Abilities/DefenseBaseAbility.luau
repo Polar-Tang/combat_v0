@@ -13,12 +13,7 @@ function DefenseAbility.new(config)
 end
 
 function DefenseAbility:Execute()
-    -- Toggle blocking state
-    if self.isActive then
-        self:Deactivate()
-    else
-        self:Activate()
-    end
+    error("This method should be override by child class")
 end
 
 local EnumDefense = {
@@ -34,6 +29,11 @@ function DefenseAbility:Activate()
     self._weaponHandler:SetActiveDefense(self)
 end
 
+function DefenseAbility:Process(context)
+    error("This method should be override by child class")
+end
+
+-- TODO: use enum types as keys
 function DefenseAbility:Deactivate()
     self.isActive = false
     self._weaponHandler:ClearActiveDefense()

@@ -88,11 +88,6 @@ function Fist:_createAbilities()
 	return self
 end
 
--- Called by the weapon context when it recives an attack
-function Fist:OnDefended(ctx)
-	self.OnDefended
-end
-
 function Fist:Execute(action: string)
 	if not self.attacks[action] then
 		return
