@@ -7,7 +7,6 @@ local CooldownController = require("CooldownController")
 local hitbox_start_stop = require("hitbox_start_stop")
 --utils
 local hitTouchTemplate = require("hitTouchTemplate")
-local DebrisFX = require("DebrisFX")
 
 --classes
 local AttackBaseAbility = require("AttackBaseAbility")
@@ -114,33 +113,18 @@ function Basic:Execute()
 		animationEventName = "EndedCon",
 	})
 
-	--WeaponData:PlaySwingSound()
-	local getStrnght = function(hit, enemyHum)
-		local Strenght = 10
-		if current_combo == max_combo then
-			self.RagdollService:Tag(enemyHum)
-			task.delay(0.5, function()
-				self.RagdollService:Untag(enemyHum)
-			end)
-			DebrisFX:GroundSmash({
-				position = hit.Position,
-				amount = 14,
-				velocity = 70,
-				material = Enum.Material.Slate,
-				dust = true,
-				shockwave = true,
-				sizeRange = Vector2.new(1, 2.5),
-				lifetime = 2.5,
-			})
-			Strenght = 35
-		end
+	local strength: number
 
-		return { Strength = Strenght }
+	if current_combo == max_combo then
+		strength = 35
+	else
+		strength = 10
 	end
+	local data = self
 
-	self.hitBox.Touched:Connect(
-		hitTouchTemplate(self._weaponHandler:GetAbilityStats(Enum.UserInputType.MouseButton1), getStrnght)
-	)
+	-- describe more data used fot the effect
+	data.strength = strength
+	self.hitBox.Touched:Connect(hitTouchTemplate(data))
 end
 
 return Basic

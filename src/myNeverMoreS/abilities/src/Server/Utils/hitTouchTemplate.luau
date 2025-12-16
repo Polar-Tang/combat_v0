@@ -1,21 +1,4 @@
-local RS = game:GetService("ReplicatedStorage")
-local Debris = game:GetService("Debris")
-local Players = game:GetService("Players")
-
-local require = require(script.Parent.loader).load(script)
--- local CombatUtils = require("CombatUtils")
-
---||BINDERS||--
--- TODO: doubt about require WeaponBInder or Weapon
-
---||Events||--
-local remotes = RS.Events
-local VFX_Event: RemoteEvent = remotes.VFX
-
---local hitbox_start_stop = require(Helpers.hitbox_start_stop)
-local stunt_client = require("stunt_client")
-
-return function(parentClass, getStrength)
+return function(parentClass)
 	local newHitbox = parentClass.hitBox
 
 	local CHAR: Model = newHitbox.Puncher
@@ -26,15 +9,30 @@ return function(parentClass, getStrength)
 	return function(hit, enemyHum)
 		----------------------------------------------------
 		-- TODO: destroy the old hitboxes un Unequip tool
+		local context = {}
+		context.Defender_Humanoid = enemyHum
+
 		local ENEMY_CHAR: Model = enemyHum.Parent
-		local weaponEnemy = WeaponBinder:Get(ENEMY_CHAR)
-		weaponEnemy:OnIncomingAttack()
+		context.Defender = ENEMY_CHAR
+
+		context.strength = parentClass.strength
+
+		local ENEMYHRP = ENEMY_CHAR:WaitForChild("HumanoidRootPart")
+		context.Defender_HRP = ENEMYHRP
 
 		local HRP = CHAR:WaitForChild("HumanoidRootPart")
+		local CENTER = (ENEMYHRP.Position - HRP.Position).Unit
+		local kockback = CENTER * parentClass.strength
+		context.kockback = kockback
 		----------------------------------------------------
+		-- LAST BUT NOT LEAST, IMPORTANT DATA FROM THE PARENT
+		context.damage = parentClass.damage
+		context.stun_time = parentClass.stun_time
+		context._serviceBag = parentClass._serviceBag
 
-		local Damage = parentClass.damage
-		local StunTime = parentClass.stun_time
+		local weaponEnemy = WeaponBinder:Get(ENEMY_CHAR)
+		weaponEnemy:OnIncomingAttack(context)
+
 		----------------------------------------------------
 		-- Handling the hit blocking
 		-- Heavy will be an attribute set by the heavy attack, execute()
@@ -61,13 +59,8 @@ return function(parentClass, getStrength)
 		end
 		]]
 		------------ CONSTANTS ------------
-		local ENEMYCHAR = ENEMY_CHAR
-		local ENEMYHRP = ENEMYCHAR:WaitForChild("HumanoidRootPart")
 
-		local CENTER = (ENEMYHRP.Position - HRP.Position).Unit
 		--local STRENGTH = 10
-		local data = getStrength(hit, enemyHum)
-		local STRENGTH = data.Strength
 
 		---------------------- HIT: ANIM, DAMAGA ----------------------
 		--enemyHrp.CFrame = CFrame.lookAt(enemyHrp.Position, hrp.Position)--makes the enemy look at you, disabled it cuz it doesnt look good lol
@@ -75,38 +68,6 @@ return function(parentClass, getStrength)
 		-- PLAY THE HIT FROM THE COMBO
 		--print("Stop animation playing feint")
 		--print("NPCAnimBinder ", NPCAnimBinder)
-
-		local kockback = CENTER * STRENGTH
-
-		if STRENGTH >= 35 then
-			local bv = Instance.new("BodyVelocity")
-			bv.MaxForce = Vector3.new(math.huge, 0, math.huge)
-			bv.P = 50000
-			bv.Velocity = kockback
-			bv.Parent = ENEMYHRP
-
-			Debris:AddItem(bv, 0.2)
-		end
-
-		ENEMYCHAR:SetAttribute("IsRagdoll", false)
-		if Damage then
-			enemyHum:TakeDamage(Damage)
-			ENEMYHRP.Anchored = false
-		end
-
-		stunt_client(enemyHum, StunTime)
-
-		ENEMYCHAR:SetAttribute("IsBlocking", false)
-		ENEMYCHAR:SetAttribute("Attacking", false)
-		ENEMYCHAR:SetAttribute("Swing", false)
-		ENEMYCHAR:SetAttribute("Parrying", false)
-		ENEMYCHAR:SetAttribute("IsBlocking", false)
-
-		VFX_Event:FireAllClients("SwordHit", ENEMYCHAR)
-		local Player = Players:GetPlayerFromCharacter(CHAR)
-		if Player then
-			VFX_Event:FireClient(Player, "SwordHitShake")
-		end
 	end
 end
 
