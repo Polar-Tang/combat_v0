@@ -68,9 +68,7 @@ function Basic:Execute()
 	if self._cooldownController:getCD() then
 		return
 	end
-	if self.hitCon then
-		self.hitCon:Disconnect()
-	end
+
 	self._cooldownController:init(self.cooldown)
 	local CHAR = self.character
 
@@ -148,7 +146,7 @@ function Basic:Execute()
 	}
 	-- describe more data used fot the effect
 	data.strength = strength
-	self.hitCon = self.hitBox.Touched:Connect(hitTouchTemplate(data))
+	self._maid.hitConnection = self.hitBox.Touched:Connect(hitTouchTemplate(data))
 end
 
 return Basic

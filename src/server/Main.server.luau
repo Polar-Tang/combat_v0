@@ -25,9 +25,12 @@ serviceBag:GetService(Nevermore("RagdollService"))
 local AnimationHandler = Nevermore("AnimationHandler")
 local Binder = Nevermore("Binder")
 local WeaponBinder = Nevermore("Weapon")
+local StateMachine = Nevermore("StateMachine")
+
 local Binders = {
 	["AnimationHandler"] = AnimationHandler,
 	["Armed"] = WeaponBinder,
+	["NPC"] = StateMachine
 }
 ---------- USE BINDER PORVIDER ----------
 local BinderProvider = Nevermore("BinderProvider")

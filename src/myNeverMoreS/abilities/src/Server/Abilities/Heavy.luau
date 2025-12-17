@@ -19,9 +19,7 @@ function Heavy:Execute()
 	if self._cooldownController:getCD() then
 		return
 	end
-	if self.hitCon then
-		self.hitCon:Disconnect()
-	end
+	
 	self._cooldownController:init(self.cooldown)
 	local CHAR = self.character
 	local newHitbox = self.hitBox
@@ -84,7 +82,7 @@ function Heavy:Execute()
 		stun_time = self.stun_time
 	}
 
-	self.hitCon = newHitbox.Touched:Connect(hitTouchTemplate(data))
+	self._maid.hitConnection = newHitbox.Touched:Connect(hitTouchTemplate(data))
 end
 
 function Heavy:test()

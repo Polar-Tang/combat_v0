@@ -1,3 +1,4 @@
+-- The attacks abilities does not deal damage instantly, they rather describe intentes and derive that to the weapon's enemy
 local require = require(script.Parent.loader).load(script)
 local HitboxModule = require("MuchachoHitbox")
 local get_trail = require("get_trail")

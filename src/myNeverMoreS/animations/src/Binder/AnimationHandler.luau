@@ -148,7 +148,7 @@ function AnimationHandler:_getDescriptor(animaName): AnimationDescriptor
 end
 
 function AnimationHandler:Destroy()
-	--print("[AnimationHandler] Destroyed for", self.npc)
+	self._maid:DoCleaning()
 	setmetatable(self, nil)
 end
 
@@ -217,38 +217,22 @@ function AnimationHandler:OnSignal(info: connArgs)
 
 	local animationTracker = descriptor.AnimationTrack
 	local signal: RBXScriptSignal
-	--[[
-	print(
-		"Connecting marker:",
-		animationEventName,
-		"for animation:",
-		animName,
-		"track exists:",
-		descriptor.AnimationTrack ~= nil
-	)
-	]]
-	-- if animName == "Heavy" then
-	-- 	for _, marker in ipairs(descriptor.AnimationTrack:GetTimeOfKeyframe("Hit")) do
-	-- 		print("Marker:", marker.Name)
-	-- 	end
-	-- end
 
 	if animationEventName == "EndedCon" then
-		--print("animationTracker.Ended ", Maid.isMaid(animationTracker.Ended))
 		signal = animationTracker.Ended
 	else
-		--print("animationTracker:GetMarkerReachedSignal(animationEventName) ",animationTracker:GetMarkerReachedSignal(animationEventName))
 		signal = animationTracker:GetMarkerReachedSignal(animationEventName)
 	end
 	local conn = signal:Connect(function(param)
 		info.callback(animationTracker, param)
 	end)
 	descriptor.Maid:__newindex(animationEventName, conn)
+	self._maid[animName] = descriptor.Maid
 end
 
 function AnimationHandler:ClearAnimation(animName)
 	local desc = self.animationDescriptors[animName]
-	if desc then
+	if desc and desc.Maid then
 		desc.Maid:DoCleaning() -- disconnects ALL marker/ended/start connections
 		if desc.AnimationTrack then
 			desc.AnimationTrack:Destroy()

@@ -41,7 +41,7 @@ end
 
 function Weapon:OnIncomingAttack(context)
 	-- Context should be modified through the chain, and the last in the change is TakeHit
-	task.spawn(function()
+	task.defer(function()
 		self:OnDefend(context)
 	end)
 end

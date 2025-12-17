@@ -20,6 +20,16 @@ local otherAnims: OtherAnims = {
 		["WDash"] = "rbxassetid://126359086132557",
 	},
 	Extra = "some value",
+	-- TODO: load this animations through :registryAnims, to the npc. Also fill it with the same animations filds as the Player.Character.Animate
+	["default-r6"] = {
+		walk = "",
+
+	}
+	-- TODO: fill it with Player.Character.Animate 
+	["default"] = {
+		walk = "",
+
+	}
 }
 
 return otherAnims
