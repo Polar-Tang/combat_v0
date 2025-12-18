@@ -10,11 +10,11 @@ function OffAttackRange:OnDataChanged(data)
 
 	--lastTime = data.lastTriggerTime
 
-	if (data.timer - data.lastTriggerTime) == 0 then
+	-- if (self.timer - self.lastTriggerTime) == 0 then
 		if data.TargetingController:GetDistanceToTarget() > 6 then
 			return true
 		end
-	end
+	-- end
 	return false
 end
 

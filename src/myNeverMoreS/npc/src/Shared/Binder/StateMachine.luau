@@ -8,7 +8,7 @@ local StateMachine = {}
 StateMachine.ServiceName = "StateMachine"
 
 function StateMachine.new(char: Model, serviceBag)
-    local state = RobloxStateMachine.new("Idle", RobloxStateMachine:LoadDirectory(StatesFolder), setCTX(char, serviceBag))
+    local state = RobloxStateMachine.new("Chasing", RobloxStateMachine:LoadDirectory(StatesFolder), setCTX(char, serviceBag))
 	return state
 end
 

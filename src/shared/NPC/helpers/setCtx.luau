@@ -20,7 +20,7 @@ return function(parent: Model, serviceBag: any)
 		-- AnimationHandler = AnimationBinder:Get(parent),
 
 		-------- Controlles --------
-		SoundHandler = SoundController.new(parent, serviceBag),
+		SoundController = SoundController.new(parent, serviceBag),
 		MovementController = MovementController.new(parent, serviceBag),
 		TargetingController = TargetingController.new(parent, serviceBag),
 		AttackerController = AttackerController.new(parent, serviceBag),

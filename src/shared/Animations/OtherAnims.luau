@@ -10,6 +10,8 @@ export type Dash = {
 export type OtherAnims = {
 	Dash: Dash,
 	Extra: string,
+	-- default_r6: string,
+	-- default :
 }
 
 local otherAnims: OtherAnims = {
@@ -21,14 +23,12 @@ local otherAnims: OtherAnims = {
 	},
 	Extra = "some value",
 	-- TODO: load this animations through :registryAnims, to the npc. Also fill it with the same animations filds as the Player.Character.Animate
-	["default-r6"] = {
-		walk = "",
-
-	}
+	["default_r6"] = {
+		walk = "rbxassetid://134585533297642",
+	},
 	-- TODO: fill it with Player.Character.Animate 
 	["default"] = {
 		walk = "",
-
 	}
 }
 

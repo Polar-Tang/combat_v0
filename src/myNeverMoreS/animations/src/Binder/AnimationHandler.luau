@@ -11,6 +11,7 @@ local RS = game:GetService("ReplicatedStorage")
 local require = require(script.Parent.loader).load(script)
 
 local Maid = require("Maid")
+local Table = require("Table")
 --local NeverMore = require(RS.Packages.neverMore.loader).load(script.Parent.Parent.Parent.Packages.neverMore)
 --local Binder = NeverMore("Binder")
 --print("binder ", Binder)
@@ -78,8 +79,9 @@ function AnimationHandler:LoadAnimation(state: boolean, animaName: string, isPre
 	if isPreload then
 		warn("Do you meant to use Preload() " .. debug.traceback())
 	end
-	self:_ensurePreload(animaName)
 	local current_desc = self:_getDescriptor(animaName)
+	print("self.anims ", self.animations)
+	self:_ensurePreload(animaName)
 	local animaTionTrack: AnimationTrack = current_desc.AnimationTrack
 
 	if state and animaTionTrack then
@@ -145,6 +147,12 @@ end
 function AnimationHandler:_getDescriptor(animaName): AnimationDescriptor
 	assert(self.animations[animaName], "animation name does not exists")
 	return self.animationDescriptors[animaName]
+end
+
+function AnimationHandler:AddAnimations(newAnims)
+	for k, v in pairs(newAnims) do
+		self.animations[k] = v
+	end
 end
 
 function AnimationHandler:Destroy()
