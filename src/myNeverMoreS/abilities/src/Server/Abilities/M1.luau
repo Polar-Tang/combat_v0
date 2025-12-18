@@ -146,7 +146,11 @@ function Basic:Execute()
 	}
 	-- describe more data used fot the effect
 	data.strength = strength
-	self._maid.hitConnection = self.hitBox.Touched:Connect(hitTouchTemplate(data))
+	self._maid:DoCleaning()
+	local hitTask = self.hitBox.Touched:Connect(hitTouchTemplate(data))
+	hitTask.Destroy = hitTask.Disconnect
+
+	self._maid:GiveTask(hitTask)
 end
 
 return Basic

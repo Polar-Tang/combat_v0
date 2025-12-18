@@ -6,6 +6,7 @@ local WeaponSoundFolder = SoundFolder.Weapons
 
 local require = require(script.Parent.loader).load(script)
 local CooldownController = require("CooldownController")
+local Maid = require("Maid")
 
 local BaseAbility = {}
 BaseAbility.__index = BaseAbility
@@ -23,6 +24,7 @@ function BaseAbility.new(config)
 
 	self.RagdollService = self._serviceBag:GetService(require("Ragdoll"))
 
+	self._maid = Maid.new()
 	-- BINDERS
 	assert(_G.BinderProvider, "Binder Provider not initialized")
 	-- Get the animation binder
@@ -52,8 +54,8 @@ end
 
 function BaseAbility:Destroy()
 	setmetatable(self, nil)
+	self._maid:DoCleaning()
 	self = nil
-	print("Ability deleted")
 end
 
 return BaseAbility

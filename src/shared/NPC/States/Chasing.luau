@@ -31,7 +31,7 @@ function Chasing:OnInit(data)
 	data.SoundController:RegistrySounds(sounds)
 
 	-- Forces to get an enemy
-	local enemy: Model = workspace.virtual_nautilus
+	local enemy: Model = workspace:WaitForChild("virtual_nautilus")
 	local Players: Players = game:GetService("Players")
 	local player = Players:GetPlayerFromCharacter(enemy)
 	data.TargetingController:SetTargetPlayer(player)
@@ -39,16 +39,16 @@ function Chasing:OnInit(data)
 end
 
 function Chasing:OnEnter(data)
-	self.timer = 0
-	self.lastTriggerTime = 0
+	-- self.timer = 0
+	-- self.lastTriggerTime = 0
 
 end
 
 
 function Chasing:OnHeartbeat(data, deltatime)
-	self.timer += deltatime
-	if self.timer - self.lastTriggerTime >= 1 then
-		self.lastTriggerTime = self.timer
+	data.timer += deltatime
+	if data.timer - data.lastTriggerTime >= 1 then
+		data.lastTriggerTime = data.timer
 		
 		local currentPos = data.TargetingController:GetTargetPosition()
 

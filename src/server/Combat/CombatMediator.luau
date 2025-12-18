@@ -57,12 +57,11 @@ Equipment.OnServerEvent:Connect(function(player, data)
 
 	if not has_to_equip then
 		-- AnimationClient.UnEquip(char)
+
 		WeaponHandler:UnequiTool()
 		AnimationClient.UnEquip(char)
 		return
 	end
-	print("it continues, even with ", has_to_equip)
-	
 	WeaponHandler:EquiTool(tool)
 	WeaponHandler:registryTool(tool.Name)
 	local arm = "RightLowerArm"

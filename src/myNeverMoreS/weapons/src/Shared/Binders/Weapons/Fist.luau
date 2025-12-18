@@ -105,6 +105,7 @@ function Fist:GetAction(action: string)
 end
 
 function Fist:UnEquip()
+	self._maid:DoCleaning()
 	return self:Destroy()
 end
 

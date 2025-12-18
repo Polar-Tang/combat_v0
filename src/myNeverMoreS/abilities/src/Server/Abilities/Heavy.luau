@@ -81,8 +81,12 @@ function Heavy:Execute()
 		hitBox = newHitbox,
 		stun_time = self.stun_time
 	}
-
-	self._maid.hitConnection = newHitbox.Touched:Connect(hitTouchTemplate(data))
+	-- asumming the data is always the same, the connection should remain the same too
+	if self._maid["Heavy"] then
+			return
+		end
+	local hitTask = self.hitBox.Touched:Connect(hitTouchTemplate(data))
+	self._maid:__newindex("Heavy", hitTask)
 end
 
 function Heavy:test()

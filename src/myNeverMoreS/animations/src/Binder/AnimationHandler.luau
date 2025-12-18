@@ -64,6 +64,7 @@ function AnimationHandler.new(char, serviceBag): Options
 	self.animations = {}
 	self.animationDescriptors = {}
 	self.armName = ""
+	self._maid = Maid.new()
 	return self
 end
 
@@ -80,13 +81,17 @@ function AnimationHandler:LoadAnimation(state: boolean, animaName: string, isPre
 		warn("Do you meant to use Preload() " .. debug.traceback())
 	end
 	local current_desc = self:_getDescriptor(animaName)
-	print("self.anims ", self.animations)
 	self:_ensurePreload(animaName)
 	local animaTionTrack: AnimationTrack = current_desc.AnimationTrack
 
-	if state and animaTionTrack then
+	if state and not animaTionTrack then
+		local animaTionTrack: AnimationTrack =
+			self.animator:LoadAnimation(self.animationDescriptors[animaName].Animation)
 		animaTionTrack:Play()
-
+		self.animationDescriptors[animaName].AnimationTracker = animaTionTrack
+		return animaTionTrack
+	elseif state and animaTionTrack then
+		animaTionTrack:Play()
 		return animaTionTrack
 	end
 	--------------------------------------
@@ -132,11 +137,7 @@ function AnimationHandler:_ensurePreload(animaName)
 	do
 		local animaTionTrack: AnimationTrack =
 			self.animator:LoadAnimation(self.animationDescriptors[animaName].Animation)
-		animaTionTrack:Play()
 		animaTionTrack:Play(0)
-		animaTionTrack:AdjustSpeed(0)
-		task.wait()
-		animaTionTrack:Stop()
 		self.animationDescriptors[animaName].AnimationTrack = animaTionTrack
 	end
 
@@ -157,6 +158,7 @@ end
 
 function AnimationHandler:Destroy()
 	self._maid:DoCleaning()
+	self:ClearAllTheAnims()
 	setmetatable(self, nil)
 end
 
@@ -225,20 +227,23 @@ function AnimationHandler:OnSignal(info: connArgs)
 
 	local animationTracker = descriptor.AnimationTrack
 	local signal: RBXScriptSignal
+	if descriptor.Maid[animationEventName] then
+		return
+	end
 
 	if animationEventName == "EndedCon" then
 		signal = animationTracker.Ended
 	else
 		signal = animationTracker:GetMarkerReachedSignal(animationEventName)
 	end
+
 	local conn = signal:Connect(function(param)
 		info.callback(animationTracker, param)
 	end)
 	descriptor.Maid:__newindex(animationEventName, conn)
-	self._maid[animName] = descriptor.Maid
 end
 
-function AnimationHandler:ClearAnimation(animName)
+function AnimationHandler:_ClearAnimation(animName)
 	local desc = self.animationDescriptors[animName]
 	if desc and desc.Maid then
 		desc.Maid:DoCleaning() -- disconnects ALL marker/ended/start connections
@@ -247,7 +252,11 @@ function AnimationHandler:ClearAnimation(animName)
 		end
 	end
 end
-
+function AnimationHandler:ClearAllTheAnims()
+	for k, v in pairs(self.animations) do
+		self:_ClearAnimation(k)
+	end
+end
 export type AnimationHandler = typeof(AnimationHandler.new({} :: Options))
 
 return AnimationHandler

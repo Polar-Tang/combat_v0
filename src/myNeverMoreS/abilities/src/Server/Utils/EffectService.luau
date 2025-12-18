@@ -66,7 +66,7 @@ function EffectService:Apply(context: effectHitCtx)
 			RagdollService:Untag(defender_humanoid)
 		end)
 	end
-	print("context ", context)
+	
 	if context.groundSmash then
 		local GConfig = context.groundSmash
 		DebrisFX:GroundSmash({

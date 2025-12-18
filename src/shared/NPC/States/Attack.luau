@@ -19,8 +19,7 @@ Attack.Transitions = {
 
 
 function Attack:OnEnter(data)
-	self._timer = 0
-	self._lastTriggerTime = 0
+	
 end
 
 function Attack:OnDataChanged(data)
@@ -28,8 +27,9 @@ function Attack:OnDataChanged(data)
 end
 
 function Attack:OnHeartbeat(data, deltaTime)
-	self.timer += deltaTime
-	if self.timer - self.lastTriggerTime >= 1 then
+	data.timer += deltaTime
+	if data.timer - data.lastTriggerTime >= 1 then
+		data.lastTriggerTime = data.timer
 		data.TargetingController:LookTarget()
 		data.AttackerController:Attack()
 	end

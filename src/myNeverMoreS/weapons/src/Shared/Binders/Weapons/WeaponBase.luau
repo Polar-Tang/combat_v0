@@ -59,11 +59,6 @@ function WeaponBase:Start()
 	self:_createAbilities()
 end
 
-function WeaponBase:Destroy()
-	self._maid:DoCleaning()
-	self = nil
-end
-
 -- This will loop abilities, setting new ones based on the weapon type
 --[[function Weapon:Start(weaponAbilities: {[string]})
 	for keyCode, abilityName in pairs(weaponAbilities) do

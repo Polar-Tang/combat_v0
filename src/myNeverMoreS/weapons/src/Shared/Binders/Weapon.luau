@@ -117,7 +117,7 @@ function Weapon:UnequiTool()
 
 	local arm = self.Char:FindFirstChild(self.armName)
 	arm:FindFirstChild("ToolGrip"):Destroy()
-
+	
 	local UnEquipSound = self.Folder:WaitForChild("UnEquip"):Clone()
 	UnEquipSound.Parent = self.Char:WaitForChild("HumanoidRootPart")
 	UnEquipSound:Play()

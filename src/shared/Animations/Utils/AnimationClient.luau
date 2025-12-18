@@ -69,6 +69,10 @@ anim.UnEquip = function(char: Model) --function for UnEquip animation
 	local onUnEquipp = function(animTrack)
 		char:SetAttribute("Swing", false)
 		AnimationHandler:LoadAnimation(false, "Idle")
+		AnimationHandler:LoadAnimation(false, "UnEquip")
+		AnimationHandler:LoadAnimation(false, "Equip")
+		AnimationHandler:ClearAllTheAnims()
+
 		-- EquipSound.Parent = char:WaitForChild("HumanoidRootPart")
 		-- EquipSound:Play()
 		-- Debris:AddItem(EquipSound, 1)

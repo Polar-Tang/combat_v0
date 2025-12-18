@@ -15,6 +15,8 @@ return function(parent: Model, serviceBag: any)
 	return {
 		npc = parent,
 		humanoid = parent:WaitForChild("Humanoid"),
+		timer = 0,
+		lastTriggerTime = 0,
 		-------- Binders --------
 		-- WeaponHandler = WeaponBinder:Get(parent),
 		-- AnimationHandler = AnimationBinder:Get(parent),
