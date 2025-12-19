@@ -49,7 +49,6 @@ end
 function Weapon:OnDefend(context)
 	-- Chain of Responsibility pattern
 	local modifiedContext = context
-
 	for _, description in ipairs(self._defenseChain) do
 		local modifier = description.modifier
 		modifiedContext = modifier:Process(modifiedContext)

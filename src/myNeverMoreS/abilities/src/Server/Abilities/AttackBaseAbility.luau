@@ -45,6 +45,7 @@ function AttackBaseAbility:createHitBox()
 	newHitbox.AutoDestroy = false
 	newHitbox.Puncher = CHAR
 	newHitbox.DetectionMode = "HitOnce"
+	newHitbox.Shape = self.shape or Enum.PartType.Block
 	-- newHitbox:Start()
 	return newHitbox
 end

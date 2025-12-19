@@ -69,7 +69,7 @@ return function(parentClass)
 		if parentClass.groundSmash then
 			parentClass.groundSmash.position = hit.Position
 		end
-		
+		context.hit_position = hit.Position
 		context.groundSmash = parentClass.groundSmash
 		context.damage = parentClass.damage
 		context.stunt_time = parentClass.stun_time

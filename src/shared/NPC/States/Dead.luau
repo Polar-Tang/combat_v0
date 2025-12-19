@@ -9,6 +9,5 @@ function Dead:OnEnter(data)
 	local npc: Model = data.npc
 	
 	npc:Destroy()
-	self:Destroy()
 end
 return Dead

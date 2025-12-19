@@ -41,7 +41,6 @@ end
 function Chasing:OnEnter(data)
 	-- self.timer = 0
 	-- self.lastTriggerTime = 0
-
 end
 
 

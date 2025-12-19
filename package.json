@@ -7,6 +7,7 @@
     "@quenty/ik": "^15.34.2",
     "@quenty/maid": "^3.5.0",
     "@quenty/pathfindingutils": "^10.12.2",
+    "@quenty/physicsutils": "^8.20.0",
     "@quenty/ragdoll": "^15.33.1",
     "@quenty/servicebag": "^11.13.1",
     "@quenty/soundplayer": "^7.23.2",

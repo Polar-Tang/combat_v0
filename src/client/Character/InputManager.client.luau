@@ -7,6 +7,7 @@ local swingEvent = remotes:WaitForChild("Swing")
 -- constants
 local plr = game:GetService("Players").LocalPlayer
 local char = plr.Character or plr.CharacterAdded:Wait()
+char:WaitForChild("Humanoid")
 --print("char ", char)
 
 --helpers functions

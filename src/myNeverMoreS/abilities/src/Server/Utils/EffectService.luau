@@ -10,7 +10,6 @@ local require = require(script.Parent.loader).load(script)
 local DebrisFX = require("DebrisFX")
 local stunt_client = require("stunt_client")
 
-
 local EffectService = {}
 
 function EffectService.SetAttHit(hited)
@@ -25,22 +24,22 @@ export type effectHitCtx = {
 	Defender: {
 		Character: Model,
 		Humanoid: Humanoid,
-		HRP: BasePart
+		HRP: BasePart,
 	},
 	Attacker: {
 		Character: Model,
 		Humanoid: Humanoid,
-		HRP: BasePart
+		HRP: BasePart,
 	},
 	groundSmash: {
 		position: Vector3,
-		amount : number,
-		velocity : number,
-		material : EnumItem,
-		dust : boolean ,
-		shockwave : boolean,
-		sizeRange : Vector2,
-		lifetime : number,
+		amount: number,
+		velocity: number,
+		material: EnumItem,
+		dust: boolean,
+		shockwave: boolean,
+		sizeRange: Vector2,
+		lifetime: number,
 	},
 	strength: number,
 	damage: number,
@@ -48,25 +47,50 @@ export type effectHitCtx = {
 	stunt_time: number,
 	ragdoll: {
 		isRag: boolean,
-		duration: number
+		duration: number,
 	},
-	serviceBag: any
+	serviceBag: any,
+	hit_position: Vector3,
 }
 
 function EffectService:Apply(context: effectHitCtx)
-    local serviceBag = context.serviceBag
-    local RagdollService = serviceBag:GetService(require("Ragdoll"))
+	local serviceBag = context.serviceBag
+	local RagdollService = serviceBag:GetService(require("Ragdoll"))
 
-	local defender_char = context.Defender.Character
+	local defender_char = context.Defender.Character :: Model
 	local defender_humanoid = context.Defender.Humanoid
+	local defender_hrp = context.Defender.HRP
 
-	if context.ragdoll then
+	if context.ragdoll and context.kockback and context.strength >= 35 then
 		RagdollService:Tag(defender_humanoid)
+
+		local Torso = context.Defender.Character:WaitForChild("Torso") :: BasePart
+
+		-- local impulse = context.kockback * Torso.AssemblyMass
+		-- Torso:ApplyImpulse(impulse)
+
+		-- local bv = Instance.new("BodyVelocity")
+		-- bv.MaxForce = Vector3.new(math.huge, 0, math.huge)
+		-- bv.P = 50000
+		-- bv.Velocity = context.kockback
+		-- bv.Parent = Torso
+
+		-- Debris:AddItem(bv, 0.2)
+
+		local vf = Instance.new("VectorForce")
+		vf.Force = context.kockback * Torso.AssemblyMass
+		vf.Attachment0 = Torso:FindFirstChildOfClass("Attachment")
+		vf.RelativeTo = Enum.ActuatorRelativeTo.World
+		vf.Parent = Torso
+
+		Debris:AddItem(vf, 0.2)
+		-- PhysicsUtils.applyForce(defender_hrp, context.kockback, context.hit_position)
 		task.delay(context.ragdoll.duration, function()
+			print("untag")
 			RagdollService:Untag(defender_humanoid)
 		end)
 	end
-	
+
 	if context.groundSmash then
 		local GConfig = context.groundSmash
 		DebrisFX:GroundSmash({
@@ -81,17 +105,16 @@ function EffectService:Apply(context: effectHitCtx)
 		})
 	end
 	-- Decide what to do with strength
-	local defender_hrp = context.Defender.HRP
+	-- local ragdollBinder = serviceBag:GetService(RagdollBindersServer).Ragdoll
 
-	if context.strength >= 35 then
-		local bv = Instance.new("BodyVelocity")
-		bv.MaxForce = Vector3.new(math.huge, 0, math.huge)
-		bv.P = 50000
-		bv.Velocity = context.kockback
-		bv.Parent = defender_hrp
-
-		Debris:AddItem(bv, 0.2)
-	end
+	-- local ragdoll = ragdollBinder:Get(humanoid)
+	-- if ragdoll then
+	-- 	print("Is ragdolled")
+	-- 	ragdollBinder:Unbind(humanoid)
+	-- else
+	-- 	print("Not ragdolled")
+	-- 	ragdollBinder:Bind(humanoid)
+	-- end
 
 	if context.damage then
 		defender_humanoid:TakeDamage(context.damage)

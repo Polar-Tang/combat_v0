@@ -24,7 +24,9 @@ CombatServer.swingEvent = function(plr, action)
 	local blocking = CHAR:GetAttribute("IsBlocking")
 
 	local IS_OCUPPED = attacking or stunned or swing or isRagdoll
-
+	if not Weapon:GetAction(action) then
+		return
+	end
 	if (Weapon:GetAction(action).Type == "Defense") and not IS_OCUPPED and blocking then
 		Weapon:Execute(action)
 		return

@@ -77,6 +77,7 @@ function TargetingController:GetDistanceToTarget()
 	return (pos - self._root.Position).Magnitude
 end
 
+
 function TargetingController:_isTargetInFront(dotThreshold: number?): boolean
 	dotThreshold = dotThreshold or 0.5
 

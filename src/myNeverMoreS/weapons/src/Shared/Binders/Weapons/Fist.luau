@@ -69,6 +69,19 @@ function Fist:_createAbilities()
 
 			tool_name = "Fist",
 		})
+		:Add(Enum.KeyCode.T, "PowerDome", {
+			name = "PowerDome",
+			type = "Attack",
+			_cooldown = attackData.PowerDome.cooldown,
+			damage = attackData.PowerDome.damage,
+			hitbox_size = attackData.PowerDome.hitbox_size,
+			hitbox_offset = attackData.PowerDome.hitbox_offset,
+			character = self.char,
+			shape = attackData.PowerDome.shape,
+			stun_time = attackData.PowerDome.stun_time,
+
+			tool_name = "Fist",
+		})
 		:Build()
 
 	if self.attacks then

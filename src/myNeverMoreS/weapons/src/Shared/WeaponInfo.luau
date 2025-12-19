@@ -19,6 +19,16 @@ local heavy_Fist = {
 	cooldown = 10,
 }
 
+local power_dome = {
+	damage = 100,
+	hitbox_size = Vector3.new(5.5, 5.5, 5),
+	hitbox_offset = CFrame.new(0, 0, -2.5),
+	stun_time = 3,
+	shape = Enum.PartType.Ball,
+	cooldown = 120,
+}
+
+
 local sprint = {
 	cooldown = 5,
 }
@@ -37,6 +47,7 @@ local info = {
 			Basic = basic_fist,
 			Heavy = heavy_Fist,
 			Sprint = sprint,
+			PowerDome = power_dome,
 		},
 		block_reset_time = 3, --the time it takes for the blocking value to go down after you last blocked
 		parry_time = 0.25, --How long the parry last when you start blocking

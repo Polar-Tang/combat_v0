@@ -5,6 +5,7 @@ local ALL_ABILITIES = {
 	["Sprint"] = require("Sprint"),
 	["Heavy"] = require("Heavy"),
 	["Blocking"] = require("Blocking"),
+	["PowerDome"] = require("PowerDome"),
 }
 
 local AbilityBuilder = {}
