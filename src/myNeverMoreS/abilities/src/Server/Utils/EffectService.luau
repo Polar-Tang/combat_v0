@@ -55,7 +55,7 @@ export type effectHitCtx = {
 }
 
 local function flyBack(enemy: BasePart, force)
-    
+    print("apply impulse to ", enemy)
 	enemy:ApplyImpulse(force)
 end
 

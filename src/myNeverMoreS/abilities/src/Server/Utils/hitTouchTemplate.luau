@@ -28,7 +28,8 @@ export type effectHitCtx = {
 		duration: number
 	},
 	Explosion : any,
-	serviceBag: any
+	serviceBag: any,
+	HRP: BasePart,
 }
 
 return function(parentClass)
@@ -59,7 +60,8 @@ return function(parentClass)
 		local ENEMYHRP = ENEMY_CHAR:WaitForChild("HumanoidRootPart")
 		context.Defender.HRP = ENEMYHRP
 
-		local HRP = CHAR:FindFirstChild("HumanoidRootPart") or CHAR:FindFirstChildWhichIsA("Part") or CHAR:FindFirstChildWhichIsA("BasePart") or CHAR:FindFirstChildWhichIsA("MeshPart")
+		local HRP = CHAR:FindFirstChild("HumanoidRootPart") or parentClass.HRP
+		
 		local CENTER = (ENEMYHRP.Position - HRP.Position).Unit
 		local kockback = CENTER * parentClass.strength
 		context.kockback = kockback

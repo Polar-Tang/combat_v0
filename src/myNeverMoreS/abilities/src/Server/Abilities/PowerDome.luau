@@ -2,6 +2,8 @@
 
 local RS = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
+local TweenService = game:GetService("TweenService")
+
 local windVFX = RS.Effects.winds
 local Power_dome = windVFX.power_up_dome
 local winds = windVFX.winds
@@ -24,27 +26,34 @@ function PowerDome.new(config)
 	return self
 end
 
-local TweenService = game:GetService("TweenService")
-function PowerDome:_ExpandDoom(shockwave)
-	shockwave.Parent = workspace
-
+-- Expnad the dome to its original size
+function PowerDome:_ExpandDomePart(part)
+	local originalSizes = {
+		["Base"] = Vector3.new(84.957, 4.96, 91.099),
+		["DustWind"] = Vector3.new(65.868, 34.496, 72.463),
+		["Dome"] = Vector3.new(64.967, 32.483, 66.633),
+	}
+	self.dome.Parent = workspace
+	
+	local DUR = 0.5
 	local tweenInfo = TweenInfo.new(
-		0.5, -- Duration
+		DUR,
 		Enum.EasingStyle.Quad,
 		Enum.EasingDirection.Out
 	)
 
 	local goal = {
-		Size = Vector3.new(self.maxRadius * 2, self.maxRadius * 2, self.maxRadius * 2),
+		Size = originalSizes[part.Name],
 		Transparency = 1,
 	}
 
-	local tween = TweenService:Create(shockwave, tweenInfo, goal)
+	local tween = TweenService:Create(part, tweenInfo, goal)
 	tween:Play()
 end
 
-function PowerDome:_SetDomePosition(shockwave)
-	for _, part in ipairs(shockwave:GetDescendants()) do
+-- Start the dome in the player position
+function PowerDome:_SetDomePosition()
+	for _, part in ipairs(self.dome:GetDescendants()) do
 		task.spawn(function()
 			if part:IsA("Part") or part:IsA("MeshPart") then
 				part.Position = self.currentPosition
@@ -53,35 +62,71 @@ function PowerDome:_SetDomePosition(shockwave)
 	end
 end
 
-function PowerDome:CreateExplosionVFX(shockwave: Model)
-	for _, part in ipairs(shockwave:GetDescendants()) do
-		task.spawn(function()
-			if part:IsA("Part") or part:IsA("MeshPart") then
-				self:_ExpandDoom(part)
-			end
-		end)
-	end
-
+function PowerDome:_ThrowOctagonalWinds()
 	for i = 1, 8 do
 		local wind = winds:Clone()
-		local angle = (i / 8) * math.pi * 2
-		local offset = Vector3.new(math.cos(angle) * 5, 0, math.sin(angle) * 5)
+
+		-- Horizontal angle around the circle
+		local horizontalAngle = (i / 8) * math.pi * 2
+
+		-- Vertical angle for hemisphere (0 to 90 degrees)
+		-- You can adjust this to control how high up the dome the winds appear
+		local verticalAngle = math.pi / 4 -- 45 degrees - adjust between 0 and math.pi/2
+
+		-- Calculate position on hemisphere surface
+		local radius = 5
+		local offset = Vector3.new(
+			math.cos(horizontalAngle) * math.cos(verticalAngle) * radius,
+			math.sin(verticalAngle), -- Y component for height
+			math.sin(horizontalAngle) * math.cos(verticalAngle) * radius
+		)
 
 		wind.Position = self.currentPosition + offset
-		wind.CFrame = CFrame.lookAt(wind.Position, self.currentPosition)
+
+		-- Orient the wind to point outward along the dome surface
+		-- The wind should face away from center, tangent to the sphere
+		local outwardDirection = (wind.Position - self.currentPosition).Unit
+		wind.CFrame = CFrame.lookAt(wind.Position, wind.Position + outwardDirection)
 		wind.Parent = workspace
 
+		-- Animate wind moving outward along the hemisphere trajectory
+		local finalOffset = offset.Unit * (radius * 10)
 		local windTween =
 			TweenService:Create(wind, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-				Position = self.currentPosition + (offset * 10),
+				Position = self.currentPosition + finalOffset,
 				Transparency = 1,
 			})
 		windTween:Play()
 
 		game:GetService("Debris"):AddItem(wind, 0.6)
 	end
+end
 
-	game:GetService("Debris"):AddItem(shockwave, 0.5)
+function PowerDome:CreateExplosionVFX()
+	-- PASS THE DEBUGER HERE
+	for _, part in ipairs(self.dome:GetDescendants()) do
+		task.spawn(function()
+			if part:IsA("Part") or part:IsA("MeshPart") then
+				self:_ExpandDomePart(part)
+			end
+		end)
+	end
+	self:_ThrowOctagonalWinds()
+	game:GetService("Debris"):AddItem(self.dome, 0.5)
+end
+
+function PowerDome:_CreateDome()
+-- First set the dome clone, attach it a hit box
+	self.dome = Power_dome:Clone()
+	self.dome:ScaleTo(0.1)
+	self.HRP = self.dome:FindFirstChild("HumanoidRootPart")
+		or self.dome.PrimaryPart
+		or self.dome:FindFirstChildOfClass("MeshPart")
+		or self.dome:FindFirstChildOfClass("Part")
+	self.currentPosition = self.character.PrimaryPart.Position
+
+	self:_SetDomePosition()
+	self.dome.Parent = Workspace
 end
 
 function PowerDome:Execute()
@@ -94,22 +139,16 @@ function PowerDome:Execute()
 	--Settin attr
 	-- self:SetAttributes()
 
-	-- First set the dome clone, attach it a hit box
-	local shockwave = Power_dome:Clone()
-	self.currentPosition = self.character.PrimaryPart.Position
-
-	self:_SetDomePosition(shockwave)
-	shockwave.Parent = Workspace
+	self:_CreateDome()	
 
 	self.hitBox = self:createHitBox({
-		Puncher = shockwave,
+		Puncher = self.dome,
 		mode = "Default",
 	})
 
 	------------- Create the description -------------
 	local data
 	do
-
 		local groundSmash = {
 			position = nil,
 			amount = 14,
@@ -141,6 +180,7 @@ function PowerDome:Execute()
 
 			["kockback"] = math.huge,
 			["strength"] = 100,
+			["HRP"] = self.HRP,
 		}
 	end
 	---------------------------------------------------------------------------------
@@ -148,24 +188,23 @@ function PowerDome:Execute()
 	--create the connection
 	-- asumming the data is always the same, the connection should remain the same too
 
-	if self._maid["Heavy"] then
-		return
+	if not self._maid["Heavy"] then
+		local hitTask = self.hitBox.Touched:Connect(hitTouchTemplate(data))
+		self._maid:__newindex("Heavy", hitTask)
 	end
-	local hitTask = self.hitBox.Touched:Connect(hitTouchTemplate(data))
-	self._maid:__newindex("Heavy", hitTask)
 
 	-- PLay an animation
 	-- TODO: get a cool asimation that resembles goku henkidama
 	local animHandler = self._animHandler
 	animHandler:LoadAnimation(true, "Heavy")
 
-	-- instantly run the effect
-	task.spawn(function()
-		self:CreateExplosionVFX(shockwave)
-	end)
+	-- run the effect
+	self:CreateExplosionVFX()
 
 	-- Start the damn box
-	hitbox_start_stop(self.character, self.hitBox)
+	task.defer(function()
+		hitbox_start_stop(self.character, self.hitBox)
+	end)
 end
 
 return PowerDome

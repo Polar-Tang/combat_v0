@@ -373,11 +373,9 @@ function muchacho_hitbox:_cast()
 	self:_FindTouchEnded(parts)
 
 	for _, hit in pairs(parts) do
-		print("the parts hited ", hit)
 		local character = hit:FindFirstAncestorOfClass("Model") or hit.Parent
 		local humanoid = character:FindFirstChildOfClass("Humanoid")
-		print("character this should be blocking", character)
-		print("This should say 'Humanoid ", humanoid)
+		
 		-- detection mode
 		if mode == "Default" and humanoid and not self.HitList[table.find(self.HitList, humanoid)] then
 			table.insert(self.HitList, humanoid)

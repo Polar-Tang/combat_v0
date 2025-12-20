@@ -1,5 +1,4 @@
 return function(char, newHitbox)
-	print("newHitbox ", newHitbox)
 	if not newHitbox then
 		return
 	end
