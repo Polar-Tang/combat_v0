@@ -65,6 +65,10 @@ UserInputSer.InputBegan:Connect(function(input, IsTyping)
 		-- swingEvent:FireServer(Enum.KeyCode.W)
 
 		-- GCD(1)
+	elseif input.KeyCode == Enum.KeyCode.T then
+		-- TODO: use comman pattern here too
+		GCD(1)
+		swingEvent:FireServer(Enum.KeyCode.T)
 	elseif input.UserInputType == Enum.UserInputType.MouseButton1 and attckChck(char) and not isBlocking then
 		--lastMouseButton1Pressed = tick()
 
@@ -85,7 +89,7 @@ UserInputSer.InputEnded:Connect(function(input, isTyping)
 	end
 
 	local command = InputManager.Bindings[input.KeyCode]
-	
+
 	if input.KeyCode == Enum.KeyCode.F and attckChck() and not isBlocking then
 		command.Kill()
 		swingEvent:FireServer(Enum.KeyCode.F)

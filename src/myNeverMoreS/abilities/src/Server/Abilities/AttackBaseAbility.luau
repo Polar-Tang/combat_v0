@@ -23,10 +23,11 @@ function AttackBaseAbility.new(config)
 
 	return self
 end
-function AttackBaseAbility:createHitBox()
+function AttackBaseAbility:createHitBox(config)
 	local CHAR = self.character
 	local hitbox_offset = self.hitbox_offset
 	local hitbox_size = self.hitbox_size
+	
 	local HRP = CHAR:WaitForChild("HumanoidRootPart")
 	local trail = get_trail(CHAR)
 	local tool = CHAR:FindFirstChildWhichIsA("Tool")
@@ -37,15 +38,15 @@ function AttackBaseAbility:createHitBox()
 	params.FilterType = Enum.RaycastFilterType.Exclude
 	params.FilterDescendantsInstances = { CHAR }
 
-	local newHitbox = HitboxModule.CreateHitbox() --creating the hitbox
+	local newHitbox = HitboxModule.CreateHitbox() 
 	newHitbox.Size = hitbox_size
 	newHitbox.CFrame = HRP
 	newHitbox.Offset = hitbox_offset
 	newHitbox.OverlapParams = params
 	newHitbox.AutoDestroy = false
-	newHitbox.Puncher = CHAR
-	newHitbox.DetectionMode = "HitOnce"
-	newHitbox.Shape = self.shape or Enum.PartType.Block
+	newHitbox.Puncher = (config and config.Puncher) or CHAR
+	newHitbox.DetectionMode = "HitOnce" or config.mode
+	newHitbox.Shape = Enum.PartType.Block or config.shape
 	-- newHitbox:Start()
 	return newHitbox
 end

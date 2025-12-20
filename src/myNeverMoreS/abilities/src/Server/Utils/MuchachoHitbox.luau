@@ -373,9 +373,11 @@ function muchacho_hitbox:_cast()
 	self:_FindTouchEnded(parts)
 
 	for _, hit in pairs(parts) do
+		print("the parts hited ", hit)
 		local character = hit:FindFirstAncestorOfClass("Model") or hit.Parent
 		local humanoid = character:FindFirstChildOfClass("Humanoid")
-
+		print("character this should be blocking", character)
+		print("This should say 'Humanoid ", humanoid)
 		-- detection mode
 		if mode == "Default" and humanoid and not self.HitList[table.find(self.HitList, humanoid)] then
 			table.insert(self.HitList, humanoid)
@@ -419,6 +421,7 @@ function muchacho_hitbox:_clear()
 	end
 end
 
+-- When this shite is started it already should have our self.Tocuh connection, because it spawn task to see if can fire them
 function muchacho_hitbox:Start()
 	if hitboxes[self.Key] then
 		error("A hitbox with this Key has already been started. Change the key if you want to start this hitbox.")

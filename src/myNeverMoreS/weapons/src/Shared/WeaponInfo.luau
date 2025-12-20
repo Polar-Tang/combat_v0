@@ -21,7 +21,7 @@ local heavy_Fist = {
 
 local power_dome = {
 	damage = 100,
-	hitbox_size = Vector3.new(5.5, 5.5, 5),
+	hitbox_size = Vector3.new(20, 10, 20),
 	hitbox_offset = CFrame.new(0, 0, -2.5),
 	stun_time = 3,
 	shape = Enum.PartType.Ball,

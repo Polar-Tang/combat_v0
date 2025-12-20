@@ -51,7 +51,13 @@ export type effectHitCtx = {
 	},
 	serviceBag: any,
 	hit_position: Vector3,
+	Explosion: {},
 }
+
+local function flyBack(enemy: BasePart, force)
+    
+	enemy:ApplyImpulse(force)
+end
 
 function EffectService:Apply(context: effectHitCtx)
 	local serviceBag = context.serviceBag
@@ -64,8 +70,6 @@ function EffectService:Apply(context: effectHitCtx)
 	if context.ragdoll and context.kockback and context.strength >= 35 then
 		RagdollService:Tag(defender_humanoid)
 
-		local Torso = context.Defender.Character:WaitForChild("Torso") :: BasePart
-
 		-- local impulse = context.kockback * Torso.AssemblyMass
 		-- Torso:ApplyImpulse(impulse)
 
@@ -77,18 +81,30 @@ function EffectService:Apply(context: effectHitCtx)
 
 		-- Debris:AddItem(bv, 0.2)
 
-		local vf = Instance.new("VectorForce")
-		vf.Force = context.kockback * Torso.AssemblyMass
-		vf.Attachment0 = Torso:FindFirstChildOfClass("Attachment")
-		vf.RelativeTo = Enum.ActuatorRelativeTo.World
-		vf.Parent = Torso
-
-		Debris:AddItem(vf, 0.2)
 		-- PhysicsUtils.applyForce(defender_hrp, context.kockback, context.hit_position)
+		local Torso = context.Defender.Character:WaitForChild("Torso") :: BasePart
+		local force = context.kockback * Torso.AssemblyMass
+		flyBack(Torso, force)
 		task.delay(context.ragdoll.duration, function()
 			print("untag")
 			RagdollService:Untag(defender_humanoid)
 		end)
+	end
+
+	local attacker = context.Attacker.Character
+	local attacker_HRP = context.Attacker.HRP
+	-- Bug: it looks if the parent is self character to not make it damage and apply impulse. THis means that if there's a nested part force will be applyed on it
+	if context.Explosion then
+		local char_POS = attacker_HRP.Position
+		local parts = workspace:GetPartBoundsInRadius(char_POS, 50)
+		self:CreateExplosionVFX(attacker_HRP.Position, 20)
+		for _, part in pairs(parts) do
+			print("part ", part.Parent)
+			if part.Parent == attacker then
+				continue
+			end
+			flyBack(part, context.kockback)
+		end
 	end
 
 	if context.groundSmash then

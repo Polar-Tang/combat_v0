@@ -27,6 +27,7 @@ export type effectHitCtx = {
 		isRag: boolean,
 		duration: number
 	},
+	Explosion : any,
 	serviceBag: any
 }
 
@@ -44,7 +45,8 @@ return function(parentClass)
 			Defender = {},
 			Attacker = {},
 			groundSmash = {},
-			ragdoll = {}
+			ragdoll = {},
+			Explosion = {},
 		} :: effectHitCtx
 		context.Defender.Humanoid = enemyHum
 		context.Attacker.Character = CHAR
@@ -57,7 +59,7 @@ return function(parentClass)
 		local ENEMYHRP = ENEMY_CHAR:WaitForChild("HumanoidRootPart")
 		context.Defender.HRP = ENEMYHRP
 
-		local HRP = CHAR:WaitForChild("HumanoidRootPart")
+		local HRP = CHAR:FindFirstChild("HumanoidRootPart") or CHAR:FindFirstChildWhichIsA("Part") or CHAR:FindFirstChildWhichIsA("BasePart") or CHAR:FindFirstChildWhichIsA("MeshPart")
 		local CENTER = (ENEMYHRP.Position - HRP.Position).Unit
 		local kockback = CENTER * parentClass.strength
 		context.kockback = kockback
@@ -75,7 +77,8 @@ return function(parentClass)
 		context.stunt_time = parentClass.stun_time
 		context.serviceBag = parentClass.serviceBag
 		context.ragdoll = parentClass.ragdoll
-		
+		context.Explosion = parentClass.Explotion
+
 		local weaponEnemy = WeaponBinder:Get(ENEMY_CHAR)
 		weaponEnemy:OnIncomingAttack(context)
 
