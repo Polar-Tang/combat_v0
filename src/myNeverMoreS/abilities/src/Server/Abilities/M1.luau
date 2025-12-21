@@ -135,7 +135,7 @@ function Basic:Execute()
 
 	local data = {
 		serviceBag = self._serviceBag,
-		strength = 2000,
+		strength = 3000,
 		ragdoll = {
 			duration = 0.5,
 		},

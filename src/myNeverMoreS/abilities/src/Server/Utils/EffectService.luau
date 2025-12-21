@@ -1,3 +1,4 @@
+local Debris = game:GetService("Debris")
 local RS = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
@@ -61,6 +62,12 @@ local knockback = DIRECTION * parentClass.strength
 ]]
 
 local function flyBack(enemy: BasePart, force)
+	-- local bv = Instance.new("BodyVelocity")
+	-- bv.MaxForce = Vector3.new(math.huge, 0, math.huge)
+	-- bv.P = 50000
+	-- bv.Velocity = force
+	-- bv.Parent = enemy
+	-- Debris:AddItem(bv, 0.2)
 	enemy:ApplyImpulse(force)
 end
 
@@ -72,10 +79,10 @@ function EffectService:Apply(context: effectHitCtx)
 	local defender_humanoid = context.Defender.Humanoid
 	local defender_hrp = context.Defender.HRP
 
-	if context.ragdoll and context.kockback and context.strength >= 35 then
+	if context.ragdoll then
 		RagdollService:Tag(defender_humanoid)
 
-		-- local impulse = context.kockback * Torso.AssemblyMass
+		--local impulse = context.kockback * Torso.AssemblyMass
 		-- Torso:ApplyImpulse(impulse)
 
 		-- local bv = Instance.new("BodyVelocity")
@@ -86,12 +93,16 @@ function EffectService:Apply(context: effectHitCtx)
 
 		-- Debris:AddItem(bv, 0.2)
 
-		-- PhysicsUtils.applyForce(defender_hrp, context.kockback, context.hit_position)
-		local force = context.kockback
-		flyBack(context.HitPart, force)
+		--
+
 		task.delay(context.ragdoll.duration, function()
 			RagdollService:Untag(defender_humanoid)
 		end)
+	end
+
+	if context.kockback and context.strength >= 35 then
+		local force = context.kockback
+		flyBack(context.HitPart, force)
 	end
 
 	-- Bug: it looks if the parent is self character to not make it damage and apply impulse. THis means that if there's a nested part force will be applyed on it
@@ -110,9 +121,9 @@ function EffectService:Apply(context: effectHitCtx)
 				continue
 			end
 			task.defer(function()
-				flyBack(defender_hrp, context.kockback)
+				flyBack(root, context.kockback)
 				task.delay(0.3, function()
-					humanoid:TakeDamage(80)
+					humanoid:TakeDamage(100)
 				end)
 			end)
 		end

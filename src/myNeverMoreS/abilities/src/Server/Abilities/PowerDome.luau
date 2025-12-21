@@ -1,6 +1,5 @@
 -- TODO: It would be call if this is described and not directly executed, so move this logic to the effect service domain
 
-
 local require = require(script.Parent.loader).load(script)
 local AttackBaseAbility = require("AttackBaseAbility")
 
@@ -29,7 +28,6 @@ function PowerDome:Execute()
 	--Settin attr
 	-- self:SetAttributes()
 
-
 	self.hitBox = self:createHitBox({
 		Puncher = self.dome,
 		mode = "Default",
@@ -44,7 +42,7 @@ function PowerDome:Execute()
 		data = {
 			serviceBag = self._serviceBag,
 			ragdoll = ragdoll,
-			damage = self.damage,
+			damage = nil,
 			hitBox = self.hitBox,
 			stun_time = self.stun_time,
 			["Explosion"] = {
@@ -56,7 +54,7 @@ function PowerDome:Execute()
 			},
 
 			["kockback"] = math.huge,
-			["strength"] = 3000,
+			["strength"] = 4000,
 			["HRP"] = self.HRP,
 		}
 	end

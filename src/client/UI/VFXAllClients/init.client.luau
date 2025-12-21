@@ -45,8 +45,6 @@ end
 
 --||VFX All Clients Function||--
 RS:WaitForChild("Events"):WaitForChild("VFX").OnClientEvent:Connect(function(action, ...)
-	print("new action: ", action)
-
 	if action == "SwordHitShake" then
 		camShake:ShakeOnce(1.6, 4.5, 0.2, 1)
 	end

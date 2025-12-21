@@ -6,6 +6,7 @@ local StarterPlayer = game:GetService("StarterPlayer")
 local PathfindingService = game:GetService("PathfindingService")
 
 local PathfindingUtils = require(ReplicatedStorage.Nevermore.Quenty.pathfindingutils.Shared.PathfindingUtils)
+local ThrottledFunction = require(ReplicatedStorage.Nevermore.Quenty.throttle.Shared.ThrottledFunction)
 local Maid = require(StarterPlayer.StarterPlayerScripts.CustomShiftLock.Utils.Maid)
 
 local STOP_DISTANCE = 6
@@ -49,7 +50,9 @@ function MovementController:MoveTo(targetPosition)
 		self:Stop()
 		return
 	end
-
+	if (self._lastTarget and ((self._lastTarget - targetPosition).Magnitude > 0)) or self.isMoving then
+		self:Stop()
+	end
 	self._lastTarget = targetPosition
 	self:_computePath(targetPosition)
 end
@@ -59,11 +62,15 @@ local function onReject()
 end
 
 function MovementController:_computePath(destination: Vector3)
+	-- Cancel any existing path computation
+
 	local path = PathfindingService:CreatePath()
 
-	PathfindingUtils.promiseComputeAsync(path, self._root.Position, destination):Then(function(computedPath)
-		self:_walkThroughPath(computedPath)
-	end, onReject)
+	self._maid:GiveTask(
+		PathfindingUtils.promiseComputeAsync(path, self._root.Position, destination):Then(function(computedPath)
+			self:_walkThroughPath(computedPath)
+		end, onReject)
+	)
 end
 
 function MovementController:_walkThroughPath(path)
@@ -102,20 +109,21 @@ function MovementController:_moveToNext()
 		return
 	end
 	if (self._root.Position - self._lastTarget).Magnitude <= STOP_DISTANCE then
+		print("")
 		self:Stop()
 		return
 	end
-
 	self._AnimationHandler:LoadAnimation(true, "walk")
+	self.isMoving = true
 	self.Humanoid:MoveTo(wp.Position)
-	
 end
 
 function MovementController:Stop()
 	self._pathMaid:DoCleaning()
 	self._currentPath = nil
 	self._waypoints = nil
-	if self._AnimationHandler then 
+	self.isMoving = false
+	if self._AnimationHandler then
 		self._AnimationHandler:LoadAnimation(false, "walk")
 	end
 end
