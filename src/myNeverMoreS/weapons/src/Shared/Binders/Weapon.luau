@@ -26,8 +26,10 @@ function Weapon.new(char: Model, serviceBag)
 
 	if self.Humanoid.RigType == Enum.HumanoidRigType.R15 then
 		self.armName = "RightLowerArm"
+		self.torso = self.Char:FindFirstChild("UpperTorso") 
 	else
 		self.armName = "Right Arm"
+		self.torso = self.Char:FindFirstChild("Torso")
 	end
 	return self
 end
@@ -49,6 +51,9 @@ end
 function Weapon:OnDefend(context)
 	-- Chain of Responsibility pattern
 	local modifiedContext = context
+	-- For the moment, the hit part always will be a torso
+	context.HitPart =  self.torso
+
 	for _, description in ipairs(self._defenseChain) do
 		local modifier = description.modifier
 		modifiedContext = modifier:Process(modifiedContext)

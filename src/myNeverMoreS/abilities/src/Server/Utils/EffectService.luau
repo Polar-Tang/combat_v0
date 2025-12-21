@@ -1,4 +1,3 @@
-local Debris = game:GetService("Debris")
 local RS = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
@@ -52,10 +51,16 @@ export type effectHitCtx = {
 	serviceBag: any,
 	hit_position: Vector3,
 	Explosion: {},
+	HitPart: BasePart,
 }
 
+--[[
+force calculation:
+local DIRECTION = (ENEMYHRP.Position - HRP.Position).Unit
+local knockback = DIRECTION * parentClass.strength
+]]
+
 local function flyBack(enemy: BasePart, force)
-    print("apply impulse to ", enemy)
 	enemy:ApplyImpulse(force)
 end
 
@@ -82,29 +87,37 @@ function EffectService:Apply(context: effectHitCtx)
 		-- Debris:AddItem(bv, 0.2)
 
 		-- PhysicsUtils.applyForce(defender_hrp, context.kockback, context.hit_position)
-		local Torso = context.Defender.Character:WaitForChild("Torso") :: BasePart
-		local force = context.kockback * Torso.AssemblyMass
-		flyBack(Torso, force)
+		local force = context.kockback
+		flyBack(context.HitPart, force)
 		task.delay(context.ragdoll.duration, function()
-			print("untag")
 			RagdollService:Untag(defender_humanoid)
 		end)
 	end
 
-	local attacker = context.Attacker.Character
-	local attacker_HRP = context.Attacker.HRP
 	-- Bug: it looks if the parent is self character to not make it damage and apply impulse. THis means that if there's a nested part force will be applyed on it
 	if context.Explosion then
-		local char_POS = attacker_HRP.Position
-		local parts = workspace:GetPartBoundsInRadius(char_POS, 50)
-		self:CreateExplosionVFX(attacker_HRP.Position, 20)
-		for _, part in pairs(parts) do
-			print("part ", part.Parent)
-			if part.Parent == attacker then
+		local npcs = workspace:WaitForChild("Npcs")
+
+		for _, character in ipairs(npcs:GetChildren()) do
+			if not character:IsA("Model") then
 				continue
 			end
-			flyBack(part, context.kockback)
+
+			local humanoid = character:FindFirstChildOfClass("Humanoid")
+			local root = character.PrimaryPart or character:FindFirstChild("HumanoidRootPart")
+
+			if not humanoid or not root then
+				continue
+			end
+			task.defer(function()
+				flyBack(defender_hrp, context.kockback)
+				task.delay(0.3, function()
+					humanoid:TakeDamage(80)
+				end)
+			end)
 		end
+		VFX_Event:FireAllClients("domeEffect")
+		--
 	end
 
 	if context.groundSmash then
@@ -140,7 +153,7 @@ function EffectService:Apply(context: effectHitCtx)
 	stunt_client(defender_humanoid, context.stunt_time)
 
 	self.SetAttHit(defender_char)
-
+	--
 	VFX_Event:FireAllClients("SwordHit", defender_char)
 	local Player = Players:GetPlayerFromCharacter(defender_char)
 	if Player then

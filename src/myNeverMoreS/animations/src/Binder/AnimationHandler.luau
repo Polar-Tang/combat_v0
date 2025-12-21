@@ -107,6 +107,13 @@ function AnimationHandler:LoadAnimation(state: boolean, animaName: string, isPre
 	---- STOP ANIM ----
 end
 
+-- Check if there's an animator in case the user is ragdolled
+function AnimationHandler:_Check()
+	if not self.animator then
+		return
+	end
+end
+
 function AnimationHandler:_initDescriptior(animaName: string)
 	local desc = self:_getDescriptor(animaName)
 	local animId = self.animations[animaName]
@@ -131,6 +138,7 @@ function AnimationHandler:_ensurePreload(animaName)
 
 	if not self.animator then
 		self.animator = self.Char:WaitForChild("Humanoid").Animator
+		self:_Check()
 	end
 
 	-- Load the animation and declare it

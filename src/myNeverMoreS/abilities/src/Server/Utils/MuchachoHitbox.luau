@@ -370,12 +370,26 @@ function muchacho_hitbox:_cast()
 	local mode = self.DetectionMode
 	local parts = spatial_query[self.Shape](self)
 
-	self:_FindTouchEnded(parts)
+	-- for _, part in pairs(parts) do
+	-- 	local character = part.Parent
+
+	-- 	if self.Puncher.Name == "power_up_dome" then
+	-- 		print("character ", character)
+	-- 		for i, k in ipairs(character:GetDescendants()) do
+	-- 			print("k ", k)
+	-- 		end
+	-- 	end
+	-- end
+
+	--self:_FindTouchEnded(parts)
+
+	-- local npcs = game:GetService("Workspace").Npcs
+
 
 	for _, hit in pairs(parts) do
 		local character = hit:FindFirstAncestorOfClass("Model") or hit.Parent
 		local humanoid = character:FindFirstChildOfClass("Humanoid")
-		
+
 		-- detection mode
 		if mode == "Default" and humanoid and not self.HitList[table.find(self.HitList, humanoid)] then
 			table.insert(self.HitList, humanoid)
@@ -395,6 +409,7 @@ function muchacho_hitbox:_cast()
 			self:Stop()
 			break
 		elseif mode == "HitParts" then
+			print()
 			self:_InsertTouchingParts(hit)
 
 			self.Touched:Fire(hit)

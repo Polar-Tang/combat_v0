@@ -37,7 +37,6 @@ function MovementController.new(model: Instance?, serviceBag: any)
 	self._currentPath = nil
 	self._waypoints = nil
 	self._waypointIndex = 0
-
 	return self
 end
 
@@ -45,7 +44,6 @@ function MovementController:MoveTo(targetPosition)
 	if not self._root then
 		return
 	end
-
 	-- Stop if close enough
 	if (self._root.Position - targetPosition).Magnitude <= STOP_DISTANCE then
 		self:Stop()
@@ -98,15 +96,28 @@ function MovementController:_moveToNext()
 	if not wp then
 		return
 	end
+
+	if self.Humanoid:HasTag("Ragdoll") then
+		self:Stop()
+		return
+	end
+	if (self._root.Position - self._lastTarget).Magnitude <= STOP_DISTANCE then
+		self:Stop()
+		return
+	end
+
 	self._AnimationHandler:LoadAnimation(true, "walk")
 	self.Humanoid:MoveTo(wp.Position)
+	
 end
 
 function MovementController:Stop()
 	self._pathMaid:DoCleaning()
 	self._currentPath = nil
 	self._waypoints = nil
-	self._AnimationHandler:LoadAnimation(false, "walk")
+	if self._AnimationHandler then 
+		self._AnimationHandler:LoadAnimation(false, "walk")
+	end
 end
 
 function MovementController:Destroy()

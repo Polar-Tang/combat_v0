@@ -4,6 +4,8 @@ local HitboxModule = require("MuchachoHitbox")
 local get_trail = require("get_trail")
 local BaseAbility = require("BaseAbility")
 
+-- local BadDummy = game:GetService("ServerStorage"):FindFirstChild("BadDummy")
+local npcs = game:GetService("Workspace").Npcs
 local AttackBaseAbility = setmetatable({}, BaseAbility)
 AttackBaseAbility.__index = AttackBaseAbility
 
@@ -27,7 +29,7 @@ function AttackBaseAbility:createHitBox(config)
 	local CHAR = self.character
 	local hitbox_offset = self.hitbox_offset
 	local hitbox_size = self.hitbox_size
-	
+
 	local HRP = CHAR:WaitForChild("HumanoidRootPart")
 	local trail = get_trail(CHAR)
 	local tool = CHAR:FindFirstChildWhichIsA("Tool")
@@ -38,7 +40,7 @@ function AttackBaseAbility:createHitBox(config)
 	params.FilterType = Enum.RaycastFilterType.Exclude
 	params.FilterDescendantsInstances = { CHAR }
 
-	local newHitbox = HitboxModule.CreateHitbox() 
+	local newHitbox = HitboxModule.CreateHitbox()
 	newHitbox.Size = hitbox_size
 	newHitbox.CFrame = HRP
 	newHitbox.Offset = hitbox_offset

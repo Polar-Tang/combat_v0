@@ -28,6 +28,7 @@ Attkcs["Fist"] = {
 	["Idle"] = "rbxassetid://91567634616046",
 	["UnEquip"] = "rbxassetid://76401194937920",
 	["Blocking"] = "rbxassetid://109266615151969",
+	["GuardBreak"] = "rbxassetid://70952470480164",
 }
 
 Attkcs["Fist-r6"] = {
@@ -38,7 +39,7 @@ Attkcs["Fist-r6"] = {
 	["Swing4"] = "rbxassetid://112821950233659",
 	["Swing5"] = "rbxassetid://80100527539838",
 	["HeavyHit"] = "rbxassetid://84447851639470",
-	
+
 	["Sprint"] = "rbxassetid://108548036345475",
 	["Equip"] = "rbxassetid://90317007650678",
 	["Idle"] = "rbxassetid://90317007650678",

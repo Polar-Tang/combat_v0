@@ -4,8 +4,8 @@ local Debris = game:GetService("Debris")
 local TS = game:GetService("TweenService")
 
 --||Player||--
-local plr = game:GetService("Players").LocalPlayer
-
+local plr: Player = game:GetService("Players").LocalPlayer
+local player_char = plr.Character or plr.CharacterAdded:Wait()
 --||Folder||--
 local Effects = RS:WaitForChild("Effects")
 --||Services||--
@@ -13,21 +13,29 @@ local RS = game:GetService("ReplicatedStorage")
 local Lighting = game:GetService("Lighting")
 local TS = game:GetService("TweenService")
 
+--vfx
+local domeEffect = require(script.domeEffect)
+
 --||Camera||--
 local camera = game.Workspace.CurrentCamera
 
 --||Camera Shake Module||--
-local CameraShakeModule = require(RS:WaitForChild("Modules"):WaitForChild("CameraShaker"))	
+local CameraShakeModule = require(RS:WaitForChild("Modules"):WaitForChild("CameraShaker"))
 local camShake = CameraShakeModule.new(Enum.RenderPriority.Camera.Value, function(shakeCf)
 	camera.CFrame = camera.CFrame * shakeCf
 end)
 camShake:Start()
+-- TODO: theres a vfx all clients in the starter pack, meaning it's creating additionally remote event for all the players, and also looks bad
 ------------------------------------------------------------------------------------------------------------------
 
 local function getTorso(char)
-	local HUM = char:WaitForChild("Humanoid")
+	local HUM = char:FindFirstChild("Humanoid")
 
-	local Torso 
+	if not HUM then
+		return
+	end
+
+	local Torso
 	if HUM.RigType == Enum.HumanoidRigType.R6 then
 		Torso = char:WaitForChild("Torso")
 	else
@@ -36,37 +44,45 @@ local function getTorso(char)
 end
 
 --||VFX All Clients Function||--
-RS:WaitForChild("Events"):WaitForChild("VFX").OnClientEvent:Connect(function(action,...)
-	--print("new action: ", action)
-	
-	if action == "SwordHitShake" then		
-		camShake:ShakeOnce(1.6,4.5,0.2,1)
+RS:WaitForChild("Events"):WaitForChild("VFX").OnClientEvent:Connect(function(action, ...)
+	print("new action: ", action)
+
+	if action == "SwordHitShake" then
+		camShake:ShakeOnce(1.6, 4.5, 0.2, 1)
 	end
 
 	if action == "ParryEffect" then
 		Lighting.BlurEffect.Size = 25
-		TS:Create(Lighting.BlurEffect, TweenInfo.new(1.5), {Size = 0}):Play()
-		camShake:ShakeOnce(1.2,3.8,0.15,.7)
+		TS:Create(Lighting.BlurEffect, TweenInfo.new(1.5), { Size = 0 }):Play()
+		camShake:ShakeOnce(1.2, 3.8, 0.15, 0.7)
 	end
 
 	if action == "GuardBreakCamera" then
-		camShake:ShakeOnce(2.2,5.7,0.8,1.5)
+		camShake:ShakeOnce(2.2, 5.7, 0.8, 1.5)
 	end
 	if action == "SwordHit" then
 		local enemy = ...
-		local Hit = plr.Character:GetAttribute("Combo")
-		if Hit ~= 4 then enemy.Humanoid:ChangeState(Enum.HumanoidStateType.GettingUp) end
-		
+		local Hit = player_char:GetAttribute("Combo")
+		local hum = enemy:FindFirstChild("Humanoid")
+		if Hit ~= 4 and hum then
+			hum:ChangeState(Enum.HumanoidStateType.GettingUp)
+		end
+
 		local BloodEffect = Effects:WaitForChild("Blood").Attachment:Clone()
 		BloodEffect.Parent = getTorso(enemy)
 		Debris:AddItem(BloodEffect, 3)
-		
-		for i,v in pairs(BloodEffect:GetDescendants()) do
+
+		for i, v in pairs(BloodEffect:GetDescendants()) do
 			v:Emit(v:GetAttribute("EmitCount"))
 		end
-		
 	end
-	
+	if action == "domeEffect" then
+		domeEffect(player_char)
+	end
+	if action == "GuardBreakCamera" then
+		camShake:ShakeOnce(2.2, 5.7, 0.8, 1.5)
+	end
+
 	if action == "BlockingHit" then
 		local enemy: Model = ...
 		--print(enemy, "enemy ", type(enemy))
@@ -75,12 +91,11 @@ RS:WaitForChild("Events"):WaitForChild("VFX").OnClientEvent:Connect(function(act
 		BlockEffect.Parent = getTorso(enemy)
 		Debris:AddItem(BlockEffect, 3)
 
-		for i,v in pairs(BlockEffect:GetDescendants()) do
+		for i, v in pairs(BlockEffect:GetDescendants()) do
 			v:Emit(v:GetAttribute("EmitCount"))
 		end
-
 	end
-	
+
 	if action == "ParryHit" then
 		local enemy = ...
 
@@ -88,12 +103,11 @@ RS:WaitForChild("Events"):WaitForChild("VFX").OnClientEvent:Connect(function(act
 		ParryEffect.Parent = getTorso(enemy)
 		Debris:AddItem(ParryEffect, 3)
 
-		for i,v in pairs(ParryEffect:GetDescendants()) do
+		for i, v in pairs(ParryEffect:GetDescendants()) do
 			v:Emit(v:GetAttribute("EmitCount"))
 		end
-
 	end
-	
+
 	if action == "GuardBreak" then
 		local enemy = ...
 		local GuardBreakEffect = Effects:WaitForChild("GuardBreak").Attachment:Clone()
@@ -101,12 +115,11 @@ RS:WaitForChild("Events"):WaitForChild("VFX").OnClientEvent:Connect(function(act
 		GuardBreakEffect.Parent = getTorso(enemy)
 		Debris:AddItem(GuardBreakEffect, 3)
 
-		for i,v in pairs(GuardBreakEffect:GetDescendants()) do
+		for i, v in pairs(GuardBreakEffect:GetDescendants()) do
 			v:Emit(v:GetAttribute("EmitCount"))
 		end
-
 	end
-	
+
 	if action == "HeavyAttack" then
 		local char = ...
 
@@ -115,25 +128,26 @@ RS:WaitForChild("Events"):WaitForChild("VFX").OnClientEvent:Connect(function(act
 		Debris:AddItem(KanjiEffect, 3)
 
 		KanjiEffect:Emit(1)
-
 	end
-	
+
 	if action == "Iframes" then
 		local enemyHRP, duration = ...
-		
-		if enemyHRP then 			
-			local highlight = Instance.new("Highlight")			
-			highlight.Parent =  enemyHRP.Parent 
+
+		if enemyHRP then
+			local highlight = Instance.new("Highlight")
+			highlight.Parent = enemyHRP.Parent
 			highlight.DepthMode = Enum.HighlightDepthMode.Occluded
 			highlight.FillTransparency = 0.2
 			highlight.FillColor = Color3.fromRGB(255, 255, 255)
 			highlight.OutlineTransparency = 0
 			highlight.OutlineColor = Color3.fromRGB(185, 185, 185)
-			local TweenGoal1 = {FillTransparency = 1, OutlineTransparency = 1}
-			local enemyHitTween = TS:Create(highlight, TweenInfo.new(duration, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false), TweenGoal1):Play()
-			Debris:AddItem(highlight,duration)					
+			local TweenGoal1 = { FillTransparency = 1, OutlineTransparency = 1 }
+			local enemyHitTween = TS:Create(
+				highlight,
+				TweenInfo.new(duration, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false),
+				TweenGoal1
+			):Play()
+			Debris:AddItem(highlight, duration)
 		end
 	end
-
-	
 end)

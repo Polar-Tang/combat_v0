@@ -91,6 +91,7 @@ Players.PlayerAdded:Connect(function(player)
 	CombatMediator.PlayerAdded(player)
 	-- TODO: test this
 	local hum: Humanoid = char:WaitForChild("Humanoid")
+
 	hum.Died:Connect(function()
 		Ragdoll:Tag(hum)
 	end)

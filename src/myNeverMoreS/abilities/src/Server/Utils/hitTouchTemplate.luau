@@ -39,6 +39,7 @@ return function(parentClass)
 	local BinderProvider = parentClass.serviceBag:GetService(_G.BinderProvider)
 	-- weapon Binder
 	local WeaponBinder = BinderProvider:Get("Armed")
+	local NPCBinder = BinderProvider:Get("NPC")
 	--newHitbox.Touched:Connect
 	return function(hit, enemyHum)
 		----------------------------------------------------
@@ -62,9 +63,10 @@ return function(parentClass)
 
 		local HRP = CHAR:FindFirstChild("HumanoidRootPart") or parentClass.HRP
 		
-		local CENTER = (ENEMYHRP.Position - HRP.Position).Unit
-		local kockback = CENTER * parentClass.strength
-		context.kockback = kockback
+		local DIRECTION = (ENEMYHRP.Position - HRP.Position).Unit
+		local knockback = DIRECTION * parentClass.strength
+		
+		context.kockback = knockback
 		----------------------------------------------------
 		-- LAST BUT NOT LEAST, IMPORTANT DATA FROM THE PARENT
 		-- Overwrites groundSMash, if it exists it lacks the hit position, only know by this module
@@ -79,11 +81,19 @@ return function(parentClass)
 		context.stunt_time = parentClass.stun_time
 		context.serviceBag = parentClass.serviceBag
 		context.ragdoll = parentClass.ragdoll
-		context.Explosion = parentClass.Explotion
+		-- THIS IS NOT ELEGANT BUT WE NEED A WAY FOR STOPING ALL THE ANIMATION CONTROLLER AFTER RAGDOLL
+		if context.ragdoll then
+			local stateMachine = NPCBinder:Get(ENEMY_CHAR)
+			if stateMachine and stateMachine.state and stateMachine.state.MovementController then 
+				stateMachine.state.MovementController:Stop()
+			end
+		end
+		
+		context.Explosion = parentClass.Explosion
 
+		
 		local weaponEnemy = WeaponBinder:Get(ENEMY_CHAR)
 		weaponEnemy:OnIncomingAttack(context)
-
 		----------------------------------------------------
 		-- Handling the hit blocking
 		-- Heavy will be an attribute set by the heavy attack, execute()
