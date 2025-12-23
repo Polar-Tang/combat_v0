@@ -30,7 +30,7 @@ local StateMachine = Nevermore("StateMachine")
 local Binders = {
 	["AnimationHandler"] = AnimationHandler,
 	["Armed"] = WeaponBinder,
-	["NPC"] = StateMachine
+	["NPC"] = StateMachine,
 }
 ---------- USE BINDER PORVIDER ----------
 local BinderProvider = Nevermore("BinderProvider")

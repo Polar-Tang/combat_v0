@@ -1,11 +1,15 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 -- The attacks abilities does not deal damage instantly, they rather describe intentes and derive that to the weapon's enemy
 local require = require(script.Parent.loader).load(script)
+local useClient = require("useClient")
 local HitboxModule = require("MuchachoHitbox")
 local get_trail = require("get_trail")
 local BaseAbility = require("BaseAbility")
+local Maid = require("Maid")
+local Promise = require("Promise")
 
 -- local BadDummy = game:GetService("ServerStorage"):FindFirstChild("BadDummy")
-local npcs = game:GetService("Workspace").Npcs
+-- local npcs = game:GetService("Workspace").Npcs
 local AttackBaseAbility = setmetatable({}, BaseAbility)
 AttackBaseAbility.__index = AttackBaseAbility
 
@@ -22,6 +26,8 @@ type AttackBaseAbilityConfig = {
 
 function AttackBaseAbility.new(config)
 	local self = setmetatable(BaseAbility.new(config), AttackBaseAbility)
+	self._attacks = {} :: { typeof(Promise.new()) }
+	self._lastAttackID = 0
 
 	return self
 end
@@ -62,6 +68,29 @@ function AttackBaseAbility:SetAttributes()
 
 	HUM.WalkSpeed = 7
 	HUM.JumpHeight = 0
+end
+
+-- Create a promise with a csoped maid for the useClient function
+function AttackBaseAbility:CreateScopedPromise(detectionInfo)
+	local scopeMaid = Maid.new()
+
+	local PromiseTask = Promise.new(function(resolve, reject)
+		useClient(resolve, reject, scopeMaid, detectionInfo)
+	end):Finally(function()
+		-- always clean, on resolve, reject, or by expiring
+		scopeMaid:DoCleaning()
+	end)
+
+	return PromiseTask
+end
+function AttackBaseAbility:_countAttack()
+	self._lastAttackID += 1
+end
+
+function AttackBaseAbility:_GenerateAttackID()
+	-- Simple incrementing ID or use HttpService:GenerateGUID()
+
+	return self.player.UserId .. "_" .. self._lastAttackID
 end
 
 return AttackBaseAbility

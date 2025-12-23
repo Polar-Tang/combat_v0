@@ -40,7 +40,6 @@ local info = {
 
 	["Fist"] = { --If you wan't to make a new weapon just copy and paste one of the already existing tables and change the name  to your weapons name!
 		stun_time = 1.2, -- How Long The Enemy Is Stunned
-
 		max_combo = 5,
 		attacks = {
 			Basic = basic_fist,

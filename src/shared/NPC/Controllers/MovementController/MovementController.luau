@@ -109,7 +109,6 @@ function MovementController:_moveToNext()
 		return
 	end
 	if (self._root.Position - self._lastTarget).Magnitude <= STOP_DISTANCE then
-		print("")
 		self:Stop()
 		return
 	end

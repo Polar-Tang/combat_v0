@@ -2,22 +2,22 @@ export type effectHitCtx = {
 	Defender: {
 		Character: Model,
 		Humanoid: Humanoid,
-		HRP: BasePart
+		HRP: BasePart,
 	},
 	Attacker: {
 		Character: Model,
 		Humanoid: Humanoid,
-		HRP: BasePart
+		HRP: BasePart,
 	},
 	groundSmash: {
 		position: Vector3,
-		amount : number,
-		velocity : number,
-		material : EnumItem,
-		dust : boolean ,
-		shockwave : boolean,
-		sizeRange : Vector2,
-		lifetime : number,
+		amount: number,
+		velocity: number,
+		material: EnumItem,
+		dust: boolean,
+		shockwave: boolean,
+		sizeRange: Vector2,
+		lifetime: number,
 	},
 	strength: number,
 	damage: number,
@@ -25,9 +25,9 @@ export type effectHitCtx = {
 	stunt_time: number,
 	ragdoll: {
 		isRag: boolean,
-		duration: number
+		duration: number,
 	},
-	Explosion : any,
+	Explosion: any,
 	serviceBag: any,
 	HRP: BasePart,
 }
@@ -62,16 +62,16 @@ return function(parentClass)
 		context.Defender.HRP = ENEMYHRP
 
 		local HRP = CHAR:FindFirstChild("HumanoidRootPart") or parentClass.HRP
-		
+
 		local DIRECTION = (ENEMYHRP.Position - HRP.Position).Unit
 		local knockback = DIRECTION * parentClass.strength
-		
+
 		context.kockback = knockback
 		----------------------------------------------------
 		-- LAST BUT NOT LEAST, IMPORTANT DATA FROM THE PARENT
 		-- Overwrites groundSMash, if it exists it lacks the hit position, only know by this module
 		context.id = newHitbox.Key
-		
+
 		if parentClass.groundSmash then
 			parentClass.groundSmash.position = hit.Position
 		end
@@ -84,14 +84,13 @@ return function(parentClass)
 		-- THIS IS NOT ELEGANT BUT WE NEED A WAY FOR STOPING ALL THE ANIMATION CONTROLLER AFTER RAGDOLL
 		if context.ragdoll then
 			local stateMachine = NPCBinder:Get(ENEMY_CHAR)
-			if stateMachine and stateMachine.state and stateMachine.state.MovementController then 
+			if stateMachine and stateMachine.state and stateMachine.state.MovementController then
 				stateMachine.state.MovementController:Stop()
 			end
 		end
-		
+
 		context.Explosion = parentClass.Explosion
 
-		
 		local weaponEnemy = WeaponBinder:Get(ENEMY_CHAR)
 		weaponEnemy:OnIncomingAttack(context)
 		----------------------------------------------------

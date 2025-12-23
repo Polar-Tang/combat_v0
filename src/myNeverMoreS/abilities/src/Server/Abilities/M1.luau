@@ -6,7 +6,7 @@ local CooldownController = require("CooldownController")
 
 local hitbox_start_stop = require("hitbox_start_stop")
 --utils
-local hitTouchTemplate = require("hitTouchTemplate")
+-- local hitTouchTemplate = require("hitTouchTemplate")
 
 --classes
 local AttackBaseAbility = require("AttackBaseAbility")
@@ -82,6 +82,7 @@ function Basic:Execute()
 
 	--Settin attr
 	self:SetAttributes()
+	self:_countAttack()
 	-------------
 
 	local current_combo = CHAR:GetAttribute("Combo")
@@ -145,12 +146,48 @@ function Basic:Execute()
 		stun_time = self.stun_time,
 	}
 	-- describe more data used fot the effect
-	data.strength = strength
+	self:_GenerateAttackID()
+	--[[
 	self._maid:DoCleaning()
 	local hitTask = self.hitBox.Touched:Connect(hitTouchTemplate(data))
 	hitTask.Destroy = hitTask.Disconnect
-
+	
 	self._maid:GiveTask(hitTask)
+	]]
+
+	data.strength = strength
+	-- Create promise for client detection
+	local detectionInfo = {
+		Time = 0.5,
+		Size = self.hitbox_size,
+		CFrame = self.hitbox_offset,
+		AttackID = self:GenerateAttackID(),
+		Attacker = self.character,
+	}
+
+	local BinderProvider = self._serviceBag:GetService(_G.BinderProvider)
+	-- weapon Binder
+	local WeaponBinder = BinderProvider:Get("Armed")
+
+	self:CreateScopedPromise(detectionInfo)
+		:andThen(function(hitTargets)
+			-- Process hits when promise resolves
+			for _, targetCharacter in hitTargets do
+				local data = {
+					Attacker = self.character,
+					Damage = 10,
+					AttackType = "Basic",
+				}
+
+				local targetWeapon = WeaponBinder:Get(targetCharacter)
+				if targetWeapon then
+					targetWeapon:OnIncomingAttack(data)
+				end
+			end
+		end)
+		:catch(function(err)
+			warn("Attack detection failed:", err)
+		end)
 end
 
 return Basic
