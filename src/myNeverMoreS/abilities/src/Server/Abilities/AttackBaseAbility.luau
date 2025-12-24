@@ -1,4 +1,4 @@
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
 -- The attacks abilities does not deal damage instantly, they rather describe intentes and derive that to the weapon's enemy
 local require = require(script.Parent.loader).load(script)
 local useClient = require("useClient")
@@ -28,6 +28,7 @@ function AttackBaseAbility.new(config)
 	local self = setmetatable(BaseAbility.new(config), AttackBaseAbility)
 	self._attacks = {} :: { typeof(Promise.new()) }
 	self._lastAttackID = 0
+	self.player = Players:GetPlayerFromCharacter(self.character)
 
 	return self
 end

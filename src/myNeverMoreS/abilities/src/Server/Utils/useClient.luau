@@ -20,7 +20,7 @@ return function(resolve, reject, scopeMaid, detectionInfo)
 	scopeMaid:GiveTask(connection)
 
 	-- Fire to client to start detection
-	ReplicatedStorage.HitboxDetectRemote:FireClient(attacker_player, detectionInfo)
+	HitboxResponseRemote:FireClient(attacker_player, detectionInfo)
 
 	-- Setup timeout - reject if client doesn't respond in time
 	scopeMaid:GiveTask(task.delay(detectionInfo.Time + 0.2, function()

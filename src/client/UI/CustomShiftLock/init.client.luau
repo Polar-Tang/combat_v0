@@ -1,2 +1,2 @@
-local ShiftlockModule = require(script.Parent.SmoothShiftLock)
+local ShiftlockModule = require(script.SmoothShiftLock)
 ShiftlockModule:Init()

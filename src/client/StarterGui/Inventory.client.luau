@@ -51,29 +51,39 @@ tool.Unequipped:Connect(function()
 end)
 
 local HitboxClass = require(ReplicatedStorage.HitboxClass)
-
--- Create a sword hitbox that follows the weapon
-local hitbox = HitboxClass.new(tool.Name, {
-	root = tool,
-	size = Vector3.new(4, 1, 6),
-	duration = 0.3,
-	velocityPrediction = true,
-	dotProductFilter = {
-		dotProduct = 0.3,
-		referenceVector = tool.CFrame.LookVector,
-		sourcePosition = tool.Position,
-	},
-	hitboxId = "sword_" .. player.UserId,
-	HitMode = "Weak",
-	debug = true,
-})
-
 -- Remotes events (i got the code smell to migrate this)
 local Events = ReplicatedStorage.Events
 local HitboxResponseRemote = Events.HitboxResponseRemote
 
-hitbox.OnHit:Connect(function(character, hitPart)
-	HitboxResponseRemote:FireServer(hitPart)
+HitboxResponseRemote.OnClientEvent:Connect(function(attackInfo)  
+	
+	local Tool_sober = char:FindFirstAncestorOfClass("Tool")
+	print("Tool_sober ", Tool_sober)
+	if not Tool_sober then 
+		warn("Weapon don't found")
+		return 
+	end
+	-- Create a sword hitbox that follows the weapon
+	local hitbox = HitboxClass.new(Tool_sober.Name, {
+		root = Tool_sober,
+		size = Vector3.new(4, 1, 6),
+		duration = 0.3,
+		velocityPrediction = true,
+		dotProductFilter = {
+			dotProduct = 0.3,
+			referenceVector = CFrame.new(char.PrimaryPart.Position).LookVector,
+			sourcePosition = char.PrimaryPart.Position,
+		},
+		hitboxId = "sword_" .. player.UserId,
+		HitMode = "Weak",
+		debug = true,
+	})
+	
+	
+	
+	hitbox.OnHit:Connect(function(character, hitPart)
+		HitboxResponseRemote:FireServer(attackInfo.AttackID, hitPart)
+	end)
+	
+	hitbox:Start()
 end)
-
-hitbox:Start()

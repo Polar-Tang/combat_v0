@@ -115,12 +115,15 @@ function Basic:Execute()
 		animationEventName = "EndedCon",
 	})
 
-	local strength: number
-	local groundSmash = nil
-
+	local data = {
+		serviceBag = self._serviceBag,
+		damage = self.damage,
+		hitBox = self.hitBox,
+		stun_time = self.stun_time,
+	}
 	if current_combo == max_combo then
-		strength = 35
-		groundSmash = {
+		data.strength = 4000
+		data.groundSmash = {
 			position = nil,
 			amount = 14,
 			velocity = 70,
@@ -130,23 +133,15 @@ function Basic:Execute()
 			sizeRange = Vector2.new(1, 2.5),
 			lifetime = 2.5,
 		}
+		data.ragdoll = {
+			duration = 1.2,
+		}
 	else
-		strength = 10
+		data.strength = 1000
 	end
 
-	local data = {
-		serviceBag = self._serviceBag,
-		strength = 3000,
-		ragdoll = {
-			duration = 0.5,
-		},
-		groundSmash = groundSmash,
-		damage = self.damage,
-		hitBox = self.hitBox,
-		stun_time = self.stun_time,
-	}
 	-- describe more data used fot the effect
-	self:_GenerateAttackID()
+	local attackId = self:_GenerateAttackID()
 	--[[
 	self._maid:DoCleaning()
 	local hitTask = self.hitBox.Touched:Connect(hitTouchTemplate(data))
@@ -155,13 +150,12 @@ function Basic:Execute()
 	self._maid:GiveTask(hitTask)
 	]]
 
-	data.strength = strength
 	-- Create promise for client detection
 	local detectionInfo = {
 		Time = 0.5,
 		Size = self.hitbox_size,
 		CFrame = self.hitbox_offset,
-		AttackID = self:GenerateAttackID(),
+		AttackID = attackId,
 		Attacker = self.character,
 	}
 
@@ -169,25 +163,18 @@ function Basic:Execute()
 	-- weapon Binder
 	local WeaponBinder = BinderProvider:Get("Armed")
 
-	self:CreateScopedPromise(detectionInfo)
-		:andThen(function(hitTargets)
-			-- Process hits when promise resolves
-			for _, targetCharacter in hitTargets do
-				local data = {
-					Attacker = self.character,
-					Damage = 10,
-					AttackType = "Basic",
-				}
-
-				local targetWeapon = WeaponBinder:Get(targetCharacter)
-				if targetWeapon then
-					targetWeapon:OnIncomingAttack(data)
-				end
+	self:CreateScopedPromise(detectionInfo):Then(function(hitTargets)
+		if not hitTargets then
+			return
+		end
+		-- Process hits when promise resolves
+		for _, targetCharacter in hitTargets do
+			local targetWeapon = WeaponBinder:Get(targetCharacter)
+			if targetWeapon then
+				targetWeapon:OnIncomingAttack(data)
 			end
-		end)
-		:catch(function(err)
-			warn("Attack detection failed:", err)
-		end)
+		end
+	end)
 end
 
 return Basic

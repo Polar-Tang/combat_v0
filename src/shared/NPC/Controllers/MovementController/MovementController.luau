@@ -2,12 +2,10 @@
 -- TODO: Implement a method for completly stop moving the character
 local ReplicatedSorage = game:GetService("ReplicatedStorage")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local StarterPlayer = game:GetService("StarterPlayer")
 local PathfindingService = game:GetService("PathfindingService")
 
 local PathfindingUtils = require(ReplicatedStorage.Nevermore.Quenty.pathfindingutils.Shared.PathfindingUtils)
-local ThrottledFunction = require(ReplicatedStorage.Nevermore.Quenty.throttle.Shared.ThrottledFunction)
-local Maid = require(StarterPlayer.StarterPlayerScripts.CustomShiftLock.Utils.Maid)
+local Maid = require(ReplicatedStorage.Nevermore.Quenty.maid.Shared.Maid)
 
 local STOP_DISTANCE = 6
 
