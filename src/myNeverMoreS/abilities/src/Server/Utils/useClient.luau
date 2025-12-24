@@ -8,11 +8,15 @@ local HitboxResponseRemote = Events.HitboxResponseRemote
 return function(resolve, reject, scopeMaid, detectionInfo)
 	-- Listen to client on hit parts
 	local character = detectionInfo.Attacker
+	print("character", character)
 	local attacker_player = Players:GetPlayerFromCharacter(character)
+
+	print("attacker_player ", attacker_player)
 
 	local connection = HitboxResponseRemote.OnServerEvent:Connect(function(player, attackID, hitTargets)
 		if player == attacker_player and attackID == detectionInfo.AttackID then
 			resolve(hitTargets) -- Promise resolves with hit targets
+			-- targets
 		end
 	end)
 
@@ -21,9 +25,9 @@ return function(resolve, reject, scopeMaid, detectionInfo)
 
 	-- Fire to client to start detection
 	HitboxResponseRemote:FireClient(attacker_player, detectionInfo)
-
-	-- Setup timeout - reject if client doesn't respond in time
-	scopeMaid:GiveTask(task.delay(detectionInfo.Time + 0.2, function()
-		reject("Client detection timeout")
-	end))
+	
+	-- scopeMaid:GiveTask(task.delay(detectionInfo.Time + 0.2, function()
+	-- 	reject("Client detection timeout")
+	-- end))
+	-- while hitTargets
 end -- :: useClient: (any, any, typeof(Maid.new()), any) -> ()

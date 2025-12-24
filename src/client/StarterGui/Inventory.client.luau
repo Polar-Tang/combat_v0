@@ -11,7 +11,7 @@ local BackpackCoreGui = Enum.CoreGuiType.Backpack
 --||Player||--
 local player: Player = Players.LocalPlayer
 
-local char = player.Character
+local char = player.Character or player.CharacterAdded:Wait()
 
 --||RemoteEvents||--
 local remotes = RS.Events
@@ -55,23 +55,24 @@ local HitboxClass = require(ReplicatedStorage.HitboxClass)
 local Events = ReplicatedStorage.Events
 local HitboxResponseRemote = Events.HitboxResponseRemote
 
+-- This event is called in the server after it has Execute() the ability
 HitboxResponseRemote.OnClientEvent:Connect(function(attackInfo)  
 	
-	local Tool_sober = char:FindFirstAncestorOfClass("Tool")
-	print("Tool_sober ", Tool_sober)
+	local Tool_sober: Tool = char:FindFirstChild("Fist")
+
 	if not Tool_sober then 
 		warn("Weapon don't found")
 		return 
 	end
 	-- Create a sword hitbox that follows the weapon
-	local hitbox = HitboxClass.new(Tool_sober.Name, {
-		root = Tool_sober,
+	local hitbox = HitboxClass.new("Box", {
+		root = Tool_sober.BodyAttach,
 		size = Vector3.new(4, 1, 6),
-		duration = 0.3,
+		duration = 2,
 		velocityPrediction = true,
 		dotProductFilter = {
-			dotProduct = 0.3,
-			referenceVector = CFrame.new(char.PrimaryPart.Position).LookVector,
+			dotProduct = 0.1,
+			referenceVector = char.PrimaryPart.CFrame.LookVector,
 			sourcePosition = char.PrimaryPart.Position,
 		},
 		hitboxId = "sword_" .. player.UserId,
@@ -79,10 +80,8 @@ HitboxResponseRemote.OnClientEvent:Connect(function(attackInfo)
 		debug = true,
 	})
 	
-	
-	
 	hitbox.OnHit:Connect(function(character, hitPart)
-		HitboxResponseRemote:FireServer(attackInfo.AttackID, hitPart)
+		HitboxResponseRemote:FireServer(attackInfo.AttackID, character)
 	end)
 	
 	hitbox:Start()

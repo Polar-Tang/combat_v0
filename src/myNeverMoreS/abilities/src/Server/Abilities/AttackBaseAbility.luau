@@ -77,10 +77,13 @@ function AttackBaseAbility:CreateScopedPromise(detectionInfo)
 
 	local PromiseTask = Promise.new(function(resolve, reject)
 		useClient(resolve, reject, scopeMaid, detectionInfo)
-	end):Finally(function()
+	end)
+	--[[
+	:Finally(function()
 		-- always clean, on resolve, reject, or by expiring
 		scopeMaid:DoCleaning()
 	end)
+	]]
 
 	return PromiseTask
 end

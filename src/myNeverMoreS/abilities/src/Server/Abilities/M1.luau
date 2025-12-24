@@ -1,3 +1,5 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local hitTouchTemplate = require(ReplicatedStorage.Nevermore.Custom.abilities.src.Server.Utils.hitTouchTemplate)
 local require = require(script.Parent.loader).load(script)
 
 -- Binders
@@ -18,7 +20,6 @@ Basic.__index = Basic
 function Basic.new(config)
 	local self = setmetatable(AttackBaseAbility.new(config), Basic)
 	self._comboController = CooldownController.new(config.character, config._serviceBag, config)
-	self.hitBox = self:createHitBox()
 
 	return self
 end
@@ -118,7 +119,7 @@ function Basic:Execute()
 	local data = {
 		serviceBag = self._serviceBag,
 		damage = self.damage,
-		hitBox = self.hitBox,
+		attacker = self.character,
 		stun_time = self.stun_time,
 	}
 	if current_combo == max_combo then
@@ -152,28 +153,15 @@ function Basic:Execute()
 
 	-- Create promise for client detection
 	local detectionInfo = {
-		Time = 0.5,
+		Time = 2,
 		Size = self.hitbox_size,
 		CFrame = self.hitbox_offset,
 		AttackID = attackId,
 		Attacker = self.character,
 	}
 
-	local BinderProvider = self._serviceBag:GetService(_G.BinderProvider)
-	-- weapon Binder
-	local WeaponBinder = BinderProvider:Get("Armed")
-
-	self:CreateScopedPromise(detectionInfo):Then(function(hitTargets)
-		if not hitTargets then
-			return
-		end
-		-- Process hits when promise resolves
-		for _, targetCharacter in hitTargets do
-			local targetWeapon = WeaponBinder:Get(targetCharacter)
-			if targetWeapon then
-				targetWeapon:OnIncomingAttack(data)
-			end
-		end
+	self:CreateScopedPromise(detectionInfo):Then(function(hitTarget)
+		hitTouchTemplate(data, hitTarget)
 	end)
 end
 

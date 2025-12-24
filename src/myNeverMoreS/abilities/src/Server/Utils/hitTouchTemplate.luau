@@ -32,73 +32,69 @@ export type effectHitCtx = {
 	HRP: BasePart,
 }
 
-return function(parentClass)
-	local newHitbox = parentClass.hitBox
-
-	local CHAR: Model = newHitbox.Puncher
+return function(parentClass, hitTarget)
 	local BinderProvider = parentClass.serviceBag:GetService(_G.BinderProvider)
 	-- weapon Binder
 	local WeaponBinder = BinderProvider:Get("Armed")
 	local NPCBinder = BinderProvider:Get("NPC")
 	--newHitbox.Touched:Connect
-	return function(hit, enemyHum)
-		----------------------------------------------------
-		local context = {
-			Defender = {},
-			Attacker = {},
-			groundSmash = {},
-			ragdoll = {},
-			Explosion = {},
-		} :: effectHitCtx
-		context.Defender.Humanoid = enemyHum
-		context.Attacker.Character = CHAR
+	----------------------------------------------------
+	local context = {
+		Defender = {},
+		Attacker = {},
+		groundSmash = {},
+		ragdoll = {},
+		Explosion = {},
+	} :: effectHitCtx
+	local ENEMY_CHAR: Model = hitTarget
+	context.Defender.Character = ENEMY_CHAR
+	
+	context.Defender.Humanoid = ENEMY_CHAR:WaitForChild("Humanoid")
+	
+	context.strength = parentClass.strength
+	
+	local ENEMYHRP = ENEMY_CHAR:WaitForChild("HumanoidRootPart")
+	context.Defender.HRP = ENEMYHRP
+	local CHAR = parentClass.attacker
+	context.Attacker.Character = CHAR
+	local HRP = CHAR:FindFirstChild("HumanoidRootPart") or parentClass.HRP
 
-		local ENEMY_CHAR: Model = enemyHum.Parent
-		context.Defender.Character = ENEMY_CHAR
+	local DIRECTION = (ENEMYHRP.Position - HRP.Position).Unit
+	local knockback = DIRECTION * parentClass.strength
 
-		context.strength = parentClass.strength
+	context.kockback = knockback
+	----------------------------------------------------
+	-- LAST BUT NOT LEAST, IMPORTANT DATA FROM THE PARENT
+	-- Overwrites groundSMash, if it exists it lacks the hit position, only know by this module
+	context.id = parentClass.AttackID
 
-		local ENEMYHRP = ENEMY_CHAR:WaitForChild("HumanoidRootPart")
-		context.Defender.HRP = ENEMYHRP
-
-		local HRP = CHAR:FindFirstChild("HumanoidRootPart") or parentClass.HRP
-
-		local DIRECTION = (ENEMYHRP.Position - HRP.Position).Unit
-		local knockback = DIRECTION * parentClass.strength
-
-		context.kockback = knockback
-		----------------------------------------------------
-		-- LAST BUT NOT LEAST, IMPORTANT DATA FROM THE PARENT
-		-- Overwrites groundSMash, if it exists it lacks the hit position, only know by this module
-		context.id = newHitbox.Key
-
-		if parentClass.groundSmash then
-			parentClass.groundSmash.position = hit.Position
+	if parentClass.groundSmash then
+		parentClass.groundSmash.position = ENEMYHRP.Position
+	end
+	context.hit_position = ENEMYHRP.Position
+	context.groundSmash = parentClass.groundSmash
+	context.damage = parentClass.damage
+	context.stunt_time = parentClass.stun_time
+	context.serviceBag = parentClass.serviceBag
+	context.ragdoll = parentClass.ragdoll
+	-- THIS IS NOT ELEGANT BUT WE NEED A WAY FOR STOPING ALL THE ANIMATION CONTROLLER AFTER RAGDOLL
+	if context.ragdoll then
+		local stateMachine = NPCBinder:Get(ENEMY_CHAR)
+		if stateMachine and stateMachine.state and stateMachine.state.MovementController then
+			stateMachine.state.MovementController:Stop()
 		end
-		context.hit_position = hit.Position
-		context.groundSmash = parentClass.groundSmash
-		context.damage = parentClass.damage
-		context.stunt_time = parentClass.stun_time
-		context.serviceBag = parentClass.serviceBag
-		context.ragdoll = parentClass.ragdoll
-		-- THIS IS NOT ELEGANT BUT WE NEED A WAY FOR STOPING ALL THE ANIMATION CONTROLLER AFTER RAGDOLL
-		if context.ragdoll then
-			local stateMachine = NPCBinder:Get(ENEMY_CHAR)
-			if stateMachine and stateMachine.state and stateMachine.state.MovementController then
-				stateMachine.state.MovementController:Stop()
-			end
-		end
+	end
 
-		context.Explosion = parentClass.Explosion
+	context.Explosion = parentClass.Explosion
 
-		local weaponEnemy = WeaponBinder:Get(ENEMY_CHAR)
-		weaponEnemy:OnIncomingAttack(context)
-		----------------------------------------------------
-		-- Handling the hit blocking
-		-- Heavy will be an attribute set by the heavy attack, execute()
-		-- CheckInfront will be an utility directly by the weapon
-		-- CombatUtils.Blocking could be a weapon method too, self._weapon[strategy].blockig
-		--[[
+	local weaponEnemy = WeaponBinder:Get(ENEMY_CHAR)
+	weaponEnemy:OnIncomingAttack(context)
+	----------------------------------------------------
+	-- Handling the hit blocking
+	-- Heavy will be an attribute set by the heavy attack, execute()
+	-- CheckInfront will be an utility directly by the weapon
+	-- CombatUtils.Blocking could be a weapon method too, self._weapon[strategy].blockig
+	--[[
 		
 		do
 			if ENEMY_CHAR:GetAttribute("Parrying") and not Heavy and CombatUtils.CheckInfront(CHAR, ENEMY_CHAR) then
@@ -118,17 +114,16 @@ return function(parentClass)
 			end
 		end
 		]]
-		------------ CONSTANTS ------------
+	------------ CONSTANTS ------------
 
-		--local STRENGTH = 10
+	--local STRENGTH = 10
 
-		---------------------- HIT: ANIM, DAMAGA ----------------------
-		--enemyHrp.CFrame = CFrame.lookAt(enemyHrp.Position, hrp.Position)--makes the enemy look at you, disabled it cuz it doesnt look good lol
+	---------------------- HIT: ANIM, DAMAGA ----------------------
+	--enemyHrp.CFrame = CFrame.lookAt(enemyHrp.Position, hrp.Position)--makes the enemy look at you, disabled it cuz it doesnt look good lol
 
-		-- PLAY THE HIT FROM THE COMBO
-		--print("Stop animation playing feint")
-		--print("NPCAnimBinder ", NPCAnimBinder)
-	end
+	-- PLAY THE HIT FROM THE COMBO
+	--print("Stop animation playing feint")
+	--print("NPCAnimBinder ", NPCAnimBinder)
 end
 
 --[[
