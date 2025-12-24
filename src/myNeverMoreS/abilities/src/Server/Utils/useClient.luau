@@ -8,10 +8,7 @@ local HitboxResponseRemote = Events.HitboxResponseRemote
 return function(resolve, reject, scopeMaid, detectionInfo)
 	-- Listen to client on hit parts
 	local character = detectionInfo.Attacker
-	print("character", character)
 	local attacker_player = Players:GetPlayerFromCharacter(character)
-
-	print("attacker_player ", attacker_player)
 
 	local connection = HitboxResponseRemote.OnServerEvent:Connect(function(player, attackID, hitTargets)
 		if player == attacker_player and attackID == detectionInfo.AttackID then
