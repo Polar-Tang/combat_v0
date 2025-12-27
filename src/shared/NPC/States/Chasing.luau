@@ -35,7 +35,6 @@ function Chasing:OnInit(data)
 	local Players: Players = game:GetService("Players")
 	local player = Players:GetPlayerFromCharacter(enemy)
 	data.TargetingController:SetTargetPlayer(player)
-
 end
 
 function Chasing:OnEnter(data)
@@ -43,13 +42,12 @@ function Chasing:OnEnter(data)
 	-- self.lastTriggerTime = 0
 end
 
-
 function Chasing:OnHeartbeat(data, deltatime)
 	data.timer += deltatime
 	if data.timer - data.lastTriggerTime >= 1 then
 		data.lastTriggerTime = data.timer
-		
-		local currentPos = data.TargetingController:GetTargetPosition()
+
+		local currentPos = data.TargetingController:GetTargetPosition() -- this calls _computePath internally
 
 		if currentPos then
 			data.MovementController:MoveTo(currentPos)

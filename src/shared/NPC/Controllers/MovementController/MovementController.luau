@@ -2,12 +2,11 @@
 -- TODO: Implement a method for completly stop moving the character
 local ReplicatedSorage = game:GetService("ReplicatedStorage")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local StarterPlayer = game:GetService("StarterPlayer")
 local PathfindingService = game:GetService("PathfindingService")
+local TweenService = game:GetService("TweenService")
 
+local Maid = require(ReplicatedStorage.Nevermore.Quenty.maid.Shared.Maid)
 local PathfindingUtils = require(ReplicatedStorage.Nevermore.Quenty.pathfindingutils.Shared.PathfindingUtils)
-local ThrottledFunction = require(ReplicatedStorage.Nevermore.Quenty.throttle.Shared.ThrottledFunction)
-local Maid = require(StarterPlayer.StarterPlayerScripts.CustomShiftLock.Utils.Maid)
 
 local STOP_DISTANCE = 6
 
@@ -17,8 +16,7 @@ MovementController.__index = MovementController
 function MovementController.new(model: Instance?, serviceBag: any)
 	local self = setmetatable({}, MovementController)
 	self.Model = model
-	self.Humanoid = self.Model:WaitForChild("Humanoid")
-	self.Humanoid.WalkSpeed = 10
+	self.velocity = 16 -- Test this
 
 	self._root = self.Model:WaitForChild("HumanoidRootPart")
 	local BinderProvider = serviceBag:GetService(_G.BinderProvider)
@@ -26,6 +24,7 @@ function MovementController.new(model: Instance?, serviceBag: any)
 	-- local WeaponBinder = BinderProvider:Get("Armed")
 	local AnimationBinder = BinderProvider:Get("AnimationHandler")
 	self._AnimationHandler = AnimationBinder:Get(model)
+	-- registry the fist animations only
 	local Animations = ReplicatedSorage.Animations
 	local anims = require(Animations.WeaponsAnims)["Fist-r6"]
 	local otherAnims = require(Animations.OtherAnims)["default_r6"]
@@ -36,8 +35,7 @@ function MovementController.new(model: Instance?, serviceBag: any)
 	self._pathMaid = Maid.new()
 	self._lastTarget = nil
 	self._currentPath = nil
-	self._waypoints = nil
-	self._waypointIndex = 0
+
 	return self
 end
 
@@ -45,11 +43,12 @@ function MovementController:MoveTo(targetPosition)
 	if not self._root then
 		return
 	end
-	-- Stop if close enough
+
 	if (self._root.Position - targetPosition).Magnitude <= STOP_DISTANCE then
 		self:Stop()
 		return
 	end
+
 	if (self._lastTarget and ((self._lastTarget - targetPosition).Magnitude > 0)) or self.isMoving then
 		self:Stop()
 	end
@@ -84,12 +83,6 @@ function MovementController:_walkThroughPath(path)
 		end
 	end))
 
-	self._pathMaid:GiveTask(self.Humanoid.MoveToFinished:Connect(function(reached)
-		if reached then
-			self:_advanceWaypoint()
-		end
-	end))
-
 	self:_moveToNext()
 end
 
@@ -98,23 +91,40 @@ function MovementController:_advanceWaypoint()
 	self:_moveToNext()
 end
 
+-- Move to the next position in the waypoint array
 function MovementController:_moveToNext()
 	local wp = self._waypoints[self._waypointIndex]
 	if not wp then
 		return
 	end
 
+	Maid.GiveTask(self._currentTween.Completed:Connect(function()
+		self:Stop()
+	end))
+
 	if self.Humanoid:HasTag("Ragdoll") then
 		self:Stop()
 		return
 	end
+
 	if (self._root.Position - self._lastTarget).Magnitude <= STOP_DISTANCE then
 		self:Stop()
 		return
 	end
+
 	self._AnimationHandler:LoadAnimation(true, "walk")
 	self.isMoving = true
-	self.Humanoid:MoveTo(wp.Position)
+
+	local distance = (wp.Position - self._root.Position).Magnitude
+	local timeToReach = distance / self.velocity
+
+	self._currentTween = TweenService:Create(
+		self._root,
+		TweenInfo.new(timeToReach, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut),
+		{ CFrame = CFrame.new(wp.Position) }
+	)
+
+	self._currentTween:Play()
 end
 
 function MovementController:Stop()
@@ -122,9 +132,11 @@ function MovementController:Stop()
 	self._currentPath = nil
 	self._waypoints = nil
 	self.isMoving = false
+	self._currentTween:Stop()
 	if self._AnimationHandler then
 		self._AnimationHandler:LoadAnimation(false, "walk")
 	end
+	-- Fire an event to report the last position to the server
 end
 
 function MovementController:Destroy()
