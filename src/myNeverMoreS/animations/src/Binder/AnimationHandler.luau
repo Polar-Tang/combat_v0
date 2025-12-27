@@ -8,6 +8,8 @@ Animation handler @v_03
 
 ]]
 local RS = game:GetService("ReplicatedStorage")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServiceInitLogger = require(ReplicatedStorage.Nevermore.Quenty.servicebag.Shared.ServiceInitLogger)
 local require = require(script.Parent.loader).load(script)
 
 local Maid = require("Maid")

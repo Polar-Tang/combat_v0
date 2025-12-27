@@ -1,11 +1,5 @@
 local Players: Players = game:getService("Players")
 local player = Players.LocalPlayer
-task.delay(20, function()
-	print("_G.ServiceBag ", _G.ServiceBag)
-end)
-repeat
-	wait()
-until _G.ServiceBag ~= nil
 
 local serviceBag = _G.ServiceBag
 local BinderProvider = serviceBag:GetService(_G.BinderProvider)

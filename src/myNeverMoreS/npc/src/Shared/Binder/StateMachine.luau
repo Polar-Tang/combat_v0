@@ -5,7 +5,7 @@ local setCTX = require(script.Parent.helpers.setCtx)
 local StatesFolder = ReplicatedStorage.NPC.States
 
 local StateMachineBinder = {}
-StateMachineBinder.ServiceName = "StateMachineBinder"
+StateMachineBinder.ServiceName = "StateMachine"
 StateMachineBinder.__index = StateMachineBinder
 
 function StateMachineBinder.new(char: Model, serviceBag)
@@ -25,6 +25,7 @@ function StateMachineBinder.new(char: Model, serviceBag)
 	self.state = nil
 	self._initialized = false
 	self._players = {}
+	self.serviceBag = serviceBag
 	return self
 end
 
@@ -35,7 +36,6 @@ function StateMachineBinder:Init(player)
 		table.insert(self._players, player)
 		return
 	end
-
 	local state =
 		StateMachine.new("Chasing", StateMachine:LoadDirectory(StatesFolder), setCTX(self.char, self.serviceBag))
 	self.state = state

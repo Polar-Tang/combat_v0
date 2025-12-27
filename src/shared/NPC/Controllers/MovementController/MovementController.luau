@@ -14,7 +14,6 @@ local MovementController = {}
 MovementController.__index = MovementController
 
 function MovementController.new(model: Model, serviceBag: any)
-	print("model ", model)
 	local self = setmetatable({}, MovementController)
 	self.Model = model
 	self.velocity = 16 -- Test this

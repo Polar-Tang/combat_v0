@@ -2,7 +2,6 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local repStore = game:getService("ReplicatedStorage")
 
 local Maid = require(ReplicatedStorage.Nevermore.Quenty.maid.Shared.Maid)
-local InvokeBadNPC = require(ReplicatedStorage.Helpers.InvokeBadNPC)
 local Roact = require(repStore.Roact)
 
 local PromptContext = require(script.Parent.PromptContext)
@@ -81,9 +80,8 @@ function PromptProvider:didMount()
 		if npc:HasTag("NPC") then
 			PromptController = PromptController.new(prompty, function(p)
 				self:DisconnectPrompt(p)
-				InvokeBadNPC.Uninvoke(npc)
+				NPCs:FireServer(prompty, true)
 			end)
-			InvokeBadNPC.Invoke(npc)
 		end
 
 		self.__prompts[id] = PromptController
