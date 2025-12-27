@@ -307,7 +307,7 @@ function HitboxClass:_queryAndProcess()
 	end
 
 	local parts = {}
-
+--
 	local opts = self.Opts
 	local root = opts.root
 	local size = opts.size

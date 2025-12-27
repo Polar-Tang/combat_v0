@@ -13,6 +13,7 @@ return function(resolve, reject, scopeMaid, detectionInfo)
 	local connection = HitboxResponseRemote.OnServerEvent:Connect(function(player, attackID, hitTargets)
 		if player == attacker_player and attackID == detectionInfo.AttackID then
 			resolve(hitTargets) -- Promise resolves with hit targets
+			-- targets
 		end
 	end)
 
@@ -20,10 +21,10 @@ return function(resolve, reject, scopeMaid, detectionInfo)
 	scopeMaid:GiveTask(connection)
 
 	-- Fire to client to start detection
-	ReplicatedStorage.HitboxDetectRemote:FireClient(attacker_player, detectionInfo)
-
-	-- Setup timeout - reject if client doesn't respond in time
-	scopeMaid:GiveTask(task.delay(detectionInfo.Time + 0.2, function()
-		reject("Client detection timeout")
-	end))
+	HitboxResponseRemote:FireClient(attacker_player, detectionInfo)
+	
+	-- scopeMaid:GiveTask(task.delay(detectionInfo.Time + 0.2, function()
+	-- 	reject("Client detection timeout")
+	-- end))
+	-- while hitTargets
 end -- :: useClient: (any, any, typeof(Maid.new()), any) -> ()
