@@ -14,7 +14,6 @@ return function(parent: Model, serviceBag: any)
 	-- local AnimationBinder = BinderProvider:Get("AnimationHandler")
 	return {
 		npc = parent,
-		humanoid = parent:WaitForChild("Humanoid"),
 		timer = 0,
 		lastTriggerTime = 0,
 		-------- Binders --------

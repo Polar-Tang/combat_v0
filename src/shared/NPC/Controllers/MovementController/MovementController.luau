@@ -13,12 +13,13 @@ local STOP_DISTANCE = 6
 local MovementController = {}
 MovementController.__index = MovementController
 
-function MovementController.new(model: Instance?, serviceBag: any)
+function MovementController.new(model: Model, serviceBag: any)
+	print("model ", model)
 	local self = setmetatable({}, MovementController)
 	self.Model = model
 	self.velocity = 16 -- Test this
-
-	self._root = self.Model:WaitForChild("HumanoidRootPart")
+	print(model)
+	self._root = model.PrimaryPart
 	local BinderProvider = serviceBag:GetService(_G.BinderProvider)
 
 	-- local WeaponBinder = BinderProvider:Get("Armed")

@@ -5,7 +5,6 @@ local BaseObject = require(packages.baseobject.Shared.BaseObject)
 -- TEST IF this doesn't break
 local HumanoidTracker = require(packages.humanoidtracker.Shared.HumanoidTracker)
 
-
 local TargetingController = setmetatable({}, BaseObject)
 TargetingController.__index = TargetingController
 
@@ -13,11 +12,9 @@ function TargetingController.new(character: Instance, serviceBag: any)
 	local self = setmetatable(BaseObject.new() :: any, TargetingController)
 
 	self._character = character
-	self._root = character:WaitForChild("HumanoidRootPart")
-    
-    self._serviceBag = serviceBag
+	self._root = character.PrimaryPart
 
-    
+	self._serviceBag = serviceBag
 
 	self._currentPlayer = nil
 	self._humanoidTracker = nil
@@ -35,8 +32,8 @@ function TargetingController:SetTargetPlayer(player: Player?)
 		return
 	end
 
-    --local tracker = self._serviceBag:GetService(HumanoidTracker)
-    
+	--local tracker = self._serviceBag:GetService(HumanoidTracker)
+
 	local tracker = HumanoidTracker.new(player)
 	self._humanoidTracker = tracker
 	self._maid.target = tracker
@@ -55,7 +52,7 @@ function TargetingController:_GetAliveHumanoid()
 end
 
 function TargetingController:GetTarget()
-    -- self.HumanoidTracker
+	-- self.HumanoidTracker
 	return self._currentTarget
 end
 
@@ -77,7 +74,6 @@ function TargetingController:GetDistanceToTarget()
 	return (pos - self._root.Position).Magnitude
 end
 
-
 function TargetingController:_isTargetInFront(dotThreshold: number?): boolean
 	dotThreshold = dotThreshold or 0.5
 
@@ -92,18 +88,16 @@ function TargetingController:_isTargetInFront(dotThreshold: number?): boolean
 	return forward:Dot(direction) >= dotThreshold
 end
 
-
 function TargetingController:LookTarget()
-    if not self:_isTargetInFront() then
+	if not self:_isTargetInFront() then
+		local targetPos = self:GetTargetPosition()
+		local targetCFrame = CFrame.lookAt(self._root.Position, targetPos)
 
-        local targetPos = self:GetTargetPosition()
-        local targetCFrame = CFrame.lookAt(self._root.Position, targetPos)
-
-        local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-        local goal = { CFrame = targetCFrame }
-        local tween = TweenService:Create(self._root, tweenInfo, goal)
-        tween:Play()
-    end
+		local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+		local goal = { CFrame = targetCFrame }
+		local tween = TweenService:Create(self._root, tweenInfo, goal)
+		tween:Play()
+	end
 end
 
 return TargetingController

@@ -2,7 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local repStore = game:getService("ReplicatedStorage")
 
 local Maid = require(ReplicatedStorage.Nevermore.Quenty.maid.Shared.Maid)
-local InvokeBadNPC = require(script.Parent.Helpers.InvokeBadNPC)
+local InvokeBadNPC = require(ReplicatedStorage.Helpers.InvokeBadNPC)
 local Roact = require(repStore.Roact)
 
 local PromptContext = require(script.Parent.PromptContext)
@@ -55,10 +55,9 @@ end
 
 function PromptProvider:didMount()
 	local promptCon = game:GetService("ProximityPromptService").PromptShown:Connect(function(prompty: ProximityPrompt)
-		local promtId = prompty.ObjectText -- uses object text as id
 		local promptParent = prompty.Parent
 
-		if promtId and promptParent then
+		if promptParent then
 			NPCs:FireServer(prompty)
 		end
 	end)
@@ -97,7 +96,6 @@ function PromptProvider:didMount()
 			prompts = clone,
 		})
 	end)
-
 	self._maid:GiveTask(promptCon)
 	self._maid:GiveTask(promptCreator)
 end

@@ -1,18 +1,20 @@
+local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Workspace = game:GetService("Workspace")
+
 local Events = ReplicatedStorage.Events
+
+local npcMediator = {}
+
 -- Server
-Events.NPCs.OnServerInvoke = function(player, data)
-	local npcModel = data.npc
-	local id = data.id
-	local prompt = data.prompt
+Events.NPCs.OnServerEvent:Connect(function(player, prompt)
+	local npcModel = prompt.Parent
+	local id = prompt.ObjectText
 	-- EZ anti exploits checks
 	do
-		if npcModel.Parent ~= Workspace.NPCs then
+		local RealNPC = CollectionService:GetTagged(id)[1]
+		if not RealNPC then
 			return
 		end
-
-		local RealNPC = Workspace.npcModel
 		if RealNPC ~= npcModel then
 			return
 		end
@@ -34,4 +36,6 @@ Events.NPCs.OnServerInvoke = function(player, data)
 		prompt = prompt,
 	})
 	return true
-end
+end)
+
+return npcMediator
